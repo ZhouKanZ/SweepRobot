@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:paddingLeft="50dp"
+    android:paddingRight="50dp"
+    android:paddingTop="12dp"
+    android:background="@drawable/shape_layout"
+    >
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/head"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginTop="40dp"
+        android:layout_centerHorizontal="true"
+        android:src="@mipmap/head"
+        app:civ_border_color="@color/bussiness_card_gridview_bg"
+        app:civ_border_width="1dp"
+        />
+
+    <EditText
+        android:id="@+id/et_ip"
+        android:layout_width="match_parent"
+        android:layout_height="42dp"
+        android:hint="@string/input_ip"
+        android:background="@drawable/sel_shape"
+        android:paddingLeft="32dp"
+        android:layout_marginTop="80dp"
+        android:layout_below="@+id/head"
+        />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="42dp"
+        android:layout_marginTop="20dp"
+        android:layout_below="@+id/et_ip"
+        android:background="@drawable/sel_shape_pressed"
+        android:text="@string/login"
+        android:shadowColor="@color/black"
+        />
+
+</RelativeLayout>
