@@ -1,10 +1,11 @@
-package com.gps.sweeprobot.model.main.view;
+package com.gps.sweeprobot.model.main.view.activity;
 
 import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.View;
+import android.widget.TextView;
 
 import com.gps.sweeprobot.R;
 import com.gps.sweeprobot.base.BaseActivity;
@@ -26,6 +27,16 @@ public class WelcomeActivity extends BaseActivity<WelcomePresenter> implements W
     ViewPager vp;
 
     private FragmentPagerAdapter adapter;
+
+    @Override
+    protected TextView getTitleTextView() {
+        return null;
+    }
+
+    @Override
+    protected String getTitleText() {
+        return null;
+    }
 
     @Override
     protected WelcomePresenter loadPresenter() {

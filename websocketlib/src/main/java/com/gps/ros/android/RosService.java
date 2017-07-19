@@ -69,7 +69,9 @@ public class RosService extends  BaseService {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d(TAG, "onDestroy: ");
+        if ( null != rosBridgeClient && !rosBridgeClient.isClosed()){
+            rosBridgeClient.close();
+        }
     }
 
     @Nullable

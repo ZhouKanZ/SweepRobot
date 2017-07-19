@@ -3,8 +3,12 @@ package com.gps.sweeprobot.base;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.IdRes;
 import android.support.v4.app.FragmentActivity;
+import android.text.TextUtils;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.gps.sweeprobot.mvp.IView;
@@ -18,10 +22,17 @@ import butterknife.ButterKnife;
  */
 
 public abstract class BaseActivity<P extends BasePresenter> extends FragmentActivity implements
-        IView, View.OnClickListener {
+        IView, View.OnClickListener  {
+
     protected View view;
 
     protected P mPresenter;
+
+    private ImageView leftImageView,rightImageView;
+    private TextView tv_title;
+    private String title;
+    private boolean leftImageViewVisiable = false;
+    private boolean rightImageViewVisiable = false;
 
 
     @Override
@@ -33,10 +44,64 @@ public abstract class BaseActivity<P extends BasePresenter> extends FragmentActi
 
         mPresenter = loadPresenter();
         initCommonData();
-//        initView();
         initListener();
         initData();
+
+        leftImageView = getLeftImageView();
+        rightImageView = getRightImageView();
+        tv_title = getTitleTextView();
+        title = getTitleText();
+        setTitle();
+
     }
+
+
+    private void setTitle() {
+
+        title = getTitleText();
+
+        if (leftImageView != null){
+            if (leftImageViewVisiable){
+                leftImageView.setVisibility(View.VISIBLE);
+            }
+        }
+
+        if (rightImageView != null){
+            if (rightImageViewVisiable){
+                rightImageView.setVisibility(View.VISIBLE);
+            }
+        }
+
+        if (tv_title != null){
+            tv_title.setText(title);
+        }
+
+    }
+
+    /**
+     *  重写该方法的时候 再super() 方法之前执行
+     * @param visiable
+     */
+    public void setLeftVisiable(boolean visiable) {
+        leftImageViewVisiable = visiable;
+    }
+
+    public void setRightVisiable(boolean visiable) {
+        rightImageViewVisiable = visiable;
+    }
+
+    public ImageView getRightImageView(){
+        return null;
+    }
+
+    public ImageView getLeftImageView(){
+        return null;
+    }
+
+    protected abstract TextView getTitleTextView();
+
+    protected abstract String getTitleText();
+
 
     protected abstract P loadPresenter();
 
@@ -119,4 +184,12 @@ public abstract class BaseActivity<P extends BasePresenter> extends FragmentActi
         i.putExtra(act.getSimpleName(),bundle);
         ctz.startActivity(i);
     }
+
+
+    public String getStringByRes(@IdRes int resId){
+        return getResources().getString(resId);
+    }
+
+
+
 }

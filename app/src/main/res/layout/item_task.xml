@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:id="@+id/layout_task_item"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="10dp"
+    android:layout_marginRight="10dp"
+    android:layout_marginTop="5dp"
+    android:orientation="vertical"
+    android:background="@color/white"
+    android:paddingLeft="10dp"
+    >
+
+    <ImageView
+        android:id="@+id/iv_map"
+        android:layout_width="130dp"
+        android:layout_height="130dp"
+        android:src="@mipmap/map_test"
+        />
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/iv_map"
+        android:text="测试地图"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="20dp"
+        />
+
+    <TextView
+        android:id="@+id/tv_date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/iv_map"
+        android:layout_marginLeft="10dp"
+        android:layout_below="@+id/tv_title"
+        android:text="2017-7-18"
+        android:layout_marginTop="20dp"
+        />
+
+
+</RelativeLayout>
