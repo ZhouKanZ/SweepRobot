@@ -27,6 +27,7 @@ dependencies {
     })
     testCompile 'junit:junit:4.12'
     compile project(path: ':websocketlib')
+    compile project(':KqwRockerLibrary')
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.7.0'
     compile 'com.jakewharton:butterknife:8.7.0'
     compile 'com.zhy:base-rvadapter:3.0.3'
@@ -35,5 +36,10 @@ dependencies {
     compile 'de.hdodenhof:circleimageview:2.1.0'
     compile 'com.android.support:design:26.0.0-alpha1'
     compile 'com.android.support:cardview-v7:23.2.0'
-    compile project(':KqwRockerLibrary')
+    compile 'org.litepal.android:core:1.5.1'
+
+    compile 'org.glassfish:javax.json:1.0.4'
+    compile 'org.glassfish.tyrus:tyrus-client:1.2.1'
+    compile 'org.glassfish.tyrus:tyrus-container-grizzly:1.2.1'
+    testCompile 'org.glassfish.tyrus:tyrus-server:1.2.1'
 }

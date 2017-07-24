@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.v4.app.FragmentActivity;
-import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -21,12 +21,16 @@ import butterknife.ButterKnife;
  * Created by GaoSheng on 2016/9/13.
  */
 
-public abstract class BaseActivity<P extends BasePresenter> extends FragmentActivity implements
+public abstract class BaseActivity<P extends BasePresenter,V extends IView> extends FragmentActivity implements
         IView, View.OnClickListener  {
+
+    private static final String TAG = "BaseActivity";
 
     protected View view;
 
     protected P mPresenter;
+
+    public Context mCtz;
 
     private ImageView leftImageView,rightImageView;
     private TextView tv_title;
@@ -40,7 +44,11 @@ public abstract class BaseActivity<P extends BasePresenter> extends FragmentActi
         super.onCreate(savedInstanceState);
         setContentView(getView());
 
+        Log.d("BaseActivity", "onCreate: ");
+
         ButterKnife.bind(this);
+
+        mCtz = this;
 
         mPresenter = loadPresenter();
         initCommonData();
@@ -108,7 +116,7 @@ public abstract class BaseActivity<P extends BasePresenter> extends FragmentActi
     private void initCommonData() {
 
         if (mPresenter != null)
-            mPresenter.attachView(this);
+            mPresenter.attachView((V)this);
     }
 
     protected abstract void initData();
@@ -169,8 +177,23 @@ public abstract class BaseActivity<P extends BasePresenter> extends FragmentActi
     @Override
     protected void onDestroy() {
         super.onDestroy();
+
+        Log.d(TAG, "onDestroy: ");
+        
         if (mPresenter != null)
             mPresenter.detachView();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d(TAG, "onResume: ");
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Log.d(TAG, "onRestart: ");
     }
 
     /**

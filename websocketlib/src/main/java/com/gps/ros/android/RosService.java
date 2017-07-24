@@ -29,8 +29,7 @@ public class RosService extends  BaseService {
         if (rosBridgeClient != null && !rosBridgeClient.isClosed()){
             return rosBridgeClient;
         }else {
-            // ros websocket 未连接或者未进行初始化
-            return null;
+           return null;
         }
     }
 

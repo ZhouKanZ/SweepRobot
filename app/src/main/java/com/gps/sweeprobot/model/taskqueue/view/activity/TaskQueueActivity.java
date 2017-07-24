@@ -69,6 +69,8 @@ public class TaskQueueActivity extends BaseActivity {
         setLeftVisiable(true);
 
         rvTasks.setLayoutManager(new LinearLayoutManager(this));
+
+
         rvTasks.setAdapter(new CommonAdapter<GpsMap>(this,R.layout.item_task,tasks) {
 
             @Override
@@ -90,9 +92,6 @@ public class TaskQueueActivity extends BaseActivity {
 
     @Override
     protected void initListener() {
-
-
-
     }
 
     @Override

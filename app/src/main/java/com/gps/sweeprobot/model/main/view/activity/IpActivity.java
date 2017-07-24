@@ -20,7 +20,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
  * @Descriptiong : xxx
  */
 
-public class IpActivity extends BaseActivity<IpPresenter> implements IpContract.View {
+public class IpActivity extends BaseActivity<IpPresenter,IpContract.View> implements IpContract.View {
 
     @BindView(R.id.head)
     CircleImageView head;

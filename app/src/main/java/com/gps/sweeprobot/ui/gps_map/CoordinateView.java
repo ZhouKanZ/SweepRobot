@@ -33,7 +33,7 @@ public class CoordinateView extends ViewGroup{
     private boolean isShowPointName = true;
     private float locationX;
     private float locationY;
-    private Bitmap mArrow;
+//    private Bitmap mArrow;
     private int mArrowWidth;
     private ImageView mainPosition;
     private int mainPositionRes;
@@ -106,7 +106,7 @@ public class CoordinateView extends ViewGroup{
         this.textPaint.setTextSize(DensityUtil.getDimen(R.dimen.coordinate_text_size));*/
         setWillNotDraw(false);
 //        this.mArrow = BitmapFactory.decodeResource(getResources(),R.drawable.point);
-        this.mArrowWidth = this.mArrow.getWidth();
+//        this.mArrowWidth = this.mArrow.getWidth();
 //        setBackgroundColor(getResources().getColor(R.color.gps_bg));
     }
 
@@ -125,7 +125,7 @@ public class CoordinateView extends ViewGroup{
         {
             canvas.save();
             canvas.rotate(-this.angle + this.matrixRotateAngle, this.moveX, this.moveY);
-            canvas.drawBitmap(this.mArrow, this.moveX, this.mainPosition.getTop(), new Paint());
+//            canvas.drawBitmap(this.mArrow, this.moveX, this.mainPosition.getTop(), new Paint());
             canvas.restore();
         }
     }

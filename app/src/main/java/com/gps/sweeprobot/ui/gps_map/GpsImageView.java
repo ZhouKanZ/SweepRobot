@@ -11,6 +11,7 @@ import android.widget.FrameLayout;
 
 import com.gps.sweeprobot.MainApplication;
 import com.gps.sweeprobot.R;
+import com.gps.sweeprobot.model.taskqueue.bean.TaskPoint;
 import com.gps.sweeprobot.utils.DegreeManager;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -27,6 +28,7 @@ public class GpsImageView extends FrameLayout {
     private boolean isAddPoint;
     //存放标记点集合
     private List<CoordinateView> pointsList;
+
 
     public GpsImageView(Context context) {
         super(context);
@@ -82,7 +84,7 @@ public class GpsImageView extends FrameLayout {
     private void changePoint(Matrix matrix){
 
         CoordinateView coordinateView=null;
-        matrix=this.mapView.getCurrentImageMatrix();
+        matrix=this.mapView.getOuterMatrix(new Matrix());
         if (pointsList!=null){
             Iterator<CoordinateView> iterator = pointsList.iterator();
             while (iterator.hasNext()){
@@ -90,6 +92,7 @@ public class GpsImageView extends FrameLayout {
                 PointF pointF = DegreeManager.changeAbslutePoint(coordinateView.imageViewX, coordinateView.imageViewY, matrix);
                 coordinateView.setPositionViewX(pointF.x);
                 coordinateView.setPositionViewY(pointF.y);
+                Log.d(TAG, "changePoint: " + matrix +"\n"+pointF.x + "--"+pointF.y);
             }
         }
     }

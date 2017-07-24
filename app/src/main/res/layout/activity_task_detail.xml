@@ -2,54 +2,57 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    >
+    android:orientation="vertical">
 
-    <include android:id="@+id/toolbar"
-        layout="@layout/layout_toolbar"/>
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/layout_toolbar" />
+
+
+    <!-- 点 轨迹 覆盖物 -->
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_task_detail"
+        android:layout_width="100dp"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/toolbar"
+        android:background="@color/white"
+        />
+
 
     <com.gps.sweeprobot.ui.gps_map.GpsImageView
         android:id="@+id/gps_mapview_task"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/toolbar"
+        android:layout_toRightOf="@+id/rv_task_detail"
+        android:layout_toEndOf="@+id/rv_task_detail"
         >
+
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_margin="10dp"
+            android:padding="5dp">
 
-            <android.support.v7.widget.RecyclerView
-                android:layout_width="100dp"
-                android:layout_height="match_parent" />
-
-            <RelativeLayout
+            <ImageView
+                android:id="@+id/add"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:layout_margin="10dp"
-                android:background="@drawable/shape_float_control"
-                android:padding="5dp">
+                android:src="@mipmap/add" />
 
-                <ImageView
-                    android:id="@+id/add"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:src="@mipmap/add" />
-
-                <ImageView
-                    android:id="@+id/sub"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_below="@+id/add"
-                    android:layout_marginTop="10dp"
-                    android:src="@mipmap/sub" />
-
-            </RelativeLayout>
+            <ImageView
+                android:id="@+id/sub"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/add"
+                android:layout_below="@+id/add"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="10dp"
+                android:src="@mipmap/sub" />
 
         </RelativeLayout>
-
-
     </com.gps.sweeprobot.ui.gps_map.GpsImageView>
 
 </RelativeLayout>

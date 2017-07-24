@@ -21,7 +21,7 @@ import butterknife.BindView;
  * @Descriptiong : 欢迎页
  */
 
-public class WelcomeActivity extends BaseActivity<WelcomePresenter> implements WelcomeContract.View {
+public class WelcomeActivity extends BaseActivity<WelcomePresenter,WelcomeContract.View> implements WelcomeContract.View {
 
     @BindView(R.id.vp)
     ViewPager vp;

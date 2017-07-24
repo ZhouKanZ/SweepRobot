@@ -1,6 +1,5 @@
 package com.gps.sweeprobot;
 
-import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,13 +7,16 @@ import android.os.Bundle;
 import com.gps.ros.android.BaseService;
 import com.gps.ros.android.RosService;
 
+import org.litepal.LitePal;
+import org.litepal.LitePalApplication;
+
 /**
  * @Author : zhoukan
  * @CreateDate : 2017/7/12 0012
  * @Descriptiong : xxx
  */
 
-public class MainApplication extends Application {
+public class MainApplication extends LitePalApplication {
 
     private Intent serviceIntent;
 
@@ -26,10 +28,12 @@ public class MainApplication extends Application {
     public void onCreate() {
         super.onCreate();
         app = this;
+        /* 初始化LitePal数据库 */
+        LitePal.initialize(this);
+
     }
 
     public static MainApplication getContext() {
-
         return app;
     }
 

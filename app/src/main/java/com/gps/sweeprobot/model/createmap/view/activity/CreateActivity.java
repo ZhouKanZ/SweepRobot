@@ -1,12 +1,12 @@
 package com.gps.sweeprobot.model.createmap.view.activity;
 
+import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -15,7 +15,6 @@ import android.widget.TextView;
 
 import com.gps.sweeprobot.R;
 import com.gps.sweeprobot.base.BaseActivity;
-import com.gps.sweeprobot.base.BasePresenter;
 import com.gps.sweeprobot.model.createmap.bean.ControlTab;
 import com.gps.sweeprobot.model.createmap.contract.CreateMapContract;
 import com.gps.sweeprobot.model.createmap.presenter.CreateMapPresenter;
@@ -37,10 +36,12 @@ import butterknife.OnClick;
  * @Descriptiong : 创建地图页面
  */
 
-public class CreateActivity extends BaseActivity<CreateMapPresenter> implements CreateMapContract.View {
+public class CreateActivity extends BaseActivity<CreateMapPresenter,CreateMapContract.View>
+        implements CreateMapContract.View,
+        RockerView.OnAngleChangeListener {
 
     private static final String TAG = "CreateActivity";
-    
+
     @BindView(R.id.iv_back)
     ImageView ivBack;
     @BindView(R.id.title)
@@ -63,11 +64,13 @@ public class CreateActivity extends BaseActivity<CreateMapPresenter> implements 
     RecyclerView rvControl;
     @BindView(R.id.layout_control)
     RelativeLayout layoutControl;
+    @BindView(R.id.iv_anim)
+    ImageView ivAnim;
 
     private List<ControlTab> controlTabs;
 
     /**
-     *  控制layout是否隐藏
+     * 控制layout是否隐藏
      */
     private boolean controllayoutisHide = true;
 
@@ -103,32 +106,19 @@ public class CreateActivity extends BaseActivity<CreateMapPresenter> implements 
         controlTabs.add(new ControlTab(R.mipmap.cancel));
 
         rvControl.setLayoutManager(new LinearLayoutManager(this));
-        rvControl.setAdapter(new CommonAdapter<ControlTab>(this,R.layout.control_item,controlTabs) {
+        rvControl.setAdapter(new CommonAdapter<ControlTab>(this, R.layout.control_item, controlTabs) {
 
             @Override
             protected void convert(ViewHolder holder, ControlTab controlTab, int position) {
-                ((ImageView)holder.getView(R.id.iv)).setImageBitmap(
+                ((ImageView) holder.getView(R.id.iv)).setImageBitmap(
                         BitmapFactory
-                                .decodeResource(getResources(),controlTab.getResId()));
+                                .decodeResource(getResources(), controlTab.getResId()));
             }
         });
 
-        rockerViewCenter.setOnAngleChangeListener(new RockerView.OnAngleChangeListener() {
-            @Override
-            public void onStart() {
+        rockerViewCenter.setOnAngleChangeListener(this);
 
-            }
-
-            @Override
-            public void angle(double angle) {
-                // 当前的偏移角度 Android坐标系
-            }
-
-            @Override
-            public void onFinish() {
-
-            }
-        });
+        mPresenter.startScanMap();
 
     }
 
@@ -138,7 +128,8 @@ public class CreateActivity extends BaseActivity<CreateMapPresenter> implements 
     }
 
     @Override
-    protected void initListener() {}
+    protected void initListener() {
+    }
 
     @Override
     protected int getLayoutId() {
@@ -146,9 +137,10 @@ public class CreateActivity extends BaseActivity<CreateMapPresenter> implements 
     }
 
     @Override
-    protected void otherViewClick(View view) {}
+    protected void otherViewClick(View view) {
+    }
 
-    @OnClick({R.id.iv_back, R.id.iv,R.id.iv_point_south})
+    @OnClick({R.id.iv_back, R.id.iv, R.id.iv_point_south})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.iv_back:
@@ -156,12 +148,12 @@ public class CreateActivity extends BaseActivity<CreateMapPresenter> implements 
                 break;
             case R.id.iv:
 
-                if (controllayoutisHide){
-                    iv.setImageBitmap(BitmapFactory.decodeResource(getResources(),R.mipmap.hide));
+                if (controllayoutisHide) {
+                    iv.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.mipmap.hide));
                     showControlLayout(layoutControl);
                     controllayoutisHide = !controllayoutisHide;
-                }else {
-                    iv.setImageBitmap(BitmapFactory.decodeResource(getResources(),R.mipmap.show));
+                } else {
+                    iv.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.mipmap.show));
                     hideControlLayout(layoutControl);
                     controllayoutisHide = !controllayoutisHide;
                 }
@@ -173,25 +165,26 @@ public class CreateActivity extends BaseActivity<CreateMapPresenter> implements 
     }
 
 
-
     /**********/
 
     @Override
-    public void clickScanControl(boolean isScan) {}
+    public void clickScanControl(boolean isScan) {
+    }
 
     @Override
-    public void cancelScanControl() {}
+    public void cancelScanControl() {
+    }
 
     /**
-     *  offloat() 操作的单位是px
-     *  每次动画产生的位移，不是基于现有的位置，而是基于view原本的位置
+     * offloat() 操作的单位是px
+     * 每次动画产生的位移，不是基于现有的位置，而是基于view原本的位置
      *
      * @param view
      */
     @Override
     public void showControlLayout(View view) {
 
-        ObjectAnimator.ofFloat(view,"translationX",0,-DensityUtil.dip2px(100))
+        ObjectAnimator.ofFloat(view, "translationX", 0, -DensityUtil.dip2px(100))
                 .setDuration(500)
                 .start();
 
@@ -200,9 +193,62 @@ public class CreateActivity extends BaseActivity<CreateMapPresenter> implements 
     @Override
     public void hideControlLayout(View view) {
 
-        ObjectAnimator.ofFloat(view,"translationX",-DensityUtil.dip2px(100),0)
+        ObjectAnimator.ofFloat(view, "translationX", -DensityUtil.dip2px(100), 0)
                 .setDuration(500)
                 .start();
+
+    }
+
+    @Override
+    public void showGetRobotsAnimation() {
+
+        ObjectAnimator animator = ObjectAnimator
+                .ofFloat(ivAnim, "rotation", 0f, 360f * 3)
+                .setDuration(5000);
+
+        animator.start();
+
+        animator.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animator) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animator) {
+                CreateActivity.this.hideGetRobotsAnimation();
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animator) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animator) {
+
+            }
+        });
+    }
+
+    // 设置不可见
+    @Override
+    public void hideGetRobotsAnimation() {
+        ivAnim.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    public void angle(double angle) {
+
+    }
+
+    @Override
+    public void onFinish() {
 
     }
 }

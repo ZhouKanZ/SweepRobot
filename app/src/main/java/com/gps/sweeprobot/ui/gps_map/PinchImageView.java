@@ -7,10 +7,10 @@ import android.graphics.Matrix;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.widget.ImageView;
-
 
 import com.gps.sweeprobot.utils.DegreeManager;
 
@@ -24,7 +24,8 @@ import java.util.Queue;
  *
  * @author clifford
  */
-public class PinchImageView extends ImageView {
+public class PinchImageView extends ImageView
+{
 
 
     private static final String TAG = "PinchImageView";
@@ -180,10 +181,22 @@ public class PinchImageView extends ImageView {
         if (isReady()) {
             //原图大小
             RectF tempSrc = MathUtils.rectFTake(0, 0, getDrawable().getIntrinsicWidth(), getDrawable().getIntrinsicHeight());
+            Log.d(TAG, "getInnerMatrix: " + tempSrc);
             //控件大小
             RectF tempDst = MathUtils.rectFTake(0, 0, getWidth(), getHeight());
+            Log.d(TAG, "getInnerMatrix: " + tempDst);
             //计算fit center矩阵
+
+
+            Log.d(TAG, "getInnerMatrix: " + tempSrc);
+
+            Log.d(TAG, "getInnerMatrix: " + tempDst);
+            
             matrix.setRectToRect(tempSrc, tempDst, Matrix.ScaleToFit.CENTER);
+
+            Log.d(TAG, "getInnerMatrix: " + matrix); // bitmap变换用到的变化矩阵
+
+
             //释放临时对象
             MathUtils.rectFGiven(tempDst);
             MathUtils.rectFGiven(tempSrc);
@@ -845,7 +858,7 @@ public class PinchImageView extends ImageView {
             int blueValue = RGBUtil.getBlueValue(PinchImageView.this, relativePoint);
             int greenValue = RGBUtil.getGreenValue(PinchImageView.this, relativePoint);*/
 
-/*            if (addPointListener!=null && redValue==254){
+            /*if (addPointListener!=null && redValue==254){
                 addPointListener.addPoint(PinchImageView.this,relativePoint.x,relativePoint.y);
             }else {
                 ToastManager.showShort(MyApp.getInstance(), R.string.un_effective);
@@ -1014,18 +1027,18 @@ public class PinchImageView extends ImageView {
      * @param y2 缩放第二个手指
      */
     private void saveScaleContext(float x1, float y1, float x2, float y2) {
-        //记录基础缩放值,其中图片缩放比例按照x方向来计算
-        //理论上图片应该是等比的,x和y方向比例相同
-        //但是有可能外部设定了不规范的值.
-        //但是后续的scale操作会将xy不等的缩放值纠正,改成和x方向相同
-        mScaleBase = MathUtils.getMatrixScale(mOuterMatrix)[0] / MathUtils.getDistance(x1, y1, x2, y2);
-        //两手指的中点在屏幕上落在了图片的某个点上,图片上的这个点在经过总矩阵变换后和手指中点相同
-        //现在我们需要得到图片上这个点在图片是fit center状态下在屏幕上的位置
-        //因为后续的计算都是基于图片是fit center状态下进行变换
-        //所以需要把两手指中点除以外层变换矩阵得到mScaleCenter
-        float[] center = MathUtils.inverseMatrixPoint(MathUtils.getCenterPoint(x1, y1, x2, y2), mOuterMatrix);
-        mScaleCenter.set(center[0], center[1]);
-    }
+    //记录基础缩放值,其中图片缩放比例按照x方向来计算
+    //理论上图片应该是等比的,x和y方向比例相同
+    //但是有可能外部设定了不规范的值.
+    //但是后续的scale操作会将xy不等的缩放值纠正,改成和x方向相同
+    mScaleBase = MathUtils.getMatrixScale(mOuterMatrix)[0] / MathUtils.getDistance(x1, y1, x2, y2);
+    //两手指的中点在屏幕上落在了图片的某个点上,图片上的这个点在经过总矩阵变换后和手指中点相同
+    //现在我们需要得到图片上这个点在图片是fit center状态下在屏幕上的位置
+    //因为后续的计算都是基于图片是fit center状态下进行变换
+    //所以需要把两手指中点除以外层变换矩阵得到mScaleCenter
+    float[] center = MathUtils.inverseMatrixPoint(MathUtils.getCenterPoint(x1, y1, x2, y2), mOuterMatrix);
+    mScaleCenter.set(center[0], center[1]);
+}
 
     /**
      * 对图片按照一些手势信息进行缩放
