@@ -37,6 +37,11 @@ public class MainApplication extends LitePalApplication {
         return app;
     }
 
+
+    public String getThreadName(){
+        return "name================="+Thread.currentThread().getName();
+    }
+
     @Override
     public void onLowMemory() {
         super.onLowMemory();
@@ -52,6 +57,5 @@ public class MainApplication extends LitePalApplication {
             BaseService.stopService(this,serviceIntent);
         }
     }
-
 
 }

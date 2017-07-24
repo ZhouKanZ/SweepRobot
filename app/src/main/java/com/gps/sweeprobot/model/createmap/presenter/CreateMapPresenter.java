@@ -1,6 +1,7 @@
 package com.gps.sweeprobot.model.createmap.presenter;
 
 import android.content.Context;
+import android.support.v7.widget.RecyclerView;
 
 import com.gps.ros.android.RosService;
 import com.gps.sweeprobot.base.BasePresenter;
@@ -48,6 +49,16 @@ public class CreateMapPresenter extends BasePresenter<CreateMapContract.View> im
     @Override
     public HashMap<String, IModel> loadModelMap(IModel... models) {
         return null;
+    }
+
+    @Override
+    public RecyclerView.Adapter initAdapter() {
+        return null;
+    }
+
+    @Override
+    public void setData() {
+
     }
 
     /**

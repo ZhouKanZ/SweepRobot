@@ -14,7 +14,7 @@ import java.util.HashMap;
  * @Descriptiong : xxx
  */
 
-public class IpPresenter extends BasePresenter<IpActivity> implements IpContract.Presenter {
+public abstract class IpPresenter extends BasePresenter<IpActivity> implements IpContract.Presenter {
 
     @Override
     public HashMap<String, IModel> getiModelMap() {

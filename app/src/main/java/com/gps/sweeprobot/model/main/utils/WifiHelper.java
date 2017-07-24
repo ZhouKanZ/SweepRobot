@@ -11,6 +11,15 @@ import java.util.Iterator;
 
 public class WifiHelper {
 
+    /**
+     * 配置wificonfiguration，通过conf去连接wifi
+     * @param wifiManager
+     * @param ssid
+     * @param password
+     * @param paramInt
+     * @param wifiType
+     * @return
+     */
     public static WifiConfiguration createWificonf(WifiManager wifiManager,String ssid,String password
             ,int paramInt,String wifiType){
 
@@ -117,6 +126,12 @@ public class WifiHelper {
 
     }
 
+    /**
+     * 连接wifi
+     * @param wifiManager
+     * @param wifiConfiguration
+     * @return
+     */
     public static boolean connectWifi(WifiManager wifiManager,WifiConfiguration wifiConfiguration){
 
         int network = wifiManager.addNetwork(wifiConfiguration);

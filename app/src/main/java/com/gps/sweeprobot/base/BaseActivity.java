@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
+import android.support.annotation.StringRes;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
@@ -110,7 +111,6 @@ public abstract class BaseActivity<P extends BasePresenter,V extends IView> exte
 
     protected abstract String getTitleText();
 
-
     protected abstract P loadPresenter();
 
     private void initCommonData() {
@@ -208,11 +208,17 @@ public abstract class BaseActivity<P extends BasePresenter,V extends IView> exte
         ctz.startActivity(i);
     }
 
+    public  <T extends View>T findView(int viewId){
 
-    public String getStringByRes(@IdRes int resId){
-        return getResources().getString(resId);
+        if (view == null){
+            return null;
+        }
+        return (T) view.findViewById(viewId);
+
     }
 
-
+    public String getStringByRes(@StringRes int resId){
+        return getResources().getString(resId);
+    }
 
 }

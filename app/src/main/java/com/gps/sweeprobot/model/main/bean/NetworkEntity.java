@@ -4,7 +4,7 @@ package com.gps.sweeprobot.model.main.bean;
  * Created by admin on 2017/4/17.
  */
 
-public class NetworkEntity {
+public class NetworkEntity extends BaseEntity{
 
     private String name;
     private int level;
