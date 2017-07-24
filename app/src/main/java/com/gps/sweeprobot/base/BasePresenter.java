@@ -20,11 +20,16 @@ public abstract class BasePresenter<V extends IView> implements IPresenter {
     private WeakReference actReference;
     protected V iView;
 
+    /**
+     *  imodel
+     * @return
+     */
     public abstract HashMap<String, IModel> getiModelMap();
 
     @Override
     public void attachView(IView iView) {
         actReference = new WeakReference(iView);
+        this.iView = (V) iView;
     }
 
     @Override

@@ -2,10 +2,23 @@ package com.gps.ros.android;
 
 import android.util.Log;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.gps.ros.message.Message;
+import com.gps.ros.rosapi.message.Topic;
+import com.gps.ros.rosbridge.operation.Operation;
+
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 
 import java.net.URI;
+
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.Observer;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.functions.Function;
 
 /**
  * @Author : zhoukan
@@ -14,6 +27,12 @@ import java.net.URI;
  */
 public class MyWebSocket extends WebSocketClient {
 
+    public final static Observable webSocketObservable = Observable.create(new ObservableOnSubscribe() {
+        @Override
+        public void subscribe(@NonNull ObservableEmitter e) throws Exception {
+
+        }
+    });
 
     private static final String TAG = "MyWebSocket";
     
@@ -28,8 +47,16 @@ public class MyWebSocket extends WebSocketClient {
 
     @Override
     public void onMessage(String message) {
+
         Log.d(TAG, "onMessage: ");
-        // 用EventBus去分发，过来的消息
+        // 根据string来得到message -- 将message转成
+        webSocketObservable.map(new Function<String,Observable>() {
+            @Override
+            public Observable apply(@NonNull String s) throws Exception {
+                return null;
+            }
+        });
+
     }
 
     @Override

@@ -18,7 +18,8 @@
         tools:replace="android:name"
         >
 
-        <activity android:name=".model.main.view.WelcomeActivity">
+        <activity android:name=".model.main.view.activity.WelcomeActivity"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -26,7 +27,23 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".model.main.view.activity.MainActivity"/>
+        <!-- ZHOUKAN - BEGINNING -->
+        <activity android:name=".model.main.view.activity.MainActivity"
+            android:launchMode="singleTask"
+            />
+        <activity android:name=".model.main.view.activity.IpActivity"/>
+        <activity android:name=".model.createmap.view.activity.CreateActivity"
+            android:screenOrientation="landscape"
+            />
+        <activity android:name=".model.taskqueue.view.activity.TaskQueueActivity"
+            />
+        <activity android:name=".model.taskqueue.view.activity.TaskTypeActivity"
+            />
+        <activity android:name=".model.taskqueue.view.activity.TaskDetailActivity"
+            android:screenOrientation="landscape"
+            />
+
+        <!-- ZHOUKAN - ENDING -->
 
     </application>
 

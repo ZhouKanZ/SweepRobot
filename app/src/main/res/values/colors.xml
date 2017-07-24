@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
     <resources>
 
-    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimary">#1E90FF</color>
 
     <color name="colorPrimaryDark">#303F9F</color>
 
@@ -147,5 +147,15 @@
     <color name="color_gray_bfc2c5">#bfc2c5</color>
 
     <color name="color_gray_8a8a8a">#8a8a8a</color>
+
+
+    <!-- 文字颜色 -->
+    <color name="textColor">#333333</color>
+
+    <color name="secondlytextColor">#999999</color>
+
+    <color name="layout_background">#eaeaea</color>
+
+    <color name="alpha_white">#10ffffff</color>
 
 </resources>
