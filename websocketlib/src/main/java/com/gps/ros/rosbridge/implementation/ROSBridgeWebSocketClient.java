@@ -19,7 +19,6 @@
  */
 package com.gps.ros.rosbridge.implementation;
 
-
 import com.gps.ros.rosbridge.ROSClient;
 import com.gps.ros.message.Message;
 import com.gps.ros.rosbridge.FullMessageHandler;
@@ -33,7 +32,6 @@ import java.net.Socket;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.channels.SocketChannel;
-
 
 public class ROSBridgeWebSocketClient extends WebSocketClient {
     private Registry<Class> classes;

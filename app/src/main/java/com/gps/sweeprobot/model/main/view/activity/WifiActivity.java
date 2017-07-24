@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.gps.sweeprobot.R;
 import com.gps.sweeprobot.base.BaseActivity;
@@ -15,6 +16,7 @@ import com.gps.sweeprobot.model.main.adapter.item.WifiItem;
 import com.gps.sweeprobot.model.main.contract.WifiContract;
 import com.gps.sweeprobot.model.main.presenter.WifiPresenter;
 import com.gps.sweeprobot.model.main.presenterimpl.WifiPresenterImpl;
+import com.gps.sweeprobot.mvp.IView;
 import com.gps.sweeprobot.utils.ToastManager;
 
 import butterknife.BindView;
@@ -23,7 +25,7 @@ import butterknife.BindView;
  * Create by WangJun on 2017/7/13
  */
 
-public class WifiActivity extends BaseActivity<WifiPresenter> implements WifiContract.View
+public class WifiActivity extends BaseActivity<WifiPresenter,IView> implements WifiContract.View
 ,SwipeRefreshLayout.OnRefreshListener,WifiItem.MOnItemClickListener{
 
     @BindView(R.id.wifi_swipe_refresh)
@@ -42,6 +44,16 @@ public class WifiActivity extends BaseActivity<WifiPresenter> implements WifiCon
     private AlertDialog dialog;
 
     private int position;
+
+    @Override
+    protected TextView getTitleTextView() {
+        return null;
+    }
+
+    @Override
+    protected String getTitleText() {
+        return null;
+    }
 
     @Override
     protected WifiPresenter loadPresenter() {

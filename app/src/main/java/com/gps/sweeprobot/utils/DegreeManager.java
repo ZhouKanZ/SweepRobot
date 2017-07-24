@@ -2,6 +2,7 @@ package com.gps.sweeprobot.utils;
 
 import android.graphics.Matrix;
 import android.graphics.PointF;
+import android.util.Log;
 import android.view.MotionEvent;
 
 /**
@@ -17,7 +18,7 @@ public class DegreeManager {
         double delta_y=event.getY(0)-event.getY(1);
         //将矩形坐标 (x, y) 转换成极坐标 (r, theta)，返回所得角 theta。
         double radians = Math.atan2(delta_x, delta_y);
-//        Log.i(TAG, "getRotation: degree=========="+ Math.toDegrees(radians));
+        Log.i(TAG, "getRotation: degree=========="+Math.toDegrees(radians));
         return (float) Math.toDegrees(radians)*-1;
     }
 

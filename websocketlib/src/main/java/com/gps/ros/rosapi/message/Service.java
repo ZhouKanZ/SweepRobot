@@ -24,6 +24,7 @@ import com.gps.ros.message.MessageType;
 
 @MessageType(string = "rosapi/Service")
 public class Service extends Message {
+
     public String service;
     
     public Service() {}

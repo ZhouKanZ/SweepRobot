@@ -20,5 +20,18 @@
     <string name="action_path">路径</string>
     <string name="action_obstacle">虚拟墙</string>
     <string name="dialog_sure">确认</string>
+    <string name="createMap">创建地图</string>
+    <string name="createMap_desc">点击"创建地图"机器人将为您扫描出清洁区地图</string>
+
+    <string name="manageMap">管理地图</string>
+    <string name="manageMap_desc">点击"管理地图"对不同的地图进行管理：添加标记点，设置路径，添加虚拟墙等等</string>
+
+    <string name="taskqueue">任务队列</string>
+    <string name="taskqueue_desc">"任务队列"选择任务，执行任务</string>
+
+    <string name="setting">设置</string>
+    <string name="setting_desc">改变机器人的属性</string>
+    <string name="advertise">创建</string>
+    <string name="commit">提交</string>
 
 </resources>

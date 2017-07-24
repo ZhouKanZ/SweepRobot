@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/layout_tab"
+    android:layout_width="match_parent"
+    android:layout_height="120dp"
+    android:layout_marginLeft="30dp"
+    android:layout_marginRight="30dp"
+    android:orientation="vertical"
+    app:cardElevation="5dp"
+    android:background="@drawable/shape_item_maintab"
+    android:paddingRight="10dp"
+    android:layout_marginTop="20dp"
+    >
+
+
+    <ImageView
+        android:id="@+id/tab_img"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="20dp"
+        android:src="@mipmap/createmap" />
+
+
+    <TextView
+        android:id="@+id/tab_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/createMap"
+        android:layout_toRightOf="@+id/tab_img"
+        android:layout_marginLeft="20dp"
+        android:textColor="@color/textColor"
+        android:textSize="16sp"
+        android:layout_alignTop="@+id/tab_img"
+        />
+
+    <TextView
+        android:id="@+id/tab_desc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/createMap_desc"
+        android:layout_toRightOf="@+id/tab_img"
+        android:layout_marginLeft="20dp"
+        android:textColor="@color/secondlytextColor"
+        android:textSize="14sp"
+        android:layout_below="@+id/tab_name"
+        android:layout_marginTop="8dp"
+        android:maxLines="2"
+        />
+
+</RelativeLayout>

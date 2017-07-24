@@ -22,7 +22,7 @@ public abstract class BaseService extends Service{
      * @param clz
      * @return
      */
-    static Intent startSelf(Context ctz,Bundle bundle,Class clz) {
+    public static Intent startSelf(Context ctz,Bundle bundle,Class clz) {
 
         Intent i = new Intent(ctz,clz);
         i.putExtra(clz.getSimpleName(),bundle);
@@ -37,7 +37,7 @@ public abstract class BaseService extends Service{
      * @param ctz
      * @param serviceIntent
      */
-    static void stopService(Context ctz,Intent serviceIntent){
+    public static void stopService(Context ctz,Intent serviceIntent){
         ctz.stopService(serviceIntent);
     }
 

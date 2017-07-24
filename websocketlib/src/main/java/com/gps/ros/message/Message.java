@@ -27,7 +27,7 @@ import java.util.Map;
 @MessageType(string = "message")
 public abstract class Message {
     
-    // Some requirements about message types:
+    //     Some requirements about message types:
     //   - It must have a MessageType declaration to be recognized on inbound messages
     //   - Every field must be explicitly designated as public
     //   - Every field that is not a primitive or near-primitive must be another Message class

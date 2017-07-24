@@ -1,5 +1,7 @@
 package com.gps.sweeprobot.model.main.contract;
 
+import com.gps.sweeprobot.mvp.IView;
+
 /**
  * @Author : zhoukan
  * @CreateDate : 2017/7/12 0012
@@ -8,7 +10,7 @@ package com.gps.sweeprobot.model.main.contract;
 
 public class WelcomeContract {
 
-    public interface View{
+    public interface View extends IView {
 
     }
 

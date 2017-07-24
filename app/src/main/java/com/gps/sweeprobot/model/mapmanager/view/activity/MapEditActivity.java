@@ -13,6 +13,7 @@ import com.gps.sweeprobot.base.BaseActivity;
 import com.gps.sweeprobot.model.mapmanager.bean.MapListBean;
 import com.gps.sweeprobot.model.mapmanager.presenter.MapEditPresenter;
 import com.gps.sweeprobot.model.mapmanager.presenterimpl.MapEditPresenterImpl;
+import com.gps.sweeprobot.mvp.IView;
 import com.gps.sweeprobot.utils.LogManager;
 import com.gps.sweeprobot.utils.LogUtils;
 import com.gps.sweeprobot.utils.ScreenUtils;
@@ -28,7 +29,7 @@ import butterknife.BindViews;
  * Create by WangJun on 2017/7/19
  */
 
-public class MapEditActivity extends BaseActivity<MapEditPresenter> {
+public class MapEditActivity extends BaseActivity<MapEditPresenter,IView> {
 
 
     @BindView(R.id.activity_map_edit_giv)
@@ -52,6 +53,16 @@ public class MapEditActivity extends BaseActivity<MapEditPresenter> {
 
     private int mAction;
     private boolean isAdd;
+
+    @Override
+    protected TextView getTitleTextView() {
+        return null;
+    }
+
+    @Override
+    protected String getTitleText() {
+        return null;
+    }
 
     @Override
     protected MapEditPresenter loadPresenter() {

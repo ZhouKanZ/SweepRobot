@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <Button
+        android:id="@+id/connect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/connectsocket"
+        />
+
+    <Button
+        android:id="@+id/unconnect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/unconnectsocket"
+        />
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/advertise"
+        android:layout_margin="10dp"
+        android:textSize="15sp"
+        android:textColor="@color/black"
+        />
+
+    <RadioGroup
+        android:id="@+id/rg_advertise"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        >
+
+        <RadioButton
+            android:id="@+id/rb_speed_adv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="速度"
+            android:checked="true"
+            />
+
+        <RadioButton
+            android:id="@+id/rb_position_adv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:text="位置"
+            />
+
+    </RadioGroup>
+
+    <Button
+        android:id="@+id/btn_commit_adv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/commit"
+        />
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/publish"
+        android:layout_margin="10dp"
+        android:textSize="15sp"
+        android:textColor="@color/black"
+        />
+
+    <RadioGroup
+        android:id="@+id/rg_publish"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        >
+
+        <RadioButton
+            android:id="@+id/rb_speed_pub"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="速度"
+            />
+
+        <RadioButton
+            android:id="@+id/rb_position_pub"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:text="位置"
+            />
+
+    </RadioGroup>
+
+    <Button
+        android:id="@+id/btn_commit_publish"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/commit"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/subscribe"
+        android:layout_margin="10dp"
+        android:textSize="15sp"
+        android:textColor="@color/black"
+        />
+
+    <RadioGroup
+        android:id="@+id/rg_subscribe"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        >
+
+        <RadioButton
+            android:id="@+id/rb_speed_sub"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="速度"
+            />
+
+        <RadioButton
+            android:id="@+id/rb_position_sub"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:text="位置"
+            />
+
+    </RadioGroup>
+
+    <Button
+        android:id="@+id/btn_commit_sub"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/commit"
+        />
+
+    <!-- 呈现所有的信息 -->
+    <TextView
+        android:id="@+id/screen"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:background="#f0b9b9b9"
+        android:textColor="#ff0000"
+        />
+
+</LinearLayout>

@@ -34,5 +34,6 @@ public class Advertise extends Operation {
     public Advertise(String topic, String type) {
         this.topic = topic;
         this.type = type;
-    }    
+    }
+
 }

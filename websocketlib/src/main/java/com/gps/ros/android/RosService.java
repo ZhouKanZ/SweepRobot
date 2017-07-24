@@ -29,8 +29,7 @@ public class RosService extends  BaseService {
         if (rosBridgeClient != null && !rosBridgeClient.isClosed()){
             return rosBridgeClient;
         }else {
-            // ros websocket 未连接或者未进行初始化
-            return null;
+           return null;
         }
     }
 
@@ -69,7 +68,9 @@ public class RosService extends  BaseService {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d(TAG, "onDestroy: ");
+        if ( null != rosBridgeClient && !rosBridgeClient.isClosed()){
+            rosBridgeClient.close();
+        }
     }
 
     @Nullable

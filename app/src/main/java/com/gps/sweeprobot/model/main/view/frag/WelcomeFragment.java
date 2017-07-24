@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 import com.gps.sweeprobot.R;
+import com.gps.sweeprobot.model.main.view.activity.IpActivity;
 import com.gps.sweeprobot.model.main.view.activity.MainActivity;
 import com.gps.sweeprobot.model.mapmanager.view.MapManagerActivity;
 
@@ -86,6 +87,8 @@ public class WelcomeFragment extends Fragment implements View.OnClickListener {
         this.getActivity().startActivity(intent);*/
 
         MainActivity.startSelf(getActivity(), MapManagerActivity.class,null);
+
+        IpActivity.startSelf(this.getActivity(),IpActivity.class,null);
         this.getActivity().finish();
     }
 }

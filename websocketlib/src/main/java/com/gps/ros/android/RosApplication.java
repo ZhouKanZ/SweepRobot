@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 
 /**
@@ -22,6 +23,7 @@ public class RosApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        Log.d("ROS", "onCreate: ");
     }
 
     @Override

@@ -3,12 +3,14 @@ package com.gps.sweeprobot.model.mapmanager.view;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.TextView;
 
 import com.gps.sweeprobot.R;
 import com.gps.sweeprobot.base.BaseActivity;
 import com.gps.sweeprobot.model.mapmanager.adaper.item.MapListItem;
 import com.gps.sweeprobot.model.mapmanager.presenter.MapManagerPresenter;
 import com.gps.sweeprobot.model.mapmanager.presenterimpl.MapManagerPresenterImpl;
+import com.gps.sweeprobot.mvp.IView;
 
 import butterknife.BindView;
 
@@ -16,11 +18,21 @@ import butterknife.BindView;
  * Create by WangJun on 2017/7/17
  */
 
-public class MapManagerActivity extends BaseActivity<MapManagerPresenter> implements
+public class MapManagerActivity extends BaseActivity<MapManagerPresenter,IView> implements
         MapListItem.MOnItemClickListener {
 
     @BindView(R.id.activity_map_manager_rv)
     RecyclerView recyclerView;
+
+    @Override
+    protected TextView getTitleTextView() {
+        return null;
+    }
+
+    @Override
+    protected String getTitleText() {
+        return null;
+    }
 
     @Override
     protected MapManagerPresenter loadPresenter() {

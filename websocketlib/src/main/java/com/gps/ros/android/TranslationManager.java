@@ -1,5 +1,6 @@
 package com.gps.ros.android;
 
+import com.gps.ros.rosbridge.operation.Advertise;
 import com.gps.ros.rosbridge.operation.Operation;
 import com.gps.ros.rosbridge.operation.Publish;
 import com.gps.ros.rosbridge.operation.Subscribe;
@@ -23,13 +24,11 @@ public class TranslationManager {
     /**
      *  发送话题
      */
-    public static void advertiseTopic(Operation operation){
-
-        if (!topicSet.contains(operation.op)){
-            topicSet.add(operation.op);
-            send(operation);
+    public static void advertiseTopic(Advertise advertise){
+        if (!topicSet.contains(advertise.topic)){
+            topicSet.add(advertise.topic);
+            send(advertise);
         }
-
     }
 
     /**
@@ -62,12 +61,12 @@ public class TranslationManager {
      * @param op
      */
     public static void send(Operation op){
+
         if (RosService.getRosBridgeClient() != null){
             RosService.getRosBridgeClient().send(op.toJSON());
         }else {
             throw new RuntimeException("please keep websocket online");
         }
-
     }
 
 
