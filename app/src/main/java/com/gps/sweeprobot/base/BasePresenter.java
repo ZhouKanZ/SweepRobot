@@ -1,6 +1,8 @@
 package com.gps.sweeprobot.base;
 
 
+import android.support.v7.widget.RecyclerView;
+
 import com.gps.sweeprobot.mvp.IModel;
 import com.gps.sweeprobot.mvp.IPresenter;
 import com.gps.sweeprobot.mvp.IView;
@@ -20,11 +22,12 @@ public abstract class BasePresenter<V extends IView> implements IPresenter {
     private WeakReference actReference;
     protected V iView;
 
-    public abstract HashMap<String, IModel> getiModelMap();
+
 
     @Override
     public void attachView(IView iView) {
         actReference = new WeakReference(iView);
+        this.iView = (V) iView;
     }
 
     @Override
@@ -40,6 +43,7 @@ public abstract class BasePresenter<V extends IView> implements IPresenter {
         return (V) actReference.get();
     }
 
+    public abstract HashMap<String, IModel> getiModelMap();
     /**
      * @param models
      * @return
@@ -47,4 +51,7 @@ public abstract class BasePresenter<V extends IView> implements IPresenter {
      */
     public abstract HashMap<String, IModel> loadModelMap(IModel... models);
 
+    public abstract RecyclerView.Adapter initAdapter();
+
+    public abstract void setData();
 }

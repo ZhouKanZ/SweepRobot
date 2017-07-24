@@ -15,4 +15,5 @@ public class WelcomeContract {
     public interface Presenter{
 
     }
+
 }

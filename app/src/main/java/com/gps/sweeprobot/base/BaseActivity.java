@@ -38,6 +38,7 @@ public abstract class BaseActivity<P extends BasePresenter> extends FragmentActi
         initData();
     }
 
+
     protected abstract P loadPresenter();
 
     private void initCommonData() {
@@ -118,5 +119,14 @@ public abstract class BaseActivity<P extends BasePresenter> extends FragmentActi
         Intent i = new Intent(ctz,act);
         i.putExtra(act.getSimpleName(),bundle);
         ctz.startActivity(i);
+    }
+
+    public  <T extends View>T findView(int viewId){
+
+        if (view == null){
+            return null;
+        }
+        return (T) view.findViewById(viewId);
+
     }
 }

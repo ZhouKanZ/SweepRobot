@@ -3,4 +3,22 @@
     <string name="enter">立即体验</string>
     <string name="input_ip">请输入IP</string>
     <string name="login">登陆</string>
+
+    <!--activity_wifi-->
+    <string name="wifi_list_title">可用wifi列表</string>
+    <string name="connect_success">连接成功</string>
+    <string name="connect_failed">连接失败</string>
+
+    <!--dialog_input_wifi_pw-->
+    <string name="input_pw_hint"> 密码</string>
+    <string name="dialog_input_wifi_btn_cancel">取消</string>
+    <string name="dialog_input_wifi_btn_sure">确定</string>
+
+    <!--pinchImageView-->
+    <string name="un_effective">无效的目标点</string>
+    <string name="action_point">标记点</string>
+    <string name="action_path">路径</string>
+    <string name="action_obstacle">虚拟墙</string>
+    <string name="dialog_sure">确认</string>
+
 </resources>

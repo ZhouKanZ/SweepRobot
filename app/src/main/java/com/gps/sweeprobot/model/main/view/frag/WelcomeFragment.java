@@ -13,6 +13,7 @@ import android.widget.ImageView;
 
 import com.gps.sweeprobot.R;
 import com.gps.sweeprobot.model.main.view.activity.MainActivity;
+import com.gps.sweeprobot.model.mapmanager.view.MapManagerActivity;
 
 /**
  * @Author : zhoukan
@@ -56,8 +57,8 @@ public class WelcomeFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.frag_welcome,container,false);
 
-        ImageView iv     =  view.findViewById(R.id.iv);
-        Button btn_enter =  view.findViewById(R.id.btn_enter);
+        ImageView iv = (ImageView) view.findViewById(R.id.iv);
+        Button btn_enter = (Button) view.findViewById(R.id.btn_enter);
         Bitmap bitmap = null;
         switch (position){
             case "0":
@@ -80,7 +81,11 @@ public class WelcomeFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
-        MainActivity.startSelf(this.getActivity(),MainActivity.class,null);
+
+      /*  Intent intent = new Intent("android.settings.WIFI_SETTINGS");
+        this.getActivity().startActivity(intent);*/
+
+        MainActivity.startSelf(getActivity(), MapManagerActivity.class,null);
         this.getActivity().finish();
     }
 }

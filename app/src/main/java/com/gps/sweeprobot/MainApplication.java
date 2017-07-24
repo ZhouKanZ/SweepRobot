@@ -24,4 +24,8 @@ public class MainApplication extends Application {
         return app;
     }
 
+    public String getThreadName(){
+        return "name================="+Thread.currentThread().getName();
+    }
+
 }

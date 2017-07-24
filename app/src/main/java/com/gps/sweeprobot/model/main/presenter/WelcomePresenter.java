@@ -13,7 +13,7 @@ import java.util.HashMap;
  * @Descriptiong : xxx
  */
 
-public class WelcomePresenter extends BasePresenter<WelcomeActivity> implements WelcomeContract.Presenter {
+public abstract class WelcomePresenter extends BasePresenter<WelcomeActivity> implements WelcomeContract.Presenter {
 
     @Override
     public HashMap<String, IModel> getiModelMap() {
