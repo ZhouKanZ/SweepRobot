@@ -5,14 +5,11 @@ import android.content.Context;
 import com.gps.ros.android.RosService;
 import com.gps.sweeprobot.base.BasePresenter;
 import com.gps.sweeprobot.model.createmap.contract.CreateMapContract;
-import com.gps.sweeprobot.model.createmap.model.RosModel;
-import com.gps.sweeprobot.model.createmap.view.activity.CreateActivity;
 import com.gps.sweeprobot.mvp.IModel;
 import com.gps.sweeprobot.mvp.IView;
 
 import java.util.HashMap;
 
-import jrosbridge.Ros;
 
 /**
  * @Author : zhoukan
@@ -25,12 +22,12 @@ public class CreateMapPresenter extends BasePresenter<CreateMapContract.View> im
 
     private HashMap<String, IModel> modelHashMap;
 
-    private RosModel rosModel;
+//    private RosModel rosModel;
 
     public CreateMapPresenter(Context mContext) {
         this.mContext = mContext;
         this.modelHashMap = new HashMap<>();
-        this.rosModel = new RosModel();
+//        this.rosModel = new RosModel();
     }
 
     @Override
@@ -64,8 +61,7 @@ public class CreateMapPresenter extends BasePresenter<CreateMapContract.View> im
 //            RosService.getRosBridgeClient().send("");
 //            Ros
 //        }
-        rosModel.send();
-
+//        rosModel.send();
     }
 
     @Override
