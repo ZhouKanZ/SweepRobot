@@ -7,12 +7,15 @@ import android.graphics.BitmapFactory;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.gps.ros.android.RxBus;
+import com.gps.ros.entity.PublishEvent;
 import com.gps.sweeprobot.R;
 import com.gps.sweeprobot.base.BaseActivity;
 import com.gps.sweeprobot.model.createmap.bean.ControlTab;
@@ -29,6 +32,11 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import io.reactivex.Scheduler;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * @Author : zhoukan
@@ -97,7 +105,7 @@ public class CreateActivity extends BaseActivity<CreateMapPresenter,CreateMapCon
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.map_test);
-        gpsMapview.setImageView(bitmap);
+//        gpsMapview.setImageView(bitmap);
         setLeftVisiable(true);
 
         controlTabs = new ArrayList<>();
@@ -119,6 +127,19 @@ public class CreateActivity extends BaseActivity<CreateMapPresenter,CreateMapCon
         rockerViewCenter.setOnAngleChangeListener(this);
 
         mPresenter.startScanMap();
+
+        /* RxBus */
+        RxBus.getDefault().toObservable(PublishEvent.class)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<PublishEvent>() {
+                    @Override
+                    public void accept(@NonNull PublishEvent publishEvent) throws Exception {
+
+                        Log.d(TAG, "accept: " + publishEvent.msg);
+
+                    }
+                });
 
     }
 
