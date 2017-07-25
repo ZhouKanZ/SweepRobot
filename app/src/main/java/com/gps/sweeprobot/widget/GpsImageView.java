@@ -12,6 +12,7 @@ import android.widget.FrameLayout;
 
 import com.gps.sweeprobot.MainApplication;
 import com.gps.sweeprobot.R;
+import com.gps.sweeprobot.database.PointBean;
 import com.gps.sweeprobot.utils.DegreeManager;
 import com.gps.sweeprobot.utils.LogManager;
 import com.gps.sweeprobot.utils.RGBUtil;
@@ -20,6 +21,8 @@ import com.gps.sweeprobot.utils.ToastManager;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import static com.gps.sweeprobot.R.mipmap.point;
 
 /**
  * Created by admin on 2017/6/16.
@@ -32,6 +35,10 @@ public class GpsImageView extends FrameLayout {
     private boolean isAddPoint;
     //存放标记点集合
     private List<CoordinateView> pointsList;
+
+    public PinchImageView getMapView() {
+        return mapView;
+    }
 
     public GpsImageView(Context context) {
         super(context);
@@ -72,7 +79,7 @@ public class GpsImageView extends FrameLayout {
         mapView.setAddPointListener(new PinchImageView.AddPointListener() {
             @Override
             public void addPoint(PinchImageView pinchImageView, float relativeX, float relativeY) {
-                GpsImageView.this.addPoint(relativeX,relativeY,"Test");
+//                GpsImageView.this.addPoint(relativeX,relativeY,"Test");
                 Log.i(TAG, "addPoint: x========"+relativeX+"   y========"+relativeY);            }
         });
     }
@@ -100,7 +107,7 @@ public class GpsImageView extends FrameLayout {
      */
     public void addPoint(float locationX,float locationY,String positionName){
 
-        CoordinateView coordinateView=new CoordinateView(MainApplication.getContext(), R.mipmap.point);
+        CoordinateView coordinateView=new CoordinateView(MainApplication.getContext(), point);
         coordinateView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT));
 
@@ -132,6 +139,13 @@ public class GpsImageView extends FrameLayout {
         if (redValue == 254){
 
             addPoint(pointF.x,pointF.y,pointName);
+            //将标记点数据存进数据库
+            PointBean pointBean = new PointBean();
+            pointBean.setMapName("testMap");
+            pointBean.setX(pointF.x);
+            pointBean.setY(pointF.y);
+            pointBean.setPointName(pointName);
+            pointBean.save();
         }else {
             ToastManager.showShort(MainApplication.getContext(), R.string.un_effective);
         }

@@ -1,5 +1,7 @@
 package com.gps.sweeprobot.model.mapmanager.view;
 
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -7,9 +9,11 @@ import android.widget.TextView;
 
 import com.gps.sweeprobot.R;
 import com.gps.sweeprobot.base.BaseActivity;
+import com.gps.sweeprobot.model.main.bean.ToolbarOptions;
 import com.gps.sweeprobot.model.mapmanager.adaper.item.MapListItem;
 import com.gps.sweeprobot.model.mapmanager.presenter.MapManagerPresenter;
 import com.gps.sweeprobot.model.mapmanager.presenterimpl.MapManagerPresenterImpl;
+import com.gps.sweeprobot.model.mapmanager.view.activity.MapEditActivity;
 import com.gps.sweeprobot.mvp.IView;
 
 import butterknife.BindView;
@@ -40,6 +44,7 @@ public class MapManagerActivity extends BaseActivity<MapManagerPresenter,IView> 
         return new MapManagerPresenterImpl(this);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void initData() {
 
@@ -49,10 +54,16 @@ public class MapManagerActivity extends BaseActivity<MapManagerPresenter,IView> 
                 .commit();*/
 
 
+        //set toolbar
+        ToolbarOptions options = new ToolbarOptions();
+        options.titleId = R.string.activity_edit_map_title;
+        setToolBar(R.id.toolbar,options);
+
+        mPresenter.setData();
         RecyclerView.LayoutManager manager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(manager);
         recyclerView.setAdapter(mPresenter.initAdapter());
-        mPresenter.setData();
+
 
     }
 
@@ -75,6 +86,6 @@ public class MapManagerActivity extends BaseActivity<MapManagerPresenter,IView> 
     @Override
     public void onItemClickListener(View view, int position) {
 
-//        startSelf(this,);
+        startSelf(this,MapEditActivity.class,null);
     }
 }

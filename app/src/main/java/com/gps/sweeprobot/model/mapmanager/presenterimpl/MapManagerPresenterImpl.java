@@ -64,6 +64,7 @@ public class MapManagerPresenterImpl extends MapManagerPresenter {
             @Override
             public void successInfo(List<MapListBean> data) {
 
+                mapListBeanList.clear();
                 mapListBeanList.addAll(data);
             }
 

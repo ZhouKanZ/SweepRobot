@@ -5,10 +5,19 @@
     android:background="@color/color_grey_eaeaea"
     >
 
+    <include
+        layout="@layout/layout_toolbar_"/>
+
     <com.gps.sweeprobot.widget.GpsImageView
         android:id="@+id/activity_map_edit_giv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/activity_map_edit_rv"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
 
     <ImageView
         android:id="@+id/activity_map_flag"

@@ -14,6 +14,9 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.gps.ros.android.RxBus;
 import com.gps.ros.entity.PublishEvent;
 import com.gps.sweeprobot.R;
@@ -21,8 +24,8 @@ import com.gps.sweeprobot.base.BaseActivity;
 import com.gps.sweeprobot.model.createmap.bean.ControlTab;
 import com.gps.sweeprobot.model.createmap.contract.CreateMapContract;
 import com.gps.sweeprobot.model.createmap.presenter.CreateMapPresenter;
-import com.gps.sweeprobot.ui.gps_map.GpsImageView;
 import com.gps.sweeprobot.utils.DensityUtil;
+import com.gps.sweeprobot.widget.GpsImageView;
 import com.kongqw.rockerlibrary.view.RockerView;
 import com.zhy.adapter.recyclerview.CommonAdapter;
 import com.zhy.adapter.recyclerview.base.ViewHolder;
@@ -32,7 +35,6 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Consumer;
@@ -44,7 +46,7 @@ import io.reactivex.schedulers.Schedulers;
  * @Descriptiong : 创建地图页面
  */
 
-public class CreateActivity extends BaseActivity<CreateMapPresenter,CreateMapContract.View>
+public class CreateActivity extends BaseActivity<CreateMapPresenter, CreateMapContract.View>
         implements CreateMapContract.View,
         RockerView.OnAngleChangeListener {
 
@@ -77,6 +79,8 @@ public class CreateActivity extends BaseActivity<CreateMapPresenter,CreateMapCon
 
     private List<ControlTab> controlTabs;
 
+    private SimpleTarget<Bitmap> target ;
+
     /**
      * 控制layout是否隐藏
      */
@@ -104,9 +108,17 @@ public class CreateActivity extends BaseActivity<CreateMapPresenter,CreateMapCon
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.map_test);
-//        gpsMapview.setImageView(bitmap);
         setLeftVisiable(true);
+        gpsMapview.setImageView(BitmapFactory.decodeResource(getResources(),R.mipmap.map_test));
+
+        /**
+         *  加载创建中的地图
+         */
+        Glide
+                .with(this)
+                .asBitmap()
+                .load("http://192.168.2.136:82/maps/fb_map.jpg")
+                .into(gpsMapview.getMapView());
 
         controlTabs = new ArrayList<>();
         controlTabs.add(new ControlTab(R.mipmap.play));
@@ -135,12 +147,9 @@ public class CreateActivity extends BaseActivity<CreateMapPresenter,CreateMapCon
                 .subscribe(new Consumer<PublishEvent>() {
                     @Override
                     public void accept(@NonNull PublishEvent publishEvent) throws Exception {
-
                         Log.d(TAG, "accept: " + publishEvent.msg);
-
                     }
                 });
-
     }
 
     @Override
@@ -149,8 +158,7 @@ public class CreateActivity extends BaseActivity<CreateMapPresenter,CreateMapCon
     }
 
     @Override
-    protected void initListener() {
-    }
+    protected void initListener() {}
 
     @Override
     protected int getLayoutId() {
@@ -158,8 +166,7 @@ public class CreateActivity extends BaseActivity<CreateMapPresenter,CreateMapCon
     }
 
     @Override
-    protected void otherViewClick(View view) {
-    }
+    protected void otherViewClick(View view) {}
 
     @OnClick({R.id.iv_back, R.id.iv, R.id.iv_point_south})
     public void onViewClicked(View view) {
@@ -265,11 +272,18 @@ public class CreateActivity extends BaseActivity<CreateMapPresenter,CreateMapCon
 
     @Override
     public void angle(double angle) {
+        Log.d(TAG, "angle: " + angle);
+        // 转换成线速度与角速度
+        convertToRosSpeed();
+    }
 
+    private void convertToRosSpeed() {
     }
 
     @Override
-    public void onFinish() {
+    public void onFinish() {}
 
-    }
+   
+
+
 }

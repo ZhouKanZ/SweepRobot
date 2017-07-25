@@ -4,10 +4,15 @@ import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 
 import com.gps.ros.android.RosService;
+import com.gps.ros.android.TranslationManager;
+import com.gps.ros.rosbridge.implementation.ROSBridgeWebSocketClient;
+import com.gps.ros.rosbridge.operation.Subscribe;
 import com.gps.sweeprobot.base.BasePresenter;
 import com.gps.sweeprobot.model.createmap.contract.CreateMapContract;
 import com.gps.sweeprobot.mvp.IModel;
 import com.gps.sweeprobot.mvp.IView;
+
+import org.java_websocket.client.WebSocketClient;
 
 import java.util.HashMap;
 
@@ -67,12 +72,9 @@ public class CreateMapPresenter extends BasePresenter<CreateMapContract.View> im
     @Override
     public void startScanMap() {
         iView.showGetRobotsAnimation();
-
-//        if (null != RosService.getRosBridgeClient() && !RosService.getRosBridgeClient().isClosed()){
-//            RosService.getRosBridgeClient().send("");
-//            Ros
-//        }
-//        rosModel.send();
+        // 订阅 机器人位置点
+//        TranslationManager.subscribe();
+        // 在RxBus中接收机器人位置并，更新LayoutParams来更新机器人位置
     }
 
     @Override

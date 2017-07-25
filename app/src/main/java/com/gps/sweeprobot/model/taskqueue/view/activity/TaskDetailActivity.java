@@ -11,7 +11,7 @@ import com.gps.sweeprobot.R;
 import com.gps.sweeprobot.base.BaseActivity;
 import com.gps.sweeprobot.base.BasePresenter;
 import com.gps.sweeprobot.model.taskqueue.bean.TaskPoint;
-import com.gps.sweeprobot.ui.gps_map.GpsImageView;
+import com.gps.sweeprobot.widget.GpsImageView;
 import com.zhy.adapter.recyclerview.CommonAdapter;
 import com.zhy.adapter.recyclerview.base.ViewHolder;
 

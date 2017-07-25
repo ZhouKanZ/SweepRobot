@@ -33,5 +33,6 @@
     <string name="setting_desc">改变机器人的属性</string>
     <string name="advertise">创建</string>
     <string name="commit">提交</string>
+    <string name="activity_edit_map_title">地图编辑</string>
 
 </resources>

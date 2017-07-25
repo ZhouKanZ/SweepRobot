@@ -3,6 +3,10 @@ package com.gps.sweeprobot.model.mapmanager.view.activity;
 import android.app.AlertDialog;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -10,6 +14,8 @@ import android.widget.TextView;
 
 import com.gps.sweeprobot.R;
 import com.gps.sweeprobot.base.BaseActivity;
+import com.gps.sweeprobot.database.PointBean;
+import com.gps.sweeprobot.model.mapmanager.adaper.item.ActionItem;
 import com.gps.sweeprobot.model.mapmanager.bean.MapListBean;
 import com.gps.sweeprobot.model.mapmanager.presenter.MapEditPresenter;
 import com.gps.sweeprobot.model.mapmanager.presenterimpl.MapEditPresenterImpl;
@@ -20,6 +26,8 @@ import com.gps.sweeprobot.utils.ScreenUtils;
 import com.gps.sweeprobot.utils.ToastManager;
 import com.gps.sweeprobot.widget.GpsImageView;
 
+import org.litepal.crud.DataSupport;
+
 import java.util.List;
 
 import butterknife.BindView;
@@ -29,11 +37,14 @@ import butterknife.BindViews;
  * Create by WangJun on 2017/7/19
  */
 
-public class MapEditActivity extends BaseActivity<MapEditPresenter,IView> {
+public class MapEditActivity extends BaseActivity<MapEditPresenter,IView> implements ActionItem.ActionOnItemListener{
 
 
     @BindView(R.id.activity_map_edit_giv)
     GpsImageView gpsImageView;
+
+    @BindView(R.id.activity_map_edit_rv)
+    RecyclerView actionList;
 
     @BindViews({R.id.activity_map_add,R.id.activity_map_sub,R.id.activity_map_info,R.id.activity_map_flag,R.id.activity_map_commit})
     List<ImageView> nameViews;
@@ -66,9 +77,10 @@ public class MapEditActivity extends BaseActivity<MapEditPresenter,IView> {
 
     @Override
     protected MapEditPresenter loadPresenter() {
-        return new MapEditPresenterImpl();
+        return new MapEditPresenterImpl(this);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void initData() {
 
@@ -211,20 +223,28 @@ public class MapEditActivity extends BaseActivity<MapEditPresenter,IView> {
 
                 gpsImageView.addPointWrapper(ScreenUtils.getScreenWidth(this)/2,
                         ScreenUtils.getScreenHeight(this)/2,"1234");
-
                 break;
             case OPERATE_ADD_PATH:
                 break;
             case OPERATE_ADD_OBSTACLE:
                 break;
             case OPERATE_SUB_POINT:
-                gpsImageView.removePoint("1234");
+                setActionListData();
+
                 break;
             case OPERATE_SUB_PATH:
                 break;
             case OPERATE_SUB_OBSTACLE:
                 break;
         }
+    }
+
+    private void setActionListData(){
+
+        actionList.setVisibility(View.VISIBLE);
+        actionList.setLayoutManager(new LinearLayoutManager(this));
+        actionList.setAdapter(mPresenter.initAdapter());
+
     }
 
     public  <T extends View>T findView(View rootView,int viewId){
@@ -234,5 +254,12 @@ public class MapEditActivity extends BaseActivity<MapEditPresenter,IView> {
         }
         return (T) rootView.findViewById(viewId);
 
+    }
+
+    @Override
+    public void onItemClick(View view,String name) {
+
+        gpsImageView.removePoint(name);
+        DataSupport.deleteAll(PointBean.class,"pointName = ?",name);
     }
 }

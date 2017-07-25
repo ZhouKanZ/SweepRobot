@@ -9,7 +9,7 @@
         android:id="@+id/toolbar"
         layout="@layout/layout_toolbar" />
 
-    <com.gps.sweeprobot.ui.gps_map.GpsImageView
+    <com.gps.sweeprobot.widget.GpsImageView
         android:id="@+id/gps_mapview"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -84,6 +84,6 @@
 
             </RelativeLayout>
         </RelativeLayout>
-    </com.gps.sweeprobot.ui.gps_map.GpsImageView>
+    </com.gps.sweeprobot.widget.GpsImageView>
 
 </LinearLayout>
