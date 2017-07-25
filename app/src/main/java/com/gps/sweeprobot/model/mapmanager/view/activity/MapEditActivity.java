@@ -9,6 +9,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -242,6 +243,7 @@ public class MapEditActivity extends BaseActivity<MapEditPresenter,IView> implem
     private void setActionListData(){
 
         actionList.setVisibility(View.VISIBLE);
+//        actionList.setAnimation(new TranslateAnimation(this,));
         actionList.setLayoutManager(new LinearLayoutManager(this));
         actionList.setAdapter(mPresenter.initAdapter());
 

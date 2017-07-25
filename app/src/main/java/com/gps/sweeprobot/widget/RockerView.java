@@ -1,4 +1,4 @@
-package com.kongqw.rockerlibrary.view;
+package com.gps.sweeprobot.widget;
 
 import android.content.Context;
 import android.content.res.TypedArray;

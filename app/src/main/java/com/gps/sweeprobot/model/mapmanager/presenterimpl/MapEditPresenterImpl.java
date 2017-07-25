@@ -15,6 +15,7 @@ import com.gps.sweeprobot.model.mapmanager.presenter.MapEditPresenter;
 import com.gps.sweeprobot.model.view.adapter.CommonRcvAdapter;
 import com.gps.sweeprobot.model.view.adapter.item.AdapterItem;
 import com.gps.sweeprobot.mvp.IModel;
+import com.gps.sweeprobot.utils.LogManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -79,6 +80,14 @@ public class MapEditPresenterImpl extends MapEditPresenter implements MapListMod
         MapListModel mapListModel = (MapListModel) getiModelMap().get(MAP_KEY);
         mapListModel.downMapImg(this);
 
+        //测试数据
+        PointBean pointBean = new PointBean();
+        pointBean.setMapName("testMap");
+        pointBean.setX(300);
+        pointBean.setY(400);
+        pointBean.setPointName("test");
+        pointBean.save();
+
         //获取action的数据
         ActionModel actionModel = (ActionModel) getiModelMap().get(ACTION_KEY);
         actionModel.getActionData(new ActionModel.InfoMessager() {
@@ -86,6 +95,11 @@ public class MapEditPresenterImpl extends MapEditPresenter implements MapListMod
             public void successInfo(List<PointBean> data) {
                 actionList.clear();
                 actionList.addAll(data);
+            }
+
+            @Override
+            public void failInfo(Throwable e) {
+                LogManager.e(e.getMessage());
             }
         });
     }
@@ -111,8 +125,9 @@ public class MapEditPresenterImpl extends MapEditPresenter implements MapListMod
     }
 
     @Override
-    public void failInfo() {
+    public void failInfo(Throwable e) {
 
+        LogManager.e(e.getMessage());
     }
 
 }
