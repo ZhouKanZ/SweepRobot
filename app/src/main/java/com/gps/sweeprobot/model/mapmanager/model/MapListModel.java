@@ -14,8 +14,10 @@ import com.gps.sweeprobot.utils.LogUtils;
 
 import java.util.List;
 
+import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
@@ -49,12 +51,26 @@ public class MapListModel implements IModel {
                     }
                 })
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<Bitmap>() {
-                    @Override
-                    public void accept(@NonNull Bitmap bitmap) throws Exception {
+                .subscribe(new Observer<Bitmap>() {
 
-                        LogManager.i("accept================");
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+                        //切断事件
+                    }
+
+                    @Override
+                    public void onNext(@NonNull Bitmap bitmap) {
                         infoHint.successInfo(bitmap);
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        infoHint.failInfo(e);
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        LogManager.i("on complete");
                     }
                 });
     }
@@ -110,6 +126,6 @@ public class MapListModel implements IModel {
 
         void successMapListData(List<MapListBean> data);
 
-        void failInfo();
+        void failInfo(Throwable e);
     }
 }

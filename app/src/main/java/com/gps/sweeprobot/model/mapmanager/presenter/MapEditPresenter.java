@@ -8,4 +8,6 @@ import com.gps.sweeprobot.model.mapmanager.view.activity.MapEditActivity;
  */
 
 public abstract class MapEditPresenter extends BasePresenter<MapEditActivity> {
+
+
 }
