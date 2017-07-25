@@ -29,4 +29,5 @@ public interface HttpService {
     @GET
     @Streaming
     Observable<ResponseBody> downInetImage(@Url String url);
+
 }

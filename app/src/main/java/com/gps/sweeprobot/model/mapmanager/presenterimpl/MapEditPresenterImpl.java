@@ -2,13 +2,19 @@ package com.gps.sweeprobot.model.mapmanager.presenterimpl;
 
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 
+import com.gps.sweeprobot.bean.IAction;
+import com.gps.sweeprobot.database.PointBean;
+import com.gps.sweeprobot.model.mapmanager.adaper.item.ActionItem;
 import com.gps.sweeprobot.model.mapmanager.bean.MapListBean;
+import com.gps.sweeprobot.model.mapmanager.model.ActionModel;
 import com.gps.sweeprobot.model.mapmanager.model.MapListModel;
 import com.gps.sweeprobot.model.mapmanager.presenter.MapEditPresenter;
+import com.gps.sweeprobot.model.view.adapter.CommonRcvAdapter;
+import com.gps.sweeprobot.model.view.adapter.item.AdapterItem;
 import com.gps.sweeprobot.mvp.IModel;
-import com.gps.sweeprobot.utils.LogUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,13 +27,16 @@ import java.util.List;
 public class MapEditPresenterImpl extends MapEditPresenter implements MapListModel.InfoHint {
 
     private static String MAP_KEY = "mapEdit";
-    private List<MapListBean>  mapList;
-    private Bitmap mapBitmap;
-    private Drawable mapDrawable;
+    private static String ACTION_KEY = "action_key";
+    private List<MapListBean> mapList;
+    private List<IAction> actionList;
+    private ActionItem.ActionOnItemListener listener;
 
-    public MapEditPresenterImpl() {
+    public MapEditPresenterImpl(ActionItem.ActionOnItemListener listener) {
 
         mapList = new ArrayList<>();
+        actionList = new ArrayList<>();
+        this.listener = listener;
     }
 
 
@@ -35,7 +44,7 @@ public class MapEditPresenterImpl extends MapEditPresenter implements MapListMod
     @Override
     public HashMap<String, IModel> getiModelMap() {
 
-        return loadModelMap(new MapListModel());
+        return loadModelMap(new MapListModel(),new ActionModel());
     }
 
     @Override
@@ -43,13 +52,21 @@ public class MapEditPresenterImpl extends MapEditPresenter implements MapListMod
 
         HashMap<String, IModel> map = new HashMap<>();
         map.put(MAP_KEY,models[0]);
+        map.put(ACTION_KEY,models[1]);
         return map;
     }
 
     @Override
     public RecyclerView.Adapter initAdapter() {
 
-        return null;
+        return new CommonRcvAdapter<IAction>(actionList) {
+
+            @NonNull
+            @Override
+            public AdapterItem createItem(Object type) {
+                return new ActionItem(listener);
+            }
+        };
     }
 
     /**
@@ -58,9 +75,19 @@ public class MapEditPresenterImpl extends MapEditPresenter implements MapListMod
     @Override
     public void setData() {
 
+        //获取地图img
         MapListModel mapListModel = (MapListModel) getiModelMap().get(MAP_KEY);
         mapListModel.downMapImg(this);
-//        mapListModel.requestMapListData(this);
+
+        //获取action的数据
+        ActionModel actionModel = (ActionModel) getiModelMap().get(ACTION_KEY);
+        actionModel.getActionData(new ActionModel.InfoMessager() {
+            @Override
+            public void successInfo(List<PointBean> data) {
+                actionList.clear();
+                actionList.addAll(data);
+            }
+        });
     }
 
 
@@ -75,12 +102,12 @@ public class MapEditPresenterImpl extends MapEditPresenter implements MapListMod
         getIView().getData(map);
     }
 
+
     @Override
     public void successMapListData(List<MapListBean> data) {
 
         mapList.clear();
         mapList.addAll(data);
-        transData2View();
     }
 
     @Override
@@ -88,11 +115,4 @@ public class MapEditPresenterImpl extends MapEditPresenter implements MapListMod
 
     }
 
-    private void transData2View(){
-
-        LogUtils.d("trans","========================");
-        if (mapBitmap == null || mapList != null)
-            return;
-//        getIView().getData(mapBitmap,mapList);
-    }
 }

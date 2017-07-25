@@ -11,6 +11,14 @@ public class MapListBean {
     private String name;
     private MapInfoBean mapInfo;
 
+    public MapListBean() {
+    }
+
+    public MapListBean(String createAt, String name) {
+        this.createAt = createAt;
+        this.name = name;
+    }
+
     public String getCreateAt() {
         return createAt;
     }

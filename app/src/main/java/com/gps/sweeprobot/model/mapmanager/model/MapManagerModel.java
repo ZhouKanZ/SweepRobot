@@ -18,7 +18,10 @@ public class MapManagerModel implements IModel {
     public void getMapListData(InfoHint infoHint){
 
         data = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
 
+            data.add(new MapListBean("2017-07-27","testMap"));
+        }
         infoHint.successInfo(data);
     }
 
