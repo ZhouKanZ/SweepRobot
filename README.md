@@ -35,8 +35,11 @@ RxJava2操作符:
 
 
 2.Activity 横屏生命周期
-配置如下参数 在下面三种情况下 将不改变activity的生命周期
-android:configChanges="orientation|keyboardHidden|screenSize"
+    配置如下参数 在下面三种情况下 将不改变activity的生命周期
+    android:configChanges="orientation|keyboardHidden|screenSize"
 
 3. 当发起一个advertise的时候，如何监听websocket中返回的信息
+    由rxbus在onMessage中post，并在presenter中监听
+
+
 
