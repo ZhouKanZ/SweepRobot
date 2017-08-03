@@ -25,6 +25,7 @@
                 android:scaleType="centerInside"
                 android:src="@mipmap/scan"
                 android:layout_centerInParent="true"
+                android:visibility="gone"
                 />
 
             <ImageView
@@ -35,7 +36,7 @@
                 android:layout_marginTop="10dp"
                 android:src="@mipmap/pointsouth" />
 
-            <com.kongqw.rockerlibrary.view.RockerView
+            <com.gps.sweeprobot.widget.RockerView
                 android:id="@+id/rockerView_center"
                 android:layout_width="100dp"
                 android:layout_height="100dp"

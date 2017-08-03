@@ -94,7 +94,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
                     CreateActivity.startSelf(context,CreateActivity.class,null);
                     break;
                 case 1:
-                    MapManagerActivity.startSelf(context,MapManagerActivity.class,null);
+//                    MapManagerActivity.startSelf(context,MapManagerActivity.class,null);
                     break;
                 case 2:
                     TaskQueueActivity.startSelf(context,TaskQueueActivity.class,null);

@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.PointF;
 import android.graphics.drawable.Drawable;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.ViewGroup;
@@ -36,6 +37,10 @@ public class GpsImageView extends FrameLayout {
     //存放标记点集合
     private List<CoordinateView> pointsList;
 
+    private CoordinateView robotPoint;
+
+
+
     public PinchImageView getMapView() {
         return mapView;
     }
@@ -58,14 +63,13 @@ public class GpsImageView extends FrameLayout {
         Log.i(TAG, "GpsImageView: 3");
     }
 
-    private void initView(Context context){
-        mapView=new PinchImageView(context);
-        pointsList=new ArrayList<>();
+    private void initView(Context context) {
+        mapView = new PinchImageView(context);
+        pointsList = new ArrayList<>();
 
-        FrameLayout.LayoutParams layoutParams=new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT);
         mapView.setLayoutParams(layoutParams);
-//        mapView.setImageResource(R.drawable.fb_map);
         addView(mapView);
 
 
@@ -79,18 +83,18 @@ public class GpsImageView extends FrameLayout {
         mapView.setAddPointListener(new PinchImageView.AddPointListener() {
             @Override
             public void addPoint(PinchImageView pinchImageView, float relativeX, float relativeY) {
-//                GpsImageView.this.addPoint(relativeX,relativeY,"Test");
-                Log.i(TAG, "addPoint: x========"+relativeX+"   y========"+relativeY);            }
+                Log.i(TAG, "addPoint: x========" + relativeX + "   y========" + relativeY);
+            }
         });
     }
 
-    private void changePoint(Matrix matrix){
+    private void changePoint(Matrix matrix) {
 
         CoordinateView coordinateView;
-        matrix=this.mapView.getCurrentImageMatrix();
-        if (pointsList!=null){
+        matrix = this.mapView.getCurrentImageMatrix();
+        if (pointsList != null) {
             Iterator<CoordinateView> iterator = pointsList.iterator();
-            while (iterator.hasNext()){
+            while (iterator.hasNext()) {
                 coordinateView = iterator.next();
                 PointF pointF = DegreeManager.changeAbslutePoint(coordinateView.imageViewX, coordinateView.imageViewY, matrix);
                 coordinateView.setPositionViewX(pointF.x);
@@ -101,44 +105,83 @@ public class GpsImageView extends FrameLayout {
 
     /**
      * 添加标记点
+     *
      * @param locationX
      * @param locationY
      * @param positionName
      */
-    public void addPoint(float locationX,float locationY,String positionName){
+    public void addPoint(final float locationX, final float locationY, final String positionName) {
 
-        CoordinateView coordinateView=new CoordinateView(MainApplication.getContext(), point);
-        coordinateView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+        /**
+         *  设置一定的延时保证view在加载完成后 能够成功获取到Matrix再去添加点
+         */
+        mapView.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                CoordinateView coordinateView = new CoordinateView(MainApplication.getContext(), point);
+                coordinateView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT));
+
+                coordinateView.setPositionName(positionName);
+                coordinateView.setShowPointName(true);
+                //求出标记点相对于图片的坐标
+                Log.d(TAG, "addPoint: " + System.currentTimeMillis());
+                Log.d(TAG, "addPoint: " + mapView.getCurrentImageMatrix());
+                PointF pointF = DegreeManager.changeAbslutePoint(locationX, locationY, mapView.getCurrentImageMatrix());
+                coordinateView.setLocationX(pointF.x);
+                coordinateView.setLocationY(pointF.y);
+                coordinateView.imageViewX = locationX;
+                coordinateView.imageViewY = locationY;
+                pointsList.add(coordinateView);
+                addView(coordinateView);
+            }
+        },100);
+
+    }
+
+
+    /**
+     *  添加机器人点
+     * @param locationX
+     * @param locationY
+     * @param positionName
+     * @param rosBitmap
+     */
+    public void addRobotPoint(float locationX, float locationY, String positionName, Bitmap rosBitmap) {
+
+        if (null == robotPoint) {
+            robotPoint = new CoordinateView(MainApplication.getContext(), point);
+        }
+
+        robotPoint.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT));
 
-        coordinateView.setPositionName(positionName);
-        coordinateView.setShowPointName(true);
+        robotPoint.setPositionName(positionName);
+        robotPoint.setShowPointName(true);
         //求出标记点相对于图片的坐标
         PointF pointF = DegreeManager.changeAbslutePoint(locationX, locationY, this.mapView.getCurrentImageMatrix());
-        coordinateView.setLocationX(pointF.x);
-        coordinateView.setLocationY(pointF.y);
-        coordinateView.imageViewX=locationX;
-        coordinateView.imageViewY=locationY;
-        pointsList.add(coordinateView);
-        addView(coordinateView);
-
-//        LogManager.i("add point x========="+pointF.x+"\ny============="+pointF.y);
-
+        robotPoint.setLocationX(pointF.x);
+        robotPoint.setLocationY(pointF.y);
+        robotPoint.imageViewX = locationX;
+        robotPoint.imageViewY = locationY;
+        robotPoint.setmArrow(rosBitmap);
+        addView(robotPoint);
     }
 
     /**
      * 在添加标记点之前先判断像素点的颜色值RGB565，白色的点才能添加标记点
+     *
      * @param screenX
      * @param screenY
      * @param pointName
      */
-    public void addPointWrapper(float screenX,float screenY,String pointName){
+    public void addPointWrapper(float screenX, float screenY, String pointName) {
 
         PointF pointF = DegreeManager.changeRelativePoint(screenX, screenY, mapView.getCurrentImageMatrix());
         int redValue = RGBUtil.getRedValue(mapView, pointF);
-        if (redValue == 254){
+        if (redValue == 254) {
 
-            addPoint(pointF.x,pointF.y,pointName);
+            addPoint(pointF.x, pointF.y, pointName);
             //将标记点数据存进数据库
             PointBean pointBean = new PointBean();
             pointBean.setMapName("testMap");
@@ -146,22 +189,22 @@ public class GpsImageView extends FrameLayout {
             pointBean.setY(pointF.y);
             pointBean.setPointName(pointName);
             pointBean.save();
-        }else {
+        } else {
             ToastManager.showShort(MainApplication.getContext(), R.string.un_effective);
         }
-        LogManager.i("pointx======="+pointF.x+"\npointy========="+pointF.y);
+        LogManager.i("pointx=======" + pointF.x + "\npointy=========" + pointF.y);
 
     }
 
-    public void removeAllView(){
+    public void removeAllView() {
         Iterator<CoordinateView> iterator = pointsList.iterator();
-        while (iterator.hasNext()){
+        while (iterator.hasNext()) {
             removeView(iterator.next());
         }
         pointsList.clear();
     }
 
-    public void removePoint(String name){
+    public void removePoint(String name) {
 
         for (CoordinateView coordinateView : pointsList) {
             if (coordinateView.getPositionName().equals(name)) {
@@ -173,23 +216,23 @@ public class GpsImageView extends FrameLayout {
         }
     }
 
-    public void scanAddPoint(String name, int i){
+    public void scanAddPoint(String name, int i) {
 
 
     }
 
-    public void setImageView(Bitmap bitmap){
+    public void setImageView(Bitmap bitmap) {
 
         mapView.setImageBitmap(bitmap);
 
     }
 
-    public void setImageView(Drawable drawable){
+    public void setImageView(Drawable drawable) {
 
         mapView.setImageDrawable(drawable);
     }
 
-    public void setLocation(float locationX,float locationY,double d){
+    public void setLocation(float locationX, float locationY, double d) {
 
     }
 

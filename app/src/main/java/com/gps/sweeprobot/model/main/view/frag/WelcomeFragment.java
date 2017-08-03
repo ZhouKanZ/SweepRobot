@@ -86,8 +86,6 @@ public class WelcomeFragment extends Fragment implements View.OnClickListener {
       /*  Intent intent = new Intent("android.settings.WIFI_SETTINGS");
         this.getActivity().startActivity(intent);*/
 
-        MainActivity.startSelf(getActivity(), MapManagerActivity.class,null);
-
         IpActivity.startSelf(this.getActivity(),IpActivity.class,null);
         this.getActivity().finish();
     }

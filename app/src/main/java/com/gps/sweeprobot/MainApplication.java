@@ -2,10 +2,11 @@ package com.gps.sweeprobot;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
 
-import com.gps.ros.android.BaseService;
 import com.gps.ros.android.RosService;
+import com.gps.ros.rosbridge.ROSBridgeClient;
 
 import org.litepal.LitePal;
 import org.litepal.LitePalApplication;
@@ -18,11 +19,12 @@ import org.litepal.LitePalApplication;
 
 public class MainApplication extends LitePalApplication {
 
-    private Intent serviceIntent;
-
+    private static final String TAG = "application";
     private static MainApplication app;
-    // 服务端ip
-    public static String ip = "";
+    private Intent serviceIntent;
+    public ROSBridgeClient rosBridgeClient;
+
+    private ServiceConnection conn;
 
     @Override
     public void onCreate() {
@@ -30,7 +32,7 @@ public class MainApplication extends LitePalApplication {
         app = this;
         /* 初始化LitePal数据库 */
         LitePal.initialize(this);
-
+//        startService("");
     }
 
     public static MainApplication getContext() {
@@ -38,24 +40,37 @@ public class MainApplication extends LitePalApplication {
     }
 
 
-    public String getThreadName(){
-        return "name================="+Thread.currentThread().getName();
+    public String getThreadName() {
+        return "name=================" + Thread.currentThread().getName();
     }
 
     @Override
-    public void onLowMemory() {
-        super.onLowMemory();
+    public void onTerminate() {
+        super.onTerminate();
         stopService();
     }
 
-    public void startService(Context ctz, Bundle bundle, Class clz){
-        serviceIntent =  RosService.startSelf(ctz,bundle,clz);
+    public void startService(String url , ServiceConnection conn) {
+
+        this.conn = conn;
+
+        Bundle bundle = new Bundle();
+        bundle.putString(RosService.ROS_URI_KEY, url);
+        Intent i = new Intent(this, RosService.class);
+        i.putExtra("bundle", bundle);
+        bindService(i, conn, Context.BIND_AUTO_CREATE);
+
     }
 
-    public void stopService(){
-        if (serviceIntent != null){
-            BaseService.stopService(this,serviceIntent);
-        }
+    public void stopService() {
+        unbindService(conn);
     }
 
+    public ROSBridgeClient getRosBridgeClient() {
+        return rosBridgeClient;
+    }
+
+    public void setRosBridgeClient(ROSBridgeClient rosBridgeClient) {
+        this.rosBridgeClient = rosBridgeClient;
+    }
 }

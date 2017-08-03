@@ -17,58 +17,55 @@ import java.util.Set;
 public class TranslationManager {
 
     /**
-     *  话题集合
+     * 话题集合
      */
     private static Set<String> topicSet = new HashSet<>();
 
     /**
-     *  发送话题
+     * 发送话题
      */
-    public static void advertiseTopic(Advertise advertise){
-        if (!topicSet.contains(advertise.topic)){
+    public static void advertiseTopic(Advertise advertise) {
+        if (!topicSet.contains(advertise.topic)) {
             topicSet.add(advertise.topic);
             send(advertise);
         }
     }
 
     /**
-     *  publish
+     * publish
      */
-    public static void publish(Publish publish){
+    public static void publish(Publish publish) {
         // 表示话题没被advertise
-        if (!topicSet.contains(publish.op)){
+        if (!topicSet.contains(publish.op)) {
             throw new RuntimeException("Before you publish smothing you must advertise this topic!");
-        }else {
+        } else {
             send(publish);
         }
     }
 
     /**
-     *  订阅
+     * 订阅
+     *
      * @param sub
      */
-    public static void subscribe(Subscribe sub){
-        if (!topicSet.contains(sub.op)){
-            throw new RuntimeException("Before you publish smothing you must advertise this topic!");
-        }else {
-            send(sub);
-        }
+    public static void subscribe(Subscribe sub) {
+        send(sub);
     }
 
 
     /**
-     *  发送消息
+     * 发送消息
+     *
      * @param op
      */
-    public static void send(Operation op){
+    public static void send(Operation op) {
 
-        if (RosService.getRosBridgeClient() != null){
+        if (RosService.getRosBridgeClient() != null) {
             RosService.getRosBridgeClient().send(op.toJSON());
-        }else {
+        } else {
             throw new RuntimeException("please keep websocket online");
         }
     }
-
 
 
 }

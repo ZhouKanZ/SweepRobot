@@ -7,6 +7,7 @@ import android.graphics.Matrix;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.widget.ImageView;
@@ -49,6 +50,15 @@ public class PinchImageView extends ImageView {
      */
     private static final float MAX_SCALE = 4f;
 
+    private ViewLoadListener loadListener;
+
+    public void setLoadListener(ViewLoadListener loadListener) {
+        this.loadListener = loadListener;
+    }
+
+    public void removeLoadListener(){
+        this.loadListener = null;
+    }
 
     ////////////////////////////////监听器////////////////////////////////
 
@@ -70,6 +80,7 @@ public class PinchImageView extends ImageView {
      * 添加标记点事件
      */
     private AddPointListener addPointListener;
+
 
     public interface AddPointListener{
         void addPoint(PinchImageView view, float relativeX, float relativeY);
@@ -199,6 +210,11 @@ public class PinchImageView extends ImageView {
     {
         Matrix localMatrix = getInnerMatrix(new Matrix());
         localMatrix.postConcat(this.mOuterMatrix);
+
+        if (null != loadListener){
+            loadListener.onstart(localMatrix);
+        }
+
         return localMatrix;
     }
 
@@ -638,6 +654,8 @@ public class PinchImageView extends ImageView {
         //在绘制前设置变换矩阵
         if (isReady()) {
             Matrix matrix = MathUtils.matrixTake();
+            Log.d(TAG, "onDraw: " + System.currentTimeMillis());
+            Log.d(TAG, "onDraw: " + getCurrentImageMatrix());
             setImageMatrix(getCurrentImageMatrix(matrix));
             MathUtils.matrixGiven(matrix);
         }

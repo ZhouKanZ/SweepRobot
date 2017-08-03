@@ -231,7 +231,6 @@ public class MapEditActivity extends BaseActivity<MapEditPresenter,IView> implem
                 break;
             case OPERATE_SUB_POINT:
                 setActionListData();
-
                 break;
             case OPERATE_SUB_PATH:
                 break;
@@ -255,7 +254,6 @@ public class MapEditActivity extends BaseActivity<MapEditPresenter,IView> implem
             return null;
         }
         return (T) rootView.findViewById(viewId);
-
     }
 
     @Override

@@ -259,4 +259,8 @@ public class CoordinateView extends ViewGroup {
         this.isShowPointName = isShowPointName;
         invalidate();
     }
+
+    public void setmArrow(Bitmap mArrow) {
+        this.mArrow = mArrow;
+    }
 }

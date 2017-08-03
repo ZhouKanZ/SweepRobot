@@ -1,8 +1,8 @@
 package com.gps.sweeprobot;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
-import android.service.carrier.CarrierIdentifier;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.view.View;
@@ -11,14 +11,12 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
-import com.gps.ros.android.RosApplication;
 import com.gps.ros.android.RosService;
 import com.gps.ros.android.TranslationManager;
 import com.gps.ros.message.Message;
 import com.gps.ros.rosbridge.operation.Advertise;
 import com.gps.ros.rosbridge.operation.Publish;
 import com.gps.ros.rosbridge.operation.Subscribe;
-import com.gps.ros.rosbridge.rosWebsocketHelper.TopicsManager;
 import com.gps.sweeprobot.utils.RosProtrocol;
 
 import butterknife.BindView;
@@ -68,6 +66,8 @@ public class TestActivity extends Activity implements RadioGroup.OnCheckedChange
     Publish publish = new Publish();
     Subscribe subscribe = new Subscribe();
 
+
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,8 +101,12 @@ public class TestActivity extends Activity implements RadioGroup.OnCheckedChange
             case R.id.connect:
 
                 Bundle bundle = new Bundle();
-                bundle.putString(RosService.ROS_URI_KEY, "ws://192.168.2.142:9090");
-                ((MainApplication) getApplication()).startService(getApplication(), bundle, RosService.class);
+                bundle.putString(RosService.ROS_URI_KEY, "ws://192.168.2.128:9090");
+                Intent i = new Intent(MainApplication.getContext(),RosService.class);
+                i.putExtra("a",bundle);
+                MainApplication.getContext().startService(i);
+
+//                (MainApplication.getContext()).startService(MainApplication.getContext(), bundle, RosService.class);
                 break;
             case R.id.unconnect:
                 ((MainApplication) getApplication()).stopService();

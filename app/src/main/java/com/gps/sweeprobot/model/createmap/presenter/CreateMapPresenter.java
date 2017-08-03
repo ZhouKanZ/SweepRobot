@@ -1,20 +1,19 @@
 package com.gps.sweeprobot.model.createmap.presenter;
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 
-import com.gps.ros.android.RosService;
-import com.gps.ros.android.TranslationManager;
-import com.gps.ros.rosbridge.implementation.ROSBridgeWebSocketClient;
 import com.gps.ros.rosbridge.operation.Subscribe;
 import com.gps.sweeprobot.base.BasePresenter;
+import com.gps.sweeprobot.bean.GpsMap;
+import com.gps.sweeprobot.http.WebSocketHelper;
 import com.gps.sweeprobot.model.createmap.contract.CreateMapContract;
+import com.gps.sweeprobot.model.createmap.model.MapModel;
 import com.gps.sweeprobot.mvp.IModel;
-import com.gps.sweeprobot.mvp.IView;
-
-import org.java_websocket.client.WebSocketClient;
+import com.gps.sweeprobot.utils.RosProtrocol;
 
 import java.util.HashMap;
+
+import io.reactivex.disposables.Disposable;
 
 
 /**
@@ -24,67 +23,70 @@ import java.util.HashMap;
  */
 public class CreateMapPresenter extends BasePresenter<CreateMapContract.View> implements CreateMapContract.Presenter {
 
-    private Context mContext;
-
-    private HashMap<String, IModel> modelHashMap;
-
-//    private RosModel rosModel;
-
-    public CreateMapPresenter(Context mContext) {
-        this.mContext = mContext;
-        this.modelHashMap = new HashMap<>();
-//        this.rosModel = new RosModel();
-    }
-
-    @Override
-    public void attachView(IView iView) {
-        super.attachView(iView);
-    }
-
-    @Override
-    public void detachView() {
-        super.detachView();
-    }
-
-    @Override
-    public HashMap<String, IModel> getiModelMap() {
-        return null;
-    }
-
-    @Override
-    public HashMap<String, IModel> loadModelMap(IModel... models) {
-        return null;
-    }
-
-    @Override
-    public RecyclerView.Adapter initAdapter() {
-        return null;
-    }
-
-    @Override
-    public void setData() {
-
-    }
+    private static String modelKey = "CreateMapPresenter";
+    private Disposable disposable;
 
     /**
      * 开启地图扫描
      */
     @Override
     public void startScanMap() {
-        iView.showGetRobotsAnimation();
-        // 订阅 机器人位置点
-//        TranslationManager.subscribe();
-        // 在RxBus中接收机器人位置并，更新LayoutParams来更新机器人位置
+        disposable =((MapModel)getiModelMap().get(modelKey)).startScan(getIView().getConsumer());
     }
 
     @Override
     public void stopScanMap() {
-        RosService.getRosBridgeClient().send("");
+        ((MapModel)getiModelMap().get(modelKey)).stopScan(disposable);
     }
 
     @Override
     public void sendCommandToRos() {
-        RosService.getRosBridgeClient().send("");
+        ((MapModel)getiModelMap().get(modelKey)).sendVelocityToRos(
+                iView.getVelocity()[0],
+                (float) iView.getVelocity()[1]);
     }
+
+    @Override
+    public void getRosPosition() {
+        /**
+         *  subscribe
+         */
+        Subscribe subscribe = new Subscribe();
+        subscribe.topic = RosProtrocol.NaviPosition.TOPIC;
+        subscribe.type  = RosProtrocol.NaviPosition.TYPE;
+        WebSocketHelper.send(subscribe.toJSON());
+
+    }
+
+    @Override
+    public void saveMap(GpsMap map) {
+        ((MapModel)getiModelMap().get(modelKey)).saveMap(null);
+    }
+
+    @Override
+    public void subscribe() {
+        ((MapModel)getiModelMap().get(modelKey)).subscribe();
+    }
+
+    @Override
+    public HashMap<String, IModel> getiModelMap() {
+        return loadModelMap(new MapModel());
+    }
+
+    @Override
+    public HashMap<String, IModel> loadModelMap(IModel... models) {
+        HashMap<String, IModel> map = new HashMap<>();
+        map.put(modelKey,models[0]);
+        return map;
+    }
+
+    /* unused method */
+    @Override
+    public RecyclerView.Adapter initAdapter() {
+        return null;
+    }
+
+    @Override
+    public void setData() {}
 
 }
