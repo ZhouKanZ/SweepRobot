@@ -20,7 +20,7 @@ import com.gps.sweeprobot.model.createmap.contract.CreateMapContract;
 import com.gps.sweeprobot.model.createmap.presenter.CreateMapPresenter;
 import com.gps.sweeprobot.utils.DensityUtil;
 import com.gps.sweeprobot.widget.GpsImageView;
-import com.kongqw.rockerlibrary.view.RockerView;
+import com.gps.sweeprobot.widget.RockerView;
 import com.zhy.adapter.recyclerview.CommonAdapter;
 import com.zhy.adapter.recyclerview.base.ViewHolder;
 

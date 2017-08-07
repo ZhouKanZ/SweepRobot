@@ -14,7 +14,6 @@
         android:layout_width="150dp"
         android:layout_height="90dp"
         android:scaleType="centerCrop"
-        android:src="@mipmap/fb_map"
         android:layout_marginRight="17dp"/>
 
     <TextView

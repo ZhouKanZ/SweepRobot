@@ -640,6 +640,7 @@ public class PinchImageView extends ImageView {
             Matrix matrix = MathUtils.matrixTake();
             setImageMatrix(getCurrentImageMatrix(matrix));
             MathUtils.matrixGiven(matrix);
+            dispatchOuterMatrixChanged();
         }
         //对图像做遮罩处理
         if (mMask != null) {

@@ -31,6 +31,9 @@ public class MainApplication extends LitePalApplication {
         /* 初始化LitePal数据库 */
         LitePal.initialize(this);
 
+        Intent intent = new Intent(MainApplication.getContext(),RosService.class);
+        MainApplication.getContext().startService(intent);
+
     }
 
     public static MainApplication getContext() {

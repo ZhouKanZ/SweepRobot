@@ -2,20 +2,24 @@ package com.gps.sweeprobot.database;
 
 import com.gps.sweeprobot.bean.IAction;
 
-import org.litepal.crud.DataSupport;
-
 /**
  * Create by WangJun on 2017/7/24
  */
 
-public class PointBean extends DataSupport implements IAction{
+public class PointBean extends IAction{
+
+    /* 地图的id也是table的主键 */
+    private int id;
 
     //标记点相对于图片的横坐标x
     private float x;
+
     //标记点相对于图片的横坐标y
     private float y;
+
     //标记点名字
     private String pointName;
+
     //标记点所在地图的名字
     private String mapName;
 
@@ -27,6 +31,10 @@ public class PointBean extends DataSupport implements IAction{
         this.y = y;
         this.pointName = pointName;
         this.mapName = mapName;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public float getX() {

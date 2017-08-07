@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <android.support.v7.widget.ButtonBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        >
+
+        <android.support.v4.widget.Space
+            android:layout_width="0dp"
+            android:layout_height="42dp"
+            android:layout_weight="1.5"/>
+        <Button
+            android:id="@+id/dialog_add_point_cancel"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1.5"
+            android:text="@string/dialog_add_point_foot_cancel"/>
+
+        <android.support.v4.widget.Space
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"/>
+
+        <Button
+            android:id="@+id/dialog_add_point_sure"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1.5"
+            android:text="@string/dialog_input_wifi_btn_sure"
+            android:gravity="center"/>
+
+        <android.support.v4.widget.Space
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1.5"/>
+    </android.support.v7.widget.ButtonBarLayout>
+</LinearLayout>

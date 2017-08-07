@@ -12,15 +12,24 @@ import android.widget.FrameLayout;
 
 import com.gps.sweeprobot.MainApplication;
 import com.gps.sweeprobot.R;
+import com.gps.sweeprobot.database.MyPointF;
 import com.gps.sweeprobot.database.PointBean;
+import com.gps.sweeprobot.database.VirtualObstacleBean;
+import com.gps.sweeprobot.utils.CommunicationUtil;
 import com.gps.sweeprobot.utils.DegreeManager;
 import com.gps.sweeprobot.utils.LogManager;
 import com.gps.sweeprobot.utils.RGBUtil;
 import com.gps.sweeprobot.utils.ToastManager;
 
+import org.litepal.crud.DataSupport;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import io.reactivex.Flowable;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.functions.Consumer;
 
 import static com.gps.sweeprobot.R.mipmap.point;
 
@@ -32,9 +41,18 @@ public class GpsImageView extends FrameLayout {
 
     private static final String TAG = "GpsImageView";
     private PinchImageView mapView;
-    private boolean isAddPoint;
+
     //存放标记点集合
     private List<CoordinateView> pointsList;
+    //存放虚拟墙view集合
+    private List<VirtualObstacleView> obstacleViews;
+
+    VirtualObstacleView obstacleView;
+    private int locationViewSize = 15;
+
+    private FrameLayout.LayoutParams commonParams;
+
+    private OnObstacleViewClick obstacleListener;
 
     public GpsImageView(Context context) {
         super(context);
@@ -54,72 +72,68 @@ public class GpsImageView extends FrameLayout {
         Log.i(TAG, "GpsImageView: 3");
     }
 
-    private void initView(Context context){
-        mapView=new PinchImageView(context);
-        pointsList=new ArrayList<>();
+    public void setObstacleListener(OnObstacleViewClick obstacleListener) {
+        this.obstacleListener = obstacleListener;
+    }
 
-        FrameLayout.LayoutParams layoutParams=new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT);
+    private void initView(Context context) {
+        mapView = new PinchImageView(context);
+        pointsList = new ArrayList<>();
+        obstacleViews = new ArrayList<>();
+
+        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+
+       commonParams = new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+        );
+
         mapView.setLayoutParams(layoutParams);
-//        mapView.setImageResource(R.drawable.fb_map);
+        mapView.setImageResource(R.mipmap.fb_map);
         addView(mapView);
-
 
         this.mapView.addOuterMatrixChangedListener(new PinchImageView.OuterMatrixChangedListener() {
             @Override
             public void onOuterMatrixChanged(PinchImageView pinchImageView) {
-                changePoint(pinchImageView.getCurrentImageMatrix());
+              changePoint(pinchImageView.getCurrentImageMatrix());
             }
         });
 
-        mapView.setAddPointListener(new PinchImageView.AddPointListener() {
-            @Override
-            public void addPoint(PinchImageView pinchImageView, float relativeX, float relativeY) {
-                GpsImageView.this.addPoint(relativeX,relativeY,"Test");
-                Log.i(TAG, "addPoint: x========"+relativeX+"   y========"+relativeY);            }
-        });
-    }
+        obstacleView = new VirtualObstacleView(getContext());
+        obstacleView.setLayoutParams(commonParams);
+        addView(obstacleView);
 
-    private void changePoint(Matrix matrix){
-
-        CoordinateView coordinateView;
-        matrix=this.mapView.getCurrentImageMatrix();
-        if (pointsList!=null){
-            Iterator<CoordinateView> iterator = pointsList.iterator();
-            while (iterator.hasNext()){
-                coordinateView = iterator.next();
-                PointF pointF = DegreeManager.changeAbslutePoint(coordinateView.imageViewX, coordinateView.imageViewY, matrix);
-                coordinateView.setPositionViewX(pointF.x);
-                coordinateView.setPositionViewY(pointF.y);
-            }
-        }
     }
 
     /**
-     * 添加标记点
-     * @param locationX
-     * @param locationY
-     * @param positionName
+     * 矩阵变化监听
+     * @param matrix
      */
-    public void addPoint(float locationX,float locationY,String positionName){
+    private void changePoint(final Matrix matrix) {
 
-        CoordinateView coordinateView=new CoordinateView(MainApplication.getContext(), point);
-        coordinateView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT));
+        Flowable.fromIterable(pointsList)
+                .subscribe(new Consumer<CoordinateView>() {
+                    @Override
+                    public void accept(@NonNull CoordinateView coordinateView) throws Exception {
 
-        coordinateView.setPositionName(positionName);
-        coordinateView.setShowPointName(true);
-        //求出标记点相对于图片的坐标
-        PointF pointF = DegreeManager.changeAbslutePoint(locationX, locationY, this.mapView.getCurrentImageMatrix());
-        coordinateView.setLocationX(pointF.x);
-        coordinateView.setLocationY(pointF.y);
-        coordinateView.imageViewX=locationX;
-        coordinateView.imageViewY=locationY;
-        pointsList.add(coordinateView);
-        addView(coordinateView);
+                        PointF pointF = DegreeManager.changeAbsolutePoint(coordinateView.imageViewX, coordinateView.imageViewY, matrix);
+                        coordinateView.setPositionViewX(pointF.x);
+                        coordinateView.setPositionViewY(pointF.y);
+//                        LogManager.i("change point pointx========="+pointF.x+"\npointy============"+pointF.y);
+                    }
+                });
 
-//        LogManager.i("add point x========="+pointF.x+"\ny============="+pointF.y);
+            Flowable.fromIterable(obstacleViews)
+                    .subscribe(new Consumer<VirtualObstacleView>() {
+                        @Override
+                        public void accept(@NonNull VirtualObstacleView virtualObstacleView) throws Exception {
+                            virtualObstacleView.setmMatrix(matrix);
+                        }
+                    });
 
+        obstacleView.setmMatrix(matrix);
+//        LogManager.i("change point"+matrix.toString());
     }
 
     /**
@@ -128,65 +142,172 @@ public class GpsImageView extends FrameLayout {
      * @param screenY
      * @param pointName
      */
-    public void addPointWrapper(float screenX,float screenY,String pointName){
+    public PointBean addPointWrapper(float screenX, float screenY, String pointName) {
 
         PointF pointF = DegreeManager.changeRelativePoint(screenX, screenY, mapView.getCurrentImageMatrix());
         int redValue = RGBUtil.getRedValue(mapView, pointF);
-        if (redValue == 254){
+        if (redValue == 254) {
 
-            addPoint(pointF.x,pointF.y,pointName);
-            //将标记点数据存进数据库
-            PointBean pointBean = new PointBean();
-            pointBean.setMapName("testMap");
-            pointBean.setX(pointF.x);
-            pointBean.setY(pointF.y);
-            pointBean.setPointName(pointName);
-            pointBean.save();
-        }else {
+            LogManager.i("pointx=======" + pointF.x + "\npointy=========" + pointF.y);
+            addPoint(pointF.x, pointF.y, pointName);
+            return addPointData(pointF, pointName);
+
+        } else {
             ToastManager.showShort(MainApplication.getContext(), R.string.un_effective);
         }
-        LogManager.i("pointx======="+pointF.x+"\npointy========="+pointF.y);
+        return null;
+    }
+
+    /**
+     * 添加标记点
+     * @param locationX 经过矩阵变换后的x坐标
+     * @param locationY 经过矩阵变换后的y坐标
+     * @param positionName
+     */
+    public void addPoint(float locationX, float locationY, String positionName) {
+
+        CoordinateView coordinateView = new CoordinateView(MainApplication.getContext(), point);
+        coordinateView.setLayoutParams(commonParams);
+        coordinateView.setPositionName(positionName);
+        coordinateView.setShowPointName(true);
+        //求出标记点相对于图片的坐标
+        PointF pointF = DegreeManager.changeAbsolutePoint(locationX, locationY, this.mapView.getCurrentImageMatrix());
+        coordinateView.setLocationX(pointF.x);
+        coordinateView.setLocationY(pointF.y);
+        coordinateView.imageViewX = locationX;
+        coordinateView.imageViewY = locationY;
+        pointsList.add(coordinateView);
+        addView(coordinateView);
+
+        LogManager.i(mapView.getCurrentImageMatrix().toString());
+        LogManager.i("add point x========="+pointF.x+"\ny============="+pointF.y);
 
     }
 
-    public void removeAllView(){
+
+    private PointBean addPointData(PointF pointF, String pointName) {
+
+        //将标记点数据存进数据库
+        PointBean pointBean = new PointBean();
+        pointBean.setMapName("testMap");
+        pointBean.setX(pointF.x);
+        pointBean.setY(pointF.y);
+        pointBean.setPointName(pointName);
+        pointBean.save();
+
+        //通知服务器
+        CommunicationUtil.sendPointData2Server(pointBean);
+        return pointBean;
+    }
+
+    /**
+     * 更新标记点的名称
+     * @param newName 名称
+     * @param index   对应标记点view的index
+     */
+    public void updateName(String newName, int index) {
+
+        CoordinateView coordinateView = pointsList.get(index);
+        coordinateView.setPositionName(newName);
+        coordinateView.postInvalidate();
+    }
+
+    /**
+     * 删除所有标记点
+     */
+    public void removeAllView() {
         Iterator<CoordinateView> iterator = pointsList.iterator();
-        while (iterator.hasNext()){
+        while (iterator.hasNext()) {
             removeView(iterator.next());
+            DataSupport.deleteAll(PointBean.class);
         }
         pointsList.clear();
+        postInvalidate();
     }
 
-    public void removePoint(String name){
+    /**
+     * 删除单个标记点
+     * @param name
+     */
+    public void removePoint(String name, int index) {
 
-        for (CoordinateView coordinateView : pointsList) {
-            if (coordinateView.getPositionName().equals(name)) {
-                pointsList.remove(coordinateView);
-                removeView(coordinateView);
-//                postInvalidate();
-                break;
-            }
+/*        LogManager.i("gpsimageview////////index========" + index +
+                "\n name==========" + pointsList.get(index).getPositionName()
+                + "\npointsView size =========" + pointsList.size());*/
+        if (pointsList.get(index).getPositionName().equals(name)) {
+
+            removeView(pointsList.get(index));
+            pointsList.remove(pointsList.get(index));
+            postInvalidate();
         }
     }
 
-    public void scanAddPoint(String name, int i){
+    public void scanAddPoint(String name, int i) {
 
 
     }
 
-    public void setImageView(Bitmap bitmap){
+    public void setImageView(Bitmap bitmap) {
 
         mapView.setImageBitmap(bitmap);
 
     }
 
-    public void setImageView(Drawable drawable){
+    public void setImageView(Drawable drawable) {
 
         mapView.setImageDrawable(drawable);
     }
 
-    public void setLocation(float locationX,float locationY,double d){
+    public void setLocation(float locationX, float locationY, double d) {
 
+    }
+
+    /**
+     * 设置虚拟墙的多边形顶点
+     * @param pointF
+     */
+    public void setObstacleRect(PointF pointF){
+
+        obstacleView.addPoint(pointF);
+    }
+
+    /**
+     * 设置虚拟墙的名字
+     * @param name
+     */
+    public VirtualObstacleBean setObstacleName(String name){
+
+        obstacleView.setName(name);
+        return obstacleView.saveObstacleBean();
+    }
+
+    /**
+     * 添加虚拟墙控件并显示
+     * @param pointFs
+     */
+    public void addObstacleView(List<MyPointF> pointFs,String name){
+
+        VirtualObstacleView obstacleView = new VirtualObstacleView(getContext());
+        obstacleView.setLayoutParams(commonParams);
+        obstacleView.setmyPointFs(pointFs);
+        obstacleView.setName(name);
+        addView(obstacleView);
+        obstacleViews.add(obstacleView);
+    }
+
+    public void removeObstacleView(String name,int position){
+
+//        if (obstacleViews.get(position).getName().equals(name)){
+
+            removeView(obstacleViews.get(position));
+            obstacleViews.remove(position);
+            postInvalidate();
+//        }
+    }
+
+    public interface OnObstacleViewClick{
+
+        void obstacleViewOnClick();
     }
 
 }

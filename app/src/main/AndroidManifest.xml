@@ -20,11 +20,12 @@
         <!--WangJun Begin-->
         <activity android:name=".model.main.view.activity.WifiActivity"></activity>
 
-        <activity android:name=".model.mapmanager.view.MapManagerActivity"></activity>
+        <activity android:name=".model.mapmanager.view.activity.MapManagerActivity"></activity>
 
         <activity
             android:name=".model.mapmanager.view.activity.MapEditActivity"
-            android:screenOrientation="landscape"></activity>
+            android:screenOrientation="landscape"
+            android:configChanges="orientation|keyboardHidden|screenSize"></activity>
 
         <!--wangJun end-->
 

@@ -1,6 +1,8 @@
 package com.gps.ros.android;
 
+import android.app.Service;
 import android.content.Intent;
+import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
@@ -23,13 +25,14 @@ public class RosService extends  BaseService {
     private static final String TAG = "RosService";
     // ros的key
     public static final String ROS_URI_KEY = "ros_uri_key";
+
     private static WebSocketClient rosBridgeClient = null;
 
-    public static WebSocketClient getRosBridgeClient(){
+    public static WebSocketClient getRosBridgeClient() {
         if (rosBridgeClient != null && !rosBridgeClient.isClosed()){
             return rosBridgeClient;
         }else {
-           return null;
+            return null;
         }
     }
 
@@ -39,6 +42,13 @@ public class RosService extends  BaseService {
         super.onCreate();
         Log.d(TAG, "onCreate: ");
     }
+
+    public class RosBinder extends Binder{
+
+        RosService getService(){return RosService.this;}
+    }
+
+
 
     /**
      *  通过EventBus来向外发送
@@ -50,11 +60,10 @@ public class RosService extends  BaseService {
     @Override
     public int onStartCommand(Intent intent,int flags, int startId) {
 
-        Bundle bundle = getBundle(RosService.class);
-        String  uriStr =  bundle.getString(ROS_URI_KEY);
+        Log.i(TAG, "onStartCommand: " + intent);
         URI uri = null;
         try {
-            uri = new URI(uriStr);
+            uri = new URI("ws://192.168.2.128:9090");
         } catch (URISyntaxException e) {
             e.printStackTrace();
             Log.d(TAG, "onStartCommand: " + e.toString());
@@ -62,8 +71,18 @@ public class RosService extends  BaseService {
         rosBridgeClient = new MyWebSocket(uri);
         rosBridgeClient.connect();
 
-        return super.onStartCommand(intent, flags, startId);
+        return START_NOT_STICKY;
     }
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        Log.d(TAG, "onBind: ");
+
+        return mBinder;
+    }
+
+    private final IBinder mBinder = new RosBinder();
 
     @Override
     public void onDestroy() {
@@ -73,11 +92,6 @@ public class RosService extends  BaseService {
         }
     }
 
-    @Nullable
-    @Override
-    public IBinder onBind(Intent intent) {
-        Log.d(TAG, "onBind: ");
-        return null;
-    }
+
 
 }

@@ -30,7 +30,7 @@ public class DegreeManager {
      * @param matrix
      * @return
      */
-    public static PointF changeAbslutePoint(float locationX, float locationY, Matrix matrix)
+    public static PointF changeAbsolutePoint(float locationX, float locationY, Matrix matrix)
     {
         float[] point = new float[2];
         point[0] = locationX;

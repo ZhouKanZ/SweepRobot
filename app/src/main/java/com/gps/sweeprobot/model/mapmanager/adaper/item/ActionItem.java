@@ -8,6 +8,7 @@ import android.widget.TextView;
 import com.gps.sweeprobot.R;
 import com.gps.sweeprobot.bean.IAction;
 import com.gps.sweeprobot.database.PointBean;
+import com.gps.sweeprobot.database.VirtualObstacleBean;
 import com.gps.sweeprobot.model.view.adapter.item.AdapterItem;
 import com.gps.sweeprobot.utils.LogManager;
 
@@ -44,7 +45,7 @@ public class ActionItem implements AdapterItem<IAction>{
     }
 
     @Override
-    public void setViews(RecyclerView.ViewHolder holder) {
+    public void setViews(final RecyclerView.ViewHolder holder) {
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -56,7 +57,15 @@ public class ActionItem implements AdapterItem<IAction>{
                     LogManager.e("action name is null");
                     return;
                 }
-                listener.onItemClick(v,name);
+                listener.onItemClick(v,name,holder.getLayoutPosition());
+            }
+        });
+
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                listener.onItemLongClick(v,holder.getLayoutPosition());
+                return false;
             }
         });
     }
@@ -66,15 +75,23 @@ public class ActionItem implements AdapterItem<IAction>{
 
         if (iAction instanceof PointBean){
 
-            icon.setImageResource(R.mipmap.point);
+            LogManager.i("handle data successful");
             actionName.setText(((PointBean) iAction).getPointName());
+        }else {
+            actionName.setText(((VirtualObstacleBean) iAction).getName());
         }
 
     }
 
+    public void setIcon(int resId){
+        icon.setImageResource(resId);
+    }
+
     public interface ActionOnItemListener{
 
-        void onItemClick(View view,String pointName);
+        void onItemClick(View view,String pointName,int position);
+
+        void onItemLongClick(View item,int position);
     }
 
 }

@@ -31,6 +31,7 @@ public class TranslationManager {
         }
     }
 
+
     /**
      *  publish
      */
@@ -42,6 +43,7 @@ public class TranslationManager {
             send(publish);
         }
     }
+
 
     /**
      *  订阅
@@ -55,7 +57,6 @@ public class TranslationManager {
         }
     }
 
-
     /**
      *  发送消息
      * @param op
@@ -68,7 +69,5 @@ public class TranslationManager {
             throw new RuntimeException("please keep websocket online");
         }
     }
-
-
 
 }

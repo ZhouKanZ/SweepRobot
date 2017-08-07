@@ -1,4 +1,4 @@
-package com.gps.sweeprobot.model.mapmanager.view;
+package com.gps.sweeprobot.model.mapmanager.view.activity;
 
 import android.os.Build;
 import android.support.annotation.RequiresApi;
@@ -13,7 +13,6 @@ import com.gps.sweeprobot.model.main.bean.ToolbarOptions;
 import com.gps.sweeprobot.model.mapmanager.adaper.item.MapListItem;
 import com.gps.sweeprobot.model.mapmanager.presenter.MapManagerPresenter;
 import com.gps.sweeprobot.model.mapmanager.presenterimpl.MapManagerPresenterImpl;
-import com.gps.sweeprobot.model.mapmanager.view.activity.MapEditActivity;
 import com.gps.sweeprobot.mvp.IView;
 
 import butterknife.BindView;
@@ -56,7 +55,7 @@ public class MapManagerActivity extends BaseActivity<MapManagerPresenter,IView> 
 
         //set toolbar
         ToolbarOptions options = new ToolbarOptions();
-        options.titleId = R.string.activity_edit_map_title;
+        options.titleId = R.string.activity_map_manager_title;
         setToolBar(R.id.toolbar,options);
 
         mPresenter.setData();

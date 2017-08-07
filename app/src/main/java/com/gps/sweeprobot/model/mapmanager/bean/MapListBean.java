@@ -1,14 +1,17 @@
 package com.gps.sweeprobot.model.mapmanager.bean;
 
+import org.litepal.crud.DataSupport;
+
 /**
  * Create by WangJun on 2017/7/18
  */
 
-public class MapListBean {
+public class MapListBean extends DataSupport{
 
     private String createAt;
     private String id;
     private String name;
+    private String imgUrl;
     private MapInfoBean mapInfo;
 
     public MapListBean() {
@@ -17,6 +20,14 @@ public class MapListBean {
     public MapListBean(String createAt, String name) {
         this.createAt = createAt;
         this.name = name;
+    }
+
+    public String getImgUrl() {
+        return imgUrl;
+    }
+
+    public void setImgUrl(String imgUrl) {
+        this.imgUrl = imgUrl;
     }
 
     public String getCreateAt() {

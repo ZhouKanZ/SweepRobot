@@ -1,10 +1,12 @@
 package com.gps.sweeprobot.model.mapmanager.bean;
 
+import org.litepal.crud.DataSupport;
+
 /**
  * Create by WangJun on 2017/7/19
  */
 
-public class MapInfoBean {
+public class MapInfoBean extends DataSupport{
 
     private int gridHeight;
     private int gridWidth;

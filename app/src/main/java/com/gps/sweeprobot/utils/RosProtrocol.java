@@ -20,5 +20,14 @@ public class RosProtrocol {
         public static final String TOPIC = "amcl_pose";
         public static final String TYPE  = "geometry_msgs/PoseWithCovarianceStamped";
     }
+
+    /**
+     * 标记点
+     */
+    public class Point{
+        public static final String TOPIC = "/move_base/goal";
+        public static final String OPERATE = "publish";
+        public static final String FRAME_ID = "map";
+    }
     
 }
