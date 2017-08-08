@@ -1,6 +1,4 @@
 package com.gps.sweeprobot.bean;
-
-
 import java.util.Date;
 
 /**

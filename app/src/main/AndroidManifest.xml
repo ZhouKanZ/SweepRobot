@@ -19,27 +19,34 @@
         <!--WangJun Begin-->
         <activity android:name=".model.main.view.activity.WifiActivity"/>
 
-        <activity android:name=".model.mapmanager.view.MapManagerActivity"/>
+        <activity android:name=".model.mapmanager.view.activity.MapManagerActivity"></activity>
 
         <activity
             android:name=".model.mapmanager.view.activity.MapEditActivity"
-            android:screenOrientation="landscape"/>
+            android:screenOrientation="landscape"
+            android:configChanges="orientation|keyboardHidden|screenSize">
 
+        </activity>
         <!--wangJun end-->
 
         <activity android:name=".model.main.view.activity.WelcomeActivity"
             >
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
 
         <!-- ZHOUKAN - BEGINNING -->
         <activity android:name=".model.main.view.activity.MainActivity"
             android:launchMode="singleTask"
-            />
+            >
+
+        </activity>
+
         <activity android:name=".model.main.view.activity.IpActivity"/>
 
         <activity android:name=".model.createmap.view.activity.CreateActivity"

@@ -1,7 +1,5 @@
 package com.gps.sweeprobot;
 
-import android.content.ServiceConnection;
-
 import com.gps.ros.rosbridge.ROSBridgeClient;
 
 import org.litepal.LitePal;
@@ -29,6 +27,11 @@ public class MainApplication extends LitePalApplication {
 
     public static MainApplication getContext() {
         return app;
+    }
+
+    @Override
+    public void onTerminate() {
+        super.onTerminate();
     }
 
     public ROSBridgeClient getRosBridgeClient() {

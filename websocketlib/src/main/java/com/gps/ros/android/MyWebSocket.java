@@ -2,12 +2,6 @@ package com.gps.ros.android;
 
 import android.util.Log;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-import com.gps.ros.message.Message;
-import com.gps.ros.rosapi.message.Topic;
-import com.gps.ros.rosbridge.operation.Operation;
-
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 
@@ -16,7 +10,6 @@ import java.net.URI;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.Observer;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Function;
 
@@ -41,6 +34,8 @@ public class MyWebSocket extends WebSocketClient  {
 
     @Override
     public void onOpen(ServerHandshake handshakedata) {
+
+        Log.i(TAG, "onOpen: ");
         if (null != lifeCycle){
             lifeCycle.onOpen(handshakedata);
         }

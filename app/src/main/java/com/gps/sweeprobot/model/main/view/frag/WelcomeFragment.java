@@ -13,8 +13,6 @@ import android.widget.ImageView;
 
 import com.gps.sweeprobot.R;
 import com.gps.sweeprobot.model.main.view.activity.IpActivity;
-import com.gps.sweeprobot.model.main.view.activity.MainActivity;
-import com.gps.sweeprobot.model.mapmanager.view.MapManagerActivity;
 
 /**
  * @Author : zhoukan
@@ -83,8 +81,6 @@ public class WelcomeFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View view) {
 
-      /*  Intent intent = new Intent("android.settings.WIFI_SETTINGS");
-        this.getActivity().startActivity(intent);*/
 
         IpActivity.startSelf(this.getActivity(),IpActivity.class,null);
         this.getActivity().finish();

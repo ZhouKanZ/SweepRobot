@@ -1,13 +1,16 @@
 package com.gps.sweeprobot.model.view.adapter;
 
 import android.content.Context;
+import android.databinding.ObservableList;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import com.gps.sweeprobot.model.view.adapter.item.AdapterItem;
+import com.gps.sweeprobot.model.view.adapter.util.DataBindingJudgement;
 import com.gps.sweeprobot.model.view.adapter.util.ItemTypeUtil;
+import com.gps.sweeprobot.utils.LogManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,6 +37,40 @@ public abstract class CommonRcvAdapter<T> extends RecyclerView.Adapter<CommonRcv
         }
         mDataList=data;
         util=new ItemTypeUtil();
+
+        if (DataBindingJudgement.SUPPORT_DATABINDING && data instanceof ObservableList) {
+            ((ObservableList<T>) data).addOnListChangedCallback(new ObservableList.OnListChangedCallback<ObservableList<T>>() {
+                @Override
+                public void onChanged(ObservableList<T> sender) {
+                    LogManager.i("commonAdapter onChanged");
+                    notifyDataSetChanged();
+                }
+
+                @Override
+                public void onItemRangeChanged(ObservableList<T> sender, int positionStart, int itemCount) {
+                    LogManager.i("commonAdapter onItemRangeChanged");
+                    notifyDataSetChanged();
+                }
+
+                @Override
+                public void onItemRangeInserted(ObservableList<T> sender, int positionStart, int itemCount) {
+                    LogManager.i("commonAdapter onItemRangeInserted");
+                    notifyDataSetChanged();
+                }
+
+                @Override
+                public void onItemRangeMoved(ObservableList<T> sender, int fromPosition, int toPosition, int itemCount) {
+                    LogManager.i("commonAdapter onItemRangeMoved");
+                    notifyDataSetChanged();
+                }
+
+                @Override
+                public void onItemRangeRemoved(ObservableList<T> sender, int positionStart, int itemCount) {
+                    LogManager.i("commonAdapter onItemRangeRemoved");
+                    notifyDataSetChanged();
+                }
+            });
+        }
     }
 
     public void setTypePool(HashMap<Object,Integer> typePool){
@@ -48,8 +85,9 @@ public abstract class CommonRcvAdapter<T> extends RecyclerView.Adapter<CommonRcv
 
     @Override
     public void setData(@NonNull List<T> data) {
-
-        mDataList=data;
+        mDataList.clear();
+        mDataList.addAll(data);
+        notifyDataSetChanged();
     }
 
     @Override

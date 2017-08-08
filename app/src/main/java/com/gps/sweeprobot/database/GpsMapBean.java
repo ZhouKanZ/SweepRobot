@@ -16,7 +16,7 @@ import java.util.List;
 public class GpsMapBean extends DataSupport {
 
     /* 地图的id也是table的主键 */
-    private String id;
+    private int id;
 
     /* 地图的名称 */
     private String name;
@@ -43,7 +43,7 @@ public class GpsMapBean extends DataSupport {
     /* 任务点 */
     private List<TaskPoint> taskPoints;
 
-    public GpsMapBean(String id, String name,
+    public GpsMapBean(int id, String name,
                       int status, Date data,
                       String creatingMapUrl,
                       String completedMapUrl,
@@ -59,7 +59,7 @@ public class GpsMapBean extends DataSupport {
         this.taskPoints = taskPoints;
     }
 
-    public GpsMapBean(String id, String name, int status, Date data, String creatingMapUrl, String completedMapUrl) {
+    public GpsMapBean(int id, String name, int status, Date data, String creatingMapUrl, String completedMapUrl) {
         this.id = id;
         this.name = name;
         this.status = status;
@@ -68,11 +68,11 @@ public class GpsMapBean extends DataSupport {
         this.completedMapUrl = completedMapUrl;
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 

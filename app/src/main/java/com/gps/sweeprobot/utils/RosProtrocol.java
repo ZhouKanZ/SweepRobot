@@ -25,8 +25,15 @@ public class RosProtrocol {
     }
 
     /**
-     *  ros点
+     * 标记点
      */
+    public class Point{
+        public static final String TOPIC = "/move_base/goal";
+        public static final String OPERATE = "publish";
+        public static final String FRAME_ID = "map";
+    }
+    
+
     public class NaviPosition{
         public static final String TOPIC = "nav_position";
         public static final String TYPE  = "basic_msgs/nav_pose";

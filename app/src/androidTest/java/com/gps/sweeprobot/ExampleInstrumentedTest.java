@@ -22,5 +22,7 @@ public class ExampleInstrumentedTest {
         Context appContext = InstrumentationRegistry.getTargetContext();
 
         assertEquals("com.gps.sweeprobot", appContext.getPackageName());
+
     }
+
 }

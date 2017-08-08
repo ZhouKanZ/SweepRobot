@@ -2,12 +2,9 @@ package com.gps.sweeprobot.model.createmap.contract;
 
 import android.graphics.Bitmap;
 import android.graphics.Point;
-import android.view.ViewDebug;
 
 import com.alibaba.fastjson.JSONObject;
-import com.gps.sweeprobot.base.BasePresenter;
 import com.gps.sweeprobot.bean.GpsMap;
-import com.gps.sweeprobot.mvp.IModel;
 import com.gps.sweeprobot.mvp.IView;
 import com.gps.sweeprobot.mvp.RxBusModel;
 import com.gps.sweeprobot.mvp.RxBusPresenter;

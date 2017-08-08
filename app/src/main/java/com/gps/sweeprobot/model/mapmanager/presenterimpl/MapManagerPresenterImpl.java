@@ -71,6 +71,7 @@ public class MapManagerPresenterImpl extends MapManagerPresenter {
             @Override
             public void failInfo() {
 
+
             }
         });
     }

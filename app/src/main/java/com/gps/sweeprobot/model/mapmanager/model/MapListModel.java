@@ -11,6 +11,7 @@ import com.gps.sweeprobot.model.mapmanager.service.CommonService;
 import com.gps.sweeprobot.mvp.IModel;
 import com.gps.sweeprobot.utils.LogManager;
 import com.gps.sweeprobot.utils.LogUtils;
+import com.gps.sweeprobot.utils.ToastManager;
 
 import java.util.List;
 
@@ -65,6 +66,7 @@ public class MapListModel implements IModel {
 
                     @Override
                     public void onError(@NonNull Throwable e) {
+                        ToastManager.showShort(MainApplication.getContext(),"have a error by request map data from server");
                         infoHint.failInfo(e);
                     }
 
@@ -74,6 +76,8 @@ public class MapListModel implements IModel {
                     }
                 });
     }
+
+
 
     public void test(final InfoHint infoHint){
 
@@ -115,6 +119,10 @@ public class MapListModel implements IModel {
                         infoHint.successMapListData(mapListBeen);
                     }
                 });
+    }
+
+    public void getMapListDataFromDatabase(){
+
     }
 
 

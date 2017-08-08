@@ -19,7 +19,9 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.gps.sweeprobot.R;
+import com.gps.sweeprobot.utils.LogManager;
 
+import retrofit2.http.HEAD;
 
 /**
  * Created by kqw on 2016/8/30.
@@ -101,7 +103,7 @@ public class RockerView extends View {
         initAttribute(context, attrs);
 
         if (isInEditMode()) {
-            Log.i(TAG, "RockerView: isInEditMode");
+            LogManager.i(TAG, "RockerView: isInEditMode");
         }
 
         // 移动区域画笔
@@ -179,7 +181,7 @@ public class RockerView extends View {
         // 摇杆半径
         mRockerRadius = typedArray.getDimensionPixelOffset(R.styleable.RockerView_rockerRadius, DEFAULT_ROCKER_RADIUS);
 
-        Log.i(TAG, "initAttribute: mAreaBackground = " + areaBackground + "   mRockerBackground = " + rockerBackground + "  mRockerRadius = " + mRockerRadius);
+        LogManager.i(TAG, "initAttribute: mAreaBackground = " + areaBackground + "   mRockerBackground = " + rockerBackground + "  mRockerRadius = " + mRockerRadius);
         typedArray.recycle();
     }
 
@@ -204,11 +206,12 @@ public class RockerView extends View {
         } else {
             measureHeight = DEFAULT_SIZE;
         }
-        Log.i(TAG, "onMeasure: --------------------------------------");
-        Log.i(TAG, "onMeasure: widthMeasureSpec = " + widthMeasureSpec + " heightMeasureSpec = " + heightMeasureSpec);
-        Log.i(TAG, "onMeasure: widthMode = " + widthMode + "  measureWidth = " + widthSize);
-        Log.i(TAG, "onMeasure: heightMode = " + heightMode + "  measureHeight = " + widthSize);
-        Log.i(TAG, "onMeasure: measureWidth = " + measureWidth + " measureHeight = " + measureHeight);
+        LogManager.i(TAG, "onMeasure: --------------------------------------");
+        LogManager.i(TAG, "onMeasure: widthMeasureSpec = " + widthMeasureSpec + " heightMeasureSpec = " + heightMeasureSpec);
+        LogManager.i(TAG, "onMeasure: widthMode = " + widthMode + "  measureWidth = " + widthSize);
+        LogManager.i(TAG, "onMeasure: heightMode = " + heightMode + "  measureHeight = " + widthSize);
+        LogManager.i(TAG, "onMeasure: measureWidth = " + measureWidth + " measureHeight = " + measureHeight);
+
         setMeasuredDimension(measureWidth, measureHeight);
     }
 
@@ -283,7 +286,7 @@ public class RockerView extends View {
                 float upX = event.getX();
                 float upY = event.getY();
                 moveRocker(mCenterPoint.x, mCenterPoint.y);
-                Log.i(TAG, "onTouchEvent: 抬起位置 : x = " + upX + " y = " + upY);
+                LogManager.i(TAG, "onTouchEvent: 抬起位置 : x = " + upX + " y = " + upY);
                 break;
         }
         return true;
@@ -313,7 +316,8 @@ public class RockerView extends View {
         // 回调 返回参数
         callBack(angle);
 
-        Log.i(TAG, "getRockerPositionPoint: 角度 :" + angle);
+        LogManager.i(TAG, "getRockerPositionPoint: 角度 :" + angle);
+
         if (lenXY + rockerRadius <= regionRadius) { // 触摸位置在可活动范围内
             setChange((float) angle,lenXY/regionRadius);
             return touchPoint;
@@ -340,7 +344,7 @@ public class RockerView extends View {
      */
     private void moveRocker(float x, float y) {
         mRockerPosition.set((int) x, (int) y);
-        Log.i(TAG, "onTouchEvent: 移动位置 : x = " + mRockerPosition.x + " y = " + mRockerPosition.y);
+        LogManager.i(TAG, "onTouchEvent: 移动位置 : x = " + mRockerPosition.x + " y = " + mRockerPosition.y);
         invalidate();
     }
 

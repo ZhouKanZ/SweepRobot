@@ -34,5 +34,12 @@
     <string name="advertise">创建</string>
     <string name="commit">提交</string>
     <string name="activity_edit_map_title">地图编辑</string>
+    <string name="activity_map_manager_title">地图管理</string>
+    <string name="input_name_hint">请输入名称</string>
+    <string name="dialog_add_point_title">标记点</string>
+    <string name="dialog_add_point_foot_cancel">取消</string>
+    <string name="input_name_must_not_null">名字不能为空</string>
+    <string name="dialog_Obstacle">虚拟墙</string>
+    <string name="dialog_point_rename">重命名</string>
 
 </resources>

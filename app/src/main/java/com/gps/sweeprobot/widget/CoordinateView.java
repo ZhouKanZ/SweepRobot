@@ -15,6 +15,7 @@ import android.widget.ImageView;
 
 import com.gps.sweeprobot.R;
 import com.gps.sweeprobot.utils.DensityUtil;
+import com.gps.sweeprobot.utils.LogManager;
 
 /**
  * @Author : WangJun
@@ -91,9 +92,9 @@ public class CoordinateView extends ViewGroup {
         {
             public boolean onPreDraw()
             {
-                CoordinateView.this.getViewTreeObserver().removeOnPreDrawListener(this);
-                CoordinateView.this.setX(CoordinateView.this.locationX - CoordinateView.this.moveX);
-                CoordinateView.this.setY(CoordinateView.this.locationY - CoordinateView.this.moveY);
+                getViewTreeObserver().removeOnPreDrawListener(this);
+                setX(locationX - moveX);
+                setY(locationY - moveY);
                 return true;
             }
         });
@@ -105,9 +106,9 @@ public class CoordinateView extends ViewGroup {
         this.textPaint.setColor(getResources().getColor(R.color.color_activity_blue_bg));
         this.textPaint.setTextSize(DensityUtil.getDimen(R.dimen.coordinate_text_size));
         setWillNotDraw(false);
-        this.mArrow = BitmapFactory.decodeResource(getResources(),R.mipmap.point);
+        this.mArrow = BitmapFactory.decodeResource(getResources(),R.mipmap.arrow);
         this.mArrowWidth = this.mArrow.getWidth();
-//        setBackgroundColor(getResources().getColor(R.color.gps_bg));
+
     }
 
     public void draw(Canvas canvas)
@@ -183,11 +184,13 @@ public class CoordinateView extends ViewGroup {
             heightMeasureSpec = widthMeasureSpec;
             if (widthMeasureSpec < this.mArrowWidth * 2)
                 heightMeasureSpec = this.mArrowWidth * 2;
+
             widthMeasureSpec = this.mainPosition.getMeasuredHeight() + DensityUtil.dip2px(getContext(), this.padding)
                     + DensityUtil.dip2px(getContext(), this.textSize) + DensityUtil.dip2px(this.paddingBottom);
             setMeasuredDimension(heightMeasureSpec, widthMeasureSpec);
             this.moveX = (heightMeasureSpec / 2);
             this.moveY = (widthMeasureSpec - DensityUtil.dip2px(getContext(), 10.0F) / 2 - DensityUtil.dip2px(this.paddingBottom));
+            LogManager.i("coordinate on measure movex========"+moveX+"movey========="+moveY);
             return;
         }
     }

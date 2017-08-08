@@ -9,14 +9,24 @@ import com.gps.sweeprobot.R;
 import com.gps.sweeprobot.model.mapmanager.bean.MapListBean;
 import com.gps.sweeprobot.model.view.adapter.item.AdapterItem;
 
+import java.util.List;
+
+import butterknife.BindView;
+import butterknife.BindViews;
+import butterknife.ButterKnife;
+
 /**
  * Create by WangJun on 2017/7/18
  */
 
 public class MapListItem implements AdapterItem<MapListBean> {
 
-    private ImageView mapDrawable;
-    private TextView mapName,createAt;
+    @BindView(R.id.layout_map_list_iv)
+    ImageView mapDrawable;
+
+    @BindViews({R.id.layout_map_list_create_time,R.id.layout_map_list_name})
+    List<TextView> names;
+
     private MapListItem.MOnItemClickListener listener;
 
     public MapListItem(MOnItemClickListener listener) {
@@ -31,9 +41,7 @@ public class MapListItem implements AdapterItem<MapListBean> {
     @Override
     public void bindViews(View root) {
 
-        mapDrawable= (ImageView) root.findViewById(R.id.layout_map_list_iv);
-        mapName= (TextView) root.findViewById(R.id.layout_map_list_name);
-        createAt= (TextView) root.findViewById(R.id.layout_map_list_create_time);
+        ButterKnife.bind(this,root);
     }
 
     @Override
@@ -50,8 +58,9 @@ public class MapListItem implements AdapterItem<MapListBean> {
     @Override
     public void handleData(MapListBean mapListBean, int position) {
 
-        mapName.setText(mapListBean.getName());
-        createAt.setText(mapListBean.getCreateAt());
+        mapDrawable.setImageResource(R.mipmap.fb_map);
+        names.get(1).setText(mapListBean.getName());
+        names.get(0).setText(mapListBean.getCreateAt());
     }
 
     public interface MOnItemClickListener{

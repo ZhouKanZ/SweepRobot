@@ -122,4 +122,12 @@ public class ScreenUtils {
         return bp;
 
     }
+
+    public static float getFlagX(Context context){
+        return ScreenUtils.getScreenWidth(context)/2;
+    }
+
+    public static float getFlagY(Context context){
+        return ScreenUtils.getScreenHeight(context)/2;
+    }
 }
