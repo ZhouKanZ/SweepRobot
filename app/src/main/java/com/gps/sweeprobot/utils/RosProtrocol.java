@@ -3,7 +3,7 @@ package com.gps.sweeprobot.utils;
 /**
  * @Author : zhoukan
  * @CreateDate : 2017/7/17 0017
- * @Descriptiong : xxx
+ * @Descriptiong : Ros相关的位置信息
  */
 
 public class RosProtrocol {
@@ -30,6 +30,14 @@ public class RosProtrocol {
     public class NaviPosition{
         public static final String TOPIC = "nav_position";
         public static final String TYPE  = "basic_msgs/nav_pose";
+    }
+
+    /**
+     *  机器人位置信息
+     */
+    public class PicturePose{
+        public static final String TOPIC = "picture_pose";
+        public static final String TYPE  = "geometry_msgs/Pose";
     }
 
 }

@@ -44,7 +44,7 @@ public class Service<CallType extends Message, ResponseType extends Message> imp
         calls = new HashMap<String, CallRecord>();
     }
 
-    // A result can only be returned once; it is cleared from the hash before 
+    //   A result can only be returned once; it is cleared from the hash before
     //   being sent/returned. This is to ensure that results do not accumulate
     //   indefinitely.  If callers need to keep these around they can set up their 
     //   own hash.

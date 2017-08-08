@@ -29,7 +29,6 @@
 
         <activity android:name=".model.main.view.activity.WelcomeActivity"
             >
-        <!--<activity android:name=".TestActivity">-->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

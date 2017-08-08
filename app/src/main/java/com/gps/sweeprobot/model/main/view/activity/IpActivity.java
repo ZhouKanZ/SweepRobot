@@ -57,7 +57,7 @@ public class IpActivity extends BaseActivity<IpPresenter, IpContract.View> imple
     @Override
     protected void initData() {
 
-        etIp.setText(Constant.ROBOT_DOMIN);
+        etIp.setText(Constant.JiaoJian);
 
         pd = new ProgressDialog(this);
         pd.setMessage("正在连接机器人请稍后");

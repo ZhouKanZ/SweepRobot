@@ -203,6 +203,9 @@ public class PinchImageView extends ImageView {
             MathUtils.rectFGiven(tempDst);
             MathUtils.rectFGiven(tempSrc);
         }
+
+        // 需要添加监听 将内部变换矩阵 抛出去
+
         return matrix;
     }
 
@@ -233,6 +236,7 @@ public class PinchImageView extends ImageView {
     public Matrix getCurrentImageMatrix(Matrix matrix) {
         //获取内部变换矩阵
         matrix = getInnerMatrix(matrix);
+
         //乘上外部变换矩阵
         matrix.postConcat(mOuterMatrix);
         return matrix;
@@ -656,7 +660,9 @@ public class PinchImageView extends ImageView {
             Matrix matrix = MathUtils.matrixTake();
             Log.d(TAG, "onDraw: " + System.currentTimeMillis());
             Log.d(TAG, "onDraw: " + getCurrentImageMatrix());
+            Log.d(TAG, "onDraw: " + getCurrentImageMatrix(matrix));
             setImageMatrix(getCurrentImageMatrix(matrix));
+            dispatchOuterMatrixChanged();
             MathUtils.matrixGiven(matrix);
         }
         //对图像做遮罩处理
@@ -859,7 +865,6 @@ public class PinchImageView extends ImageView {
             //获得相对于图片的坐标点
             PointF relativePoint = DegreeManager.changeRelativePoint(e.getX(), e.getY(),
                     PinchImageView.this.getCurrentImageMatrix());
-
 
             /**
              * 获取按下坐标点的颜色值

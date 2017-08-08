@@ -19,7 +19,7 @@ import retrofit2.http.Url;
 
 public interface HttpService {
 
-    @GET("maps/map_pose_0803.jpg")
+    @GET("maps/fb_map.jpg")
     @Streaming
     Observable<ResponseBody> downImage();
 

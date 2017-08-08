@@ -42,6 +42,7 @@ public abstract class BasePresenter<V extends IView> implements IPresenter {
     }
 
     public abstract HashMap<String, IModel> getiModelMap();
+
     /**
      * @param models
      * @return

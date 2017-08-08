@@ -16,9 +16,17 @@ public class IpModel implements IModel,IpContract.Model {
     ROSBridgeClient rosClient;
 
     @Override
-    public ROSBridgeClient connect(String domain , ROSClient.ConnectionStatusListener listener){
+    public ROSBridgeClient connect(String domain , final ROSClient.ConnectionStatusListener listener){
+
         rosClient = new ROSBridgeClient("ws://" + domain);
-        rosClient.connect(listener);
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                rosClient.connect(listener);
+            }
+        }).start();
+
         return rosClient;
     }
 

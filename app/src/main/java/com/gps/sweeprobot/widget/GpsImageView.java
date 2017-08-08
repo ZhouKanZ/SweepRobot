@@ -2,6 +2,7 @@ package com.gps.sweeprobot.widget;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.PointF;
 import android.graphics.drawable.Drawable;
@@ -38,7 +39,6 @@ public class GpsImageView extends FrameLayout {
     private List<CoordinateView> pointsList;
 
     private CoordinateView robotPoint;
-
 
 
     public PinchImageView getMapView() {
@@ -96,10 +96,17 @@ public class GpsImageView extends FrameLayout {
             Iterator<CoordinateView> iterator = pointsList.iterator();
             while (iterator.hasNext()) {
                 coordinateView = iterator.next();
+                Log.d(TAG, "changePoint: imageX" + coordinateView.imageViewX + "imageY :" + coordinateView.imageViewY + "matrix:" + matrix);
                 PointF pointF = DegreeManager.changeAbslutePoint(coordinateView.imageViewX, coordinateView.imageViewY, matrix);
                 coordinateView.setPositionViewX(pointF.x);
                 coordinateView.setPositionViewY(pointF.y);
             }
+        }
+
+        if (robotPoint != null) {
+            PointF pointF = DegreeManager.changeAbslutePoint(robotPoint.imageViewX, robotPoint.imageViewY, matrix);
+            robotPoint.setPositionViewX(pointF.x);
+            robotPoint.setPositionViewY(pointF.y);
         }
     }
 
@@ -112,60 +119,61 @@ public class GpsImageView extends FrameLayout {
      */
     public void addPoint(final float locationX, final float locationY, final String positionName) {
 
-        /**
-         *  设置一定的延时保证view在加载完成后 能够成功获取到Matrix再去添加点
-         */
-        mapView.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                CoordinateView coordinateView = new CoordinateView(MainApplication.getContext(), point);
-                coordinateView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
-                        ViewGroup.LayoutParams.WRAP_CONTENT));
+        CoordinateView coordinateView = new CoordinateView(MainApplication.getContext(), point);
+        coordinateView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT));
 
-                coordinateView.setPositionName(positionName);
-                coordinateView.setShowPointName(true);
-                //求出标记点相对于图片的坐标
-                Log.d(TAG, "addPoint: " + System.currentTimeMillis());
-                Log.d(TAG, "addPoint: " + mapView.getCurrentImageMatrix());
-                PointF pointF = DegreeManager.changeAbslutePoint(locationX, locationY, mapView.getCurrentImageMatrix());
-                coordinateView.setLocationX(pointF.x);
-                coordinateView.setLocationY(pointF.y);
-                coordinateView.imageViewX = locationX;
-                coordinateView.imageViewY = locationY;
-                pointsList.add(coordinateView);
-                addView(coordinateView);
-            }
-        },100);
+        coordinateView.setPositionName(positionName);
+        coordinateView.setShowPointName(true);
+        //求出标记点相对于图片的坐标
+        Log.d(TAG, "addPoint: " + System.currentTimeMillis());
+        Log.d(TAG, "addPoint: " + mapView.getCurrentImageMatrix());
+        Log.d(TAG, "addPoint: locationX" + locationX + "locationY:" + locationY);
+        PointF pointF = DegreeManager.changeAbslutePoint(locationX, locationY, mapView.getCurrentImageMatrix());
+
+        coordinateView.setLocationX(pointF.x);
+        coordinateView.setLocationY(pointF.y);
+        coordinateView.imageViewX = locationX;
+        coordinateView.imageViewY = locationY;
+        pointsList.add(coordinateView);
+        addView(coordinateView);
 
     }
 
 
     /**
-     *  添加机器人点
+     * 添加机器人点
+     *
      * @param locationX
      * @param locationY
-     * @param positionName
-     * @param rosBitmap
      */
-    public void addRobotPoint(float locationX, float locationY, String positionName, Bitmap rosBitmap) {
+    public void addRobotPoint(float locationX, float locationY) {
 
         if (null == robotPoint) {
             robotPoint = new CoordinateView(MainApplication.getContext(), point);
+            robotPoint.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT));
+
+            robotPoint.setPositionName("robot");
+            robotPoint.setShowPointName(true);
+            //求出标记点相对于图片的坐标
+            Log.d(TAG, "addPoint: " + System.currentTimeMillis());
+            Log.d(TAG, "addPoint: " + mapView.getCurrentImageMatrix());
+            PointF pointF = DegreeManager.changeAbslutePoint(locationX, locationY, mapView.getCurrentImageMatrix());
+            robotPoint.setLocationX(pointF.x);
+            robotPoint.setLocationY(pointF.y);
+            robotPoint.imageViewX = locationX;
+            robotPoint.imageViewY = locationY;
+            robotPoint.setmArrow(BitmapFactory.decodeResource(getResources(), R.mipmap.sweeprobot));
+            addView(robotPoint);
+        } else {
+            PointF pointF = DegreeManager.changeAbslutePoint(locationX, locationY, mapView.getCurrentImageMatrix());
+//            robotPoint.setLocationX(pointF.x);
+//            robotPoint.setLocationY(pointF.y);
+//            robotPoint.imageViewX = locationX;
+//            robotPoint.imageViewY = locationY;
+//            postInvalidate();
         }
-
-        robotPoint.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT));
-
-        robotPoint.setPositionName(positionName);
-        robotPoint.setShowPointName(true);
-        //求出标记点相对于图片的坐标
-        PointF pointF = DegreeManager.changeAbslutePoint(locationX, locationY, this.mapView.getCurrentImageMatrix());
-        robotPoint.setLocationX(pointF.x);
-        robotPoint.setLocationY(pointF.y);
-        robotPoint.imageViewX = locationX;
-        robotPoint.imageViewY = locationY;
-        robotPoint.setmArrow(rosBitmap);
-        addView(robotPoint);
     }
 
     /**
@@ -217,18 +225,13 @@ public class GpsImageView extends FrameLayout {
     }
 
     public void scanAddPoint(String name, int i) {
-
-
     }
 
     public void setImageView(Bitmap bitmap) {
-
         mapView.setImageBitmap(bitmap);
-
     }
 
     public void setImageView(Drawable drawable) {
-
         mapView.setImageDrawable(drawable);
     }
 

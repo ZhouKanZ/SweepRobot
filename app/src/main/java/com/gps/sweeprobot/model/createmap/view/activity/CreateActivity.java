@@ -18,7 +18,6 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.request.target.SimpleTarget;
 import com.gps.sweeprobot.R;
 import com.gps.sweeprobot.base.BaseActivity;
 import com.gps.sweeprobot.model.createmap.bean.ControlTab;
@@ -78,7 +77,6 @@ public class CreateActivity extends BaseActivity<CreateMapPresenter, CreateMapCo
     ImageView ivAnim;
 
     private List<ControlTab> controlTabs;
-    private SimpleTarget<Bitmap> target;
 
     /**
      *  速度
@@ -111,7 +109,15 @@ public class CreateActivity extends BaseActivity<CreateMapPresenter, CreateMapCo
     @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
     @Override
     protected void initData() {
+        initView();
+        /**
+         *  先注册RxBus再进行发送,可以确保信息不会丢失  PublishSubject 的机制
+         */
+        mPresenter.registerRxBus();
+        mPresenter.startScanMap();
+    }
 
+    private void initView() {
         /* 隐藏状态栏 */
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -128,21 +134,21 @@ public class CreateActivity extends BaseActivity<CreateMapPresenter, CreateMapCo
         rvControl.setAdapter(new CommonAdapter<ControlTab>(this, R.layout.control_item, controlTabs) {
 
             @Override
-            protected void convert(ViewHolder holder, ControlTab controlTab, int position) {
+            protected void convert(ViewHolder holder, ControlTab controlTab,int position) {
                 ((ImageView) holder.getView(R.id.iv)).setImageBitmap(
-                        BitmapFactory
-                                .decodeResource(getResources(), controlTab.getResId()));
+                        BitmapFactory.decodeResource(getResources(), controlTab.getResId()));
+                holder.setOnClickListener(R.id.iv, new OnControlClickListener(position));
             }
         });
 
         rockerViewCenter.setOnAngleChangeListener(this);
-        mPresenter.startScanMap();
-
+//        test();
     }
 
     private void test() {
         // 测试添加点
-        gpsMapview.addPoint(100, 100, "我添加的点");
+        int px_100 = DensityUtil.dip2px(100);
+        gpsMapview.addPoint(px_100, px_100, "我添加的点");
     }
 
     @Override
@@ -161,6 +167,7 @@ public class CreateActivity extends BaseActivity<CreateMapPresenter, CreateMapCo
 
     @Override
     protected void otherViewClick(View view) {
+
     }
 
     @RequiresApi(api = Build.VERSION_CODES.HONEYCOMB)
@@ -171,7 +178,6 @@ public class CreateActivity extends BaseActivity<CreateMapPresenter, CreateMapCo
                 this.finish();
                 break;
             case R.id.iv:
-
                 if (controllayoutisHide) {
                     iv.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.mipmap.hide));
                     showControlLayout(layoutControl);
@@ -187,7 +193,6 @@ public class CreateActivity extends BaseActivity<CreateMapPresenter, CreateMapCo
                 break;
         }
     }
-
 
     @Override
     public void displayMap(Bitmap bitmap) {
@@ -228,10 +233,9 @@ public class CreateActivity extends BaseActivity<CreateMapPresenter, CreateMapCo
     }
 
     @Override
-    public void changeRobotPos(Point point) {
-
-
-
+    public void changeRobotPos(double x, double y) {
+        Log.d(TAG, "changeRobotPos: x :" + x + "   y:" +y);
+        gpsMapview.addRobotPoint((float)x,(float)y);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.HONEYCOMB)
@@ -263,9 +267,15 @@ public class CreateActivity extends BaseActivity<CreateMapPresenter, CreateMapCo
     }
 
     @Override
+    public void showLaserPoints(List<Point> points) {
+
+    }
+
+    @Override
     public void onStart() {
         super.onStart();
         mPresenter.subscribe();
+        // 开始的时候 便开始获取机器人的位置
     }
 
     @Override
@@ -317,8 +327,6 @@ public class CreateActivity extends BaseActivity<CreateMapPresenter, CreateMapCo
 
     @Override
     public void accept(@NonNull Bitmap bitmap) throws Exception {
-
-        Log.d(TAG, "accept: " + Thread.currentThread().getName());
         gpsMapview.setImageView(bitmap);
     }
 
@@ -326,11 +334,53 @@ public class CreateActivity extends BaseActivity<CreateMapPresenter, CreateMapCo
     protected void onDestroy() {
         super.onDestroy();
         mPresenter.stopScanMap();
+        mPresenter.unregisterRxBus();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         Log.d(TAG, "onPause: -----------------" );
+        /**
+         * 将消耗性能的操作 在执行onpaused的时候暂停掉，onresume的时候重新开始
+         * ex: 轮询和视图的更新
+         */
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    /**
+     *  控制布局点击事件
+     */
+    public  class OnControlClickListener implements View.OnClickListener{
+
+        private int position;
+
+        public OnControlClickListener(int position) {
+            this.position = position;
+        }
+
+        @Override
+        public void onClick(View v) {
+
+            // 开始
+            if (position == 0){
+                mPresenter.startScanMap();
+            }
+
+            // 暂停
+            if (position == 1){
+                mPresenter.stopScanMap();
+            }
+
+            // 完成
+            if (position == 2){
+                mPresenter.finishScanMap();
+            }
+
+        }
     }
 }
