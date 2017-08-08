@@ -19,10 +19,9 @@ android {
         }
     }
 
-    dataBinding {
+    dataBinding{
         enabled = true
     }
-
 }
 
 dependencies {
@@ -46,6 +45,7 @@ dependencies {
     compile 'com.squareup.retrofit2:converter-gson:2.3.0'
     compile 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
     compile 'com.orhanobut:dialogplus:1.11@aar'
-    compile 'org.litepal.android:core:1.5.1'
     compile 'com.zhy:base-rvadapter:3.0.3'
+    compile 'org.litepal.android:core:1.5.1'
+
 }

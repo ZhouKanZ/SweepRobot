@@ -2,17 +2,23 @@ package com.gps.sweeprobot.model.createmap.view.activity;
 
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
+import android.annotation.TargetApi;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Point;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.gps.sweeprobot.R;
 import com.gps.sweeprobot.base.BaseActivity;
 import com.gps.sweeprobot.model.createmap.bean.ControlTab;
@@ -29,16 +35,20 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.functions.Consumer;
 
 /**
  * @Author : zhoukan
  * @CreateDate : 2017/7/13 0013
  * @Descriptiong : 创建地图页面
  */
-
-public class CreateActivity extends BaseActivity<CreateMapPresenter,CreateMapContract.View>
-        implements CreateMapContract.View,
-        RockerView.OnAngleChangeListener {
+public class CreateActivity extends BaseActivity<CreateMapPresenter, CreateMapContract.View>
+        implements
+        CreateMapContract.View,
+        RockerView.OnAngleChangeListener,
+        Animator.AnimatorListener,
+        Consumer<Bitmap> {
 
     private static final String TAG = "CreateActivity";
 
@@ -68,6 +78,15 @@ public class CreateActivity extends BaseActivity<CreateMapPresenter,CreateMapCon
     ImageView ivAnim;
 
     private List<ControlTab> controlTabs;
+    private SimpleTarget<Bitmap> target;
+
+    /**
+     *  速度
+     */
+    private double[] velocity = new double[2];
+    private long lasttime = 0L;
+    private long currenttime = 0L;
+    private static final int TIME_INTERVAL = 100;
 
     /**
      * 控制layout是否隐藏
@@ -86,9 +105,10 @@ public class CreateActivity extends BaseActivity<CreateMapPresenter,CreateMapCon
 
     @Override
     protected CreateMapPresenter loadPresenter() {
-        return new CreateMapPresenter(this);
+        return new CreateMapPresenter();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
     @Override
     protected void initData() {
 
@@ -96,10 +116,9 @@ public class CreateActivity extends BaseActivity<CreateMapPresenter,CreateMapCon
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.map_test);
-        gpsMapview.setImageView(bitmap);
         setLeftVisiable(true);
 
+        gpsMapview.setImageView(BitmapFactory.decodeResource(getResources(), R.mipmap.place_holder));
         controlTabs = new ArrayList<>();
         controlTabs.add(new ControlTab(R.mipmap.play));
         controlTabs.add(new ControlTab(R.mipmap.stop));
@@ -117,9 +136,13 @@ public class CreateActivity extends BaseActivity<CreateMapPresenter,CreateMapCon
         });
 
         rockerViewCenter.setOnAngleChangeListener(this);
-
         mPresenter.startScanMap();
 
+    }
+
+    private void test() {
+        // 测试添加点
+        gpsMapview.addPoint(100, 100, "我添加的点");
     }
 
     @Override
@@ -140,6 +163,7 @@ public class CreateActivity extends BaseActivity<CreateMapPresenter,CreateMapCon
     protected void otherViewClick(View view) {
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.HONEYCOMB)
     @OnClick({R.id.iv_back, R.id.iv, R.id.iv_point_south})
     public void onViewClicked(View view) {
         switch (view.getId()) {
@@ -165,22 +189,26 @@ public class CreateActivity extends BaseActivity<CreateMapPresenter,CreateMapCon
     }
 
 
+    @Override
+    public void displayMap(Bitmap bitmap) {
+        gpsMapview.setImageView(bitmap);
+    }
+
     /**********/
 
     @Override
-    public void clickScanControl(boolean isScan) {
-    }
+    public void clickScanControl(boolean isScan) {}
 
     @Override
-    public void cancelScanControl() {
-    }
+    public void cancelScanControl() {}
 
     /**
-     * offloat() 操作的单位是px
+     *  offloat() 操作的单位是px
      * 每次动画产生的位移，不是基于现有的位置，而是基于view原本的位置
      *
      * @param view
      */
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Override
     public void showControlLayout(View view) {
 
@@ -190,45 +218,32 @@ public class CreateActivity extends BaseActivity<CreateMapPresenter,CreateMapCon
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.HONEYCOMB)
     @Override
     public void hideControlLayout(View view) {
 
         ObjectAnimator.ofFloat(view, "translationX", -DensityUtil.dip2px(100), 0)
                 .setDuration(500)
                 .start();
+    }
+
+    @Override
+    public void changeRobotPos(Point point) {
+
+
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.HONEYCOMB)
     @Override
     public void showGetRobotsAnimation() {
 
         ObjectAnimator animator = ObjectAnimator
                 .ofFloat(ivAnim, "rotation", 0f, 360f * 3)
                 .setDuration(5000);
-
         animator.start();
+        animator.addListener(this);
 
-        animator.addListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animator) {
-
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animator) {
-                CreateActivity.this.hideGetRobotsAnimation();
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animator) {
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animator) {
-
-            }
-        });
     }
 
     // 设置不可见
@@ -238,17 +253,84 @@ public class CreateActivity extends BaseActivity<CreateMapPresenter,CreateMapCon
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
+    public Consumer<Bitmap> getConsumer() {
+        return this;
     }
 
     @Override
-    public void angle(double angle) {
+    public double[] getVelocity() {
+        return velocity;
+    }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        mPresenter.subscribe();
+    }
+
+    @Override
+    public void change(double angle, float length) {
+
+        /**
+         *  每隔一定的时间发送一次指令
+         */
+        if (lasttime == 0L) {
+            velocity[0] = angle;
+            velocity[1] = length;
+            mPresenter.sendCommandToRos();
+            lasttime = System.currentTimeMillis();
+        } else {
+            currenttime = System.currentTimeMillis();
+            if (currenttime - lasttime >= TIME_INTERVAL) {
+                velocity[0] = angle;
+                velocity[1] = length;
+                mPresenter.sendCommandToRos();
+                lasttime = System.currentTimeMillis();
+            }
+        }
     }
 
     @Override
     public void onFinish() {
 
+        velocity[0] = 0;
+        velocity[1] = 0;
+        mPresenter.sendCommandToRos();
+
+    }
+
+    @Override
+    public void onAnimationStart(Animator animation) {}
+
+    @Override
+    public void onAnimationEnd(Animator animation) {
+        hideGetRobotsAnimation();
+    }
+
+    @Override
+    public void onAnimationCancel(Animator animation) {}
+
+    @Override
+    public void onAnimationRepeat(Animator animation) {
+
+    }
+
+    @Override
+    public void accept(@NonNull Bitmap bitmap) throws Exception {
+
+        Log.d(TAG, "accept: " + Thread.currentThread().getName());
+        gpsMapview.setImageView(bitmap);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mPresenter.stopScanMap();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d(TAG, "onPause: -----------------" );
     }
 }

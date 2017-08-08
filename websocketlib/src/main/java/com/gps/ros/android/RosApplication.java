@@ -16,9 +16,7 @@ public class RosApplication extends Application {
 
     private Intent serviceIntent;
 
-    public RosApplication() {
-        
-    }
+    public RosApplication() {}
 
     @Override
     public void onCreate() {
@@ -29,11 +27,11 @@ public class RosApplication extends Application {
     @Override
     public void onLowMemory() {
         super.onLowMemory();
-        stopService();
+//        stopService();
     }
 
     public void startService(Context ctz,Bundle bundle, Class clz){
-        serviceIntent =  RosService.startSelf(ctz,bundle,clz);
+//        serviceIntent =  RosService.startSelf(ctz,bundle,clz);
     }
 
     public void stopService(){

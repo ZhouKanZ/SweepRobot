@@ -99,7 +99,6 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
                     TaskQueueActivity.startSelf(context,TaskQueueActivity.class,null);
                     break;
                 case 3:
-
                     break;
             }
 

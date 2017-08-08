@@ -12,24 +12,31 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:name">
 
         <!--WangJun Begin-->
-        <activity android:name=".model.main.view.activity.WifiActivity"></activity>
+        <activity android:name=".model.main.view.activity.WifiActivity"/>
 
         <activity android:name=".model.mapmanager.view.activity.MapManagerActivity"></activity>
 
         <activity
             android:name=".model.mapmanager.view.activity.MapEditActivity"
             android:screenOrientation="landscape"
-            android:configChanges="orientation|keyboardHidden|screenSize"></activity>
+            android:configChanges="orientation|keyboardHidden|screenSize">
 
+        </activity>
         <!--wangJun end-->
 
         <activity android:name=".model.main.view.activity.WelcomeActivity"
+            >
+
+        </activity>
+
+        <!-- ZHOUKAN - BEGINNING -->
+        <activity android:name=".model.main.view.activity.MainActivity"
+            android:launchMode="singleTask"
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -38,12 +45,10 @@
             </intent-filter>
         </activity>
 
-        <!-- ZHOUKAN - BEGINNING -->
-        <activity android:name=".model.main.view.activity.MainActivity"
-            android:launchMode="singleTask"
-            />
         <activity android:name=".model.main.view.activity.IpActivity"/>
+
         <activity android:name=".model.createmap.view.activity.CreateActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="landscape"
             />
         <activity android:name=".model.taskqueue.view.activity.TaskQueueActivity"

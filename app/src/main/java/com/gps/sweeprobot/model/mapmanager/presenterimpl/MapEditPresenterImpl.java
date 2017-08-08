@@ -36,7 +36,7 @@ import io.reactivex.functions.Consumer;
  * Create by WangJun on 2017/7/19
  */
 
-public class MapEditPresenterImpl extends MapEditPresenter{
+public class MapEditPresenterImpl extends MapEditPresenter {
 
     private static String MAP_KEY = "mapEdit";
     private static String ACTION_KEY = "action_key";
@@ -60,7 +60,7 @@ public class MapEditPresenterImpl extends MapEditPresenter{
     private boolean isPoint;
 
     //dialog状态
-    public static final int INPUT_DIALOG_ADD =0;
+    public static final int INPUT_DIALOG_ADD = 0;
     public static final int INPUT_DIALOG_RENAME = 1;
     public static final int INPUT_DIALOG_OBSTACLE = 2;
 
@@ -86,35 +86,28 @@ public class MapEditPresenterImpl extends MapEditPresenter{
 
     /**
      * 将数据库中的point数据展示出来，在刚进入活动的时候
+     *
      * @param data
      */
     public void getPointDataFromSQL(List<PointBean> data) {
 
         pointsList.clear();
         pointsList.addAll(data);
-        for ( PointBean pointBean : pointsList) {
+        for (PointBean pointBean : pointsList) {
 
             mapEditView.addPoint(pointBean.getX(), pointBean.getY(), pointBean.getPointName());
         }
 
     }
 
-    public void getObstacleDataFormSQL(List<VirtualObstacleBean> data){
+    public void getObstacleDataFormSQL(List<VirtualObstacleBean> data) {
 
         obstacleBeanList.clear();
         obstacleBeanList.addAll(data);
+        for (VirtualObstacleBean bean : obstacleBeanList) {
 
-    /*    Flowable.fromIterable(data)
-                .subscribe(new Consumer<VirtualObstacleBean>() {
-                    @Override
-                    public void accept(@io.reactivex.annotations.NonNull VirtualObstacleBean virtualObstacleBean) throws Exception {
-                        mapEditView.addObstacle(virtualObstacleBean.getPointList());
-                    }
-                });*/
-        for (VirtualObstacleBean bean: obstacleBeanList) {
-
-            mapEditView.addObstacle(bean.getMyPointFs(),bean.getName());
-            LogManager.i("obstacle point list size============"+bean.getMyPointFs().size());
+            mapEditView.addObstacle(bean.getMyPointFs(), bean.getName());
+            LogManager.i("obstacle point list size============" + bean.getMyPointFs().size());
         }
     }
 
@@ -162,7 +155,7 @@ public class MapEditPresenterImpl extends MapEditPresenter{
 
     }
 
-    private void setMapData(){
+    private void setMapData() {
 
         Observable.just(getiModelMap().get(MAP_KEY))
                 .subscribe(new Consumer<IModel>() {
@@ -172,7 +165,7 @@ public class MapEditPresenterImpl extends MapEditPresenter{
                         ((MapListModel) iModel).downMapImg(new MapListModel.InfoHint() {
                             @Override
                             public void successInfo(Drawable drawable) {
-                                mapEditView.getData(drawable,null);
+                                mapEditView.getData(drawable, null);
                             }
 
                             @Override
@@ -209,7 +202,7 @@ public class MapEditPresenterImpl extends MapEditPresenter{
                             @Override
                             public void successInfo(List<PointBean> data) {
 
-                                LogManager.i("sql size ===="+data.size());
+                                LogManager.i("sql size ====" + data.size());
                                 getPointDataFromSQL(data);
 
                             }
@@ -225,7 +218,7 @@ public class MapEditPresenterImpl extends MapEditPresenter{
                             @Override
                             public void successInfo(List<VirtualObstacleBean> data) {
 
-                                LogManager.i("obstacle data size========="+data.size());
+                                LogManager.i("obstacle data size=========" + data.size());
                                 getObstacleDataFormSQL(data);
                             }
 
@@ -286,7 +279,7 @@ public class MapEditPresenterImpl extends MapEditPresenter{
     @Override
     public void commitViewOnClick() {
 
-        switch (mAction){
+        switch (mAction) {
 
             case OPERATE_ADD_POINT:
                 mapEditView.createInputNameDialog(getIView().getString(R.string.dialog_add_point_title));
@@ -309,19 +302,20 @@ public class MapEditPresenterImpl extends MapEditPresenter{
 
     /**
      * dialog的sure点击事件
+     *
      * @param name
      */
     @Override
     public void addPointViewOnClick(String name) {
 
-        if (dialogStatus == INPUT_DIALOG_ADD){
+        if (dialogStatus == INPUT_DIALOG_ADD) {
 
             operateAddPoint(name);
 
-        }else if (dialogStatus == INPUT_DIALOG_RENAME){
-            rename(name,position);
+        } else if (dialogStatus == INPUT_DIALOG_RENAME) {
+            rename(name, position);
 
-        }else if (dialogStatus == INPUT_DIALOG_OBSTACLE){
+        } else if (dialogStatus == INPUT_DIALOG_OBSTACLE) {
             VirtualObstacleBean obstacleBean = mapEditView.setObstacleName(name);
             obstacleBeanList.add(obstacleBean);
             mapEditView.updateAdapter(obstacleBeanList);
@@ -330,19 +324,21 @@ public class MapEditPresenterImpl extends MapEditPresenter{
 
     /**
      * 点击删除
+     *
      * @param name
      * @param position
      */
     @Override
     public void itemOnClick(String name, int position) {
 
-            mapEditView.setRemoveAnimation();
-            remove(name,position);
+        mapEditView.setRemoveAnimation();
+        remove(name, position);
 
     }
 
     /**
      * 长按重命名
+     *
      * @param position
      */
     @Override
@@ -377,7 +373,7 @@ public class MapEditPresenterImpl extends MapEditPresenter{
 
             //添加新加入数据库的pointBean
             PointBean pointBean = mapEditView.addPointWrapper(getFlagXY().x, getFlagXY().y, pointName);
-            if (pointBean != null){
+            if (pointBean != null) {
 
                 pointsList.add(pointBean);
             }
@@ -390,9 +386,10 @@ public class MapEditPresenterImpl extends MapEditPresenter{
 
     /**
      * 获得屏幕的坐标
+     *
      * @return
      */
-    private PointF getFlagXY(){
+    private PointF getFlagXY() {
 
         return new PointF(ScreenUtils.getFlagX(MainApplication.getContext()),
                 ScreenUtils.getFlagY(MainApplication.getContext()) - iView.getToolBarHeight());
@@ -401,17 +398,18 @@ public class MapEditPresenterImpl extends MapEditPresenter{
     /**
      * 设置虚拟墙的顶点
      */
-    private void setObstacleRect(){
+    private void setObstacleRect() {
 
         mapEditView.setObstacleRect(getFlagXY());
     }
 
     /**
      * 重命名
+     *
      * @param name
      * @param position
      */
-    public void rename(String name,int position){
+    public void rename(String name, int position) {
 
         //更新数据库
         PointBean pointBean = DataSupport.find(PointBean.class, pointsList.get(position).getId());
@@ -419,9 +417,9 @@ public class MapEditPresenterImpl extends MapEditPresenter{
         pointBean.save();
 
         //更新view
-        mapEditView.updateName(name,position);
+        mapEditView.updateName(name, position);
         //刷新adapter
-        pointsList.set(position,pointBean);
+        pointsList.set(position, pointBean);
         mapEditView.updateAdapter(pointsList);
         //通知服务器
 
@@ -429,24 +427,25 @@ public class MapEditPresenterImpl extends MapEditPresenter{
 
     private void remove(String name, int position) {
 
-        if (isPoint){
+        if (isPoint) {
 
-            removePoint(name,position);
-        }else {
-            removeObstacle(name,position);
+            removePoint(name, position);
+        } else {
+            removeObstacle(name, position);
         }
 
     }
 
     /**
      * 移除标记点
+     *
      * @param pointName
      * @param position
      */
-    private void removePoint(String pointName,int position){
+    private void removePoint(String pointName, int position) {
 
         //移除标记点view
-        mapEditView.removePoint(pointName,position);
+        mapEditView.removePoint(pointName, position);
         //数据库删除数据
         DataSupport.delete(PointBean.class, pointsList.get(position).getId());
         //通知服务器
@@ -459,13 +458,14 @@ public class MapEditPresenterImpl extends MapEditPresenter{
 
     /**
      * 移除虚拟墙
+     *
      * @param name
      * @param position
      */
-    private void removeObstacle(String name,int position){
+    private void removeObstacle(String name, int position) {
 
-        mapEditView.removeObstacle(name,position);
-        DataSupport.delete(VirtualObstacleBean.class,obstacleBeanList.get(position).getId());
+        mapEditView.removeObstacle(name, position);
+        DataSupport.delete(VirtualObstacleBean.class, obstacleBeanList.get(position).getId());
         obstacleBeanList.remove(position);
         mapEditView.updateAdapter(obstacleBeanList);
     }

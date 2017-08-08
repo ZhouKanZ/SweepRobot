@@ -16,6 +16,9 @@ public class RosProtrocol {
         public static final String TYPE  = "geometry_msgs/Twist";
     }
 
+    /**
+     *  位置
+     */
     public class Position{
         public static final String TOPIC = "amcl_pose";
         public static final String TYPE  = "geometry_msgs/PoseWithCovarianceStamped";
@@ -30,4 +33,10 @@ public class RosProtrocol {
         public static final String FRAME_ID = "map";
     }
     
+
+    public class NaviPosition{
+        public static final String TOPIC = "nav_position";
+        public static final String TYPE  = "basic_msgs/nav_pose";
+    }
+
 }

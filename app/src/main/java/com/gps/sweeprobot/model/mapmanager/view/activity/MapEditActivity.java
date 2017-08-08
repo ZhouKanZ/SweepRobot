@@ -102,7 +102,6 @@ public class MapEditActivity extends BaseActivity<MapEditPresenter, IView> imple
         for (ImageView imageView : nameViews) {
             imageView.setOnClickListener(this);
         }
-        gpsImageView.setObstacleListener(this);
     }
 
     @Override
@@ -399,7 +398,6 @@ public class MapEditActivity extends BaseActivity<MapEditPresenter, IView> imple
             return null;
         }
         return (T) rootView.findViewById(viewId);
-
     }
 
     @Override

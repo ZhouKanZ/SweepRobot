@@ -30,6 +30,7 @@ import java.util.List;
 import io.reactivex.Flowable;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Consumer;
+import retrofit2.http.HEAD;
 
 import static com.gps.sweeprobot.R.mipmap.point;
 
@@ -54,6 +55,14 @@ public class GpsImageView extends FrameLayout {
 
     private OnObstacleViewClick obstacleListener;
 
+    private CoordinateView robotPoint;
+
+
+
+    public PinchImageView getMapView() {
+        return mapView;
+    }
+
     public GpsImageView(Context context) {
         super(context);
         initView(context);
@@ -72,10 +81,6 @@ public class GpsImageView extends FrameLayout {
         Log.i(TAG, "GpsImageView: 3");
     }
 
-    public void setObstacleListener(OnObstacleViewClick obstacleListener) {
-        this.obstacleListener = obstacleListener;
-    }
-
     private void initView(Context context) {
         mapView = new PinchImageView(context);
         pointsList = new ArrayList<>();
@@ -91,6 +96,7 @@ public class GpsImageView extends FrameLayout {
 
         mapView.setLayoutParams(layoutParams);
         mapView.setImageResource(R.mipmap.fb_map);
+        mapView.setLayoutParams(layoutParams);
         addView(mapView);
 
         this.mapView.addOuterMatrixChangedListener(new PinchImageView.OuterMatrixChangedListener() {
@@ -160,8 +166,8 @@ public class GpsImageView extends FrameLayout {
 
     /**
      * 添加标记点
-     * @param locationX 经过矩阵变换后的x坐标
-     * @param locationY 经过矩阵变换后的y坐标
+     * @param locationX
+     * @param locationY
      * @param positionName
      */
     public void addPoint(float locationX, float locationY, String positionName) {
@@ -207,9 +213,29 @@ public class GpsImageView extends FrameLayout {
      */
     public void updateName(String newName, int index) {
 
-        CoordinateView coordinateView = pointsList.get(index);
-        coordinateView.setPositionName(newName);
-        coordinateView.postInvalidate();
+        pointsList.get(index).setPositionName(newName);
+        pointsList.get(index).postInvalidate();
+    }
+
+    public void addRobotPoint(float locationX, float locationY, String positionName, Bitmap rosBitmap) {
+
+        if (null == robotPoint) {
+            robotPoint = new CoordinateView(MainApplication.getContext(), point);
+        }
+
+        robotPoint.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT));
+
+        robotPoint.setPositionName(positionName);
+        robotPoint.setShowPointName(true);
+        //求出标记点相对于图片的坐标
+        PointF pointF = DegreeManager.changeAbsolutePoint(locationX, locationY, this.mapView.getCurrentImageMatrix());
+        robotPoint.setLocationX(pointF.x);
+        robotPoint.setLocationY(pointF.y);
+        robotPoint.imageViewX = locationX;
+        robotPoint.imageViewY = locationY;
+        robotPoint.setmArrow(rosBitmap);
+        addView(robotPoint);
     }
 
     /**

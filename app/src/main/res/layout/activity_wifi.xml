@@ -1,34 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_swipe"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="32dp"
-        android:background="@color/global_bg">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:text="@string/wifi_list_title"
-            android:textSize="18sp"
-            android:textColor="@color/white"
-            android:layout_marginLeft="10dp"/>
-    </RelativeLayout>
-
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/wifi_swipe_refresh"
+    
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_wifi"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+    </android.support.v7.widget.RecyclerView>
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/wifi_recycle_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-        />
-    </android.support.v4.widget.SwipeRefreshLayout>
 
-</LinearLayout>
+
+</android.support.v4.widget.SwipeRefreshLayout>

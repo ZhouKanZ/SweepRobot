@@ -65,7 +65,7 @@ public class ActionItem implements AdapterItem<IAction>{
             @Override
             public boolean onLongClick(View v) {
                 listener.onItemLongClick(v,holder.getLayoutPosition());
-                return false;
+                return true;
             }
         });
     }

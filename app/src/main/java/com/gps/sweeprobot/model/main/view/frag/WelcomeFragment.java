@@ -81,6 +81,7 @@ public class WelcomeFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View view) {
 
+
         IpActivity.startSelf(this.getActivity(),IpActivity.class,null);
         this.getActivity().finish();
     }
