@@ -41,5 +41,8 @@
     <string name="input_name_must_not_null">名字不能为空</string>
     <string name="dialog_Obstacle">虚拟墙</string>
     <string name="dialog_point_rename">重命名</string>
+    <string name="namerobot">请为地图命名</string>
+    <string name="cancel">取消</string>
+    <string name="ensure">确定</string>
 
 </resources>

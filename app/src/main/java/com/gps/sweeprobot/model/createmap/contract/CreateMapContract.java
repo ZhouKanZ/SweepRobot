@@ -96,6 +96,9 @@ public class CreateMapContract {
          * @param points
          */
         void showLaserPoints(List<Point> points);
+
+        void showIutInfoDialog();
+        void hideIutInfoDialog();
     }
 
     public interface Model extends RxBusModel<JSONObject> {

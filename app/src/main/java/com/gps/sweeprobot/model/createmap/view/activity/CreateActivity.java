@@ -11,21 +11,29 @@ import android.support.annotation.RequiresApi;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.gps.sweeprobot.R;
 import com.gps.sweeprobot.base.BaseActivity;
+import com.gps.sweeprobot.bean.GpsMap;
 import com.gps.sweeprobot.model.createmap.bean.ControlTab;
 import com.gps.sweeprobot.model.createmap.contract.CreateMapContract;
 import com.gps.sweeprobot.model.createmap.presenter.CreateMapPresenter;
 import com.gps.sweeprobot.utils.DensityUtil;
+import com.gps.sweeprobot.utils.ToastManager;
 import com.gps.sweeprobot.widget.GpsImageView;
 import com.gps.sweeprobot.widget.RockerView;
+import com.orhanobut.dialogplus.DialogPlus;
+import com.orhanobut.dialogplus.OnClickListener;
 import com.zhy.adapter.recyclerview.CommonAdapter;
 import com.zhy.adapter.recyclerview.base.ViewHolder;
 
@@ -77,6 +85,7 @@ public class CreateActivity extends BaseActivity<CreateMapPresenter, CreateMapCo
     ImageView ivAnim;
 
     private List<ControlTab> controlTabs;
+    private DialogPlus dialog;
 
     /**
      *  速度
@@ -143,6 +152,38 @@ public class CreateActivity extends BaseActivity<CreateMapPresenter, CreateMapCo
 
         rockerViewCenter.setOnAngleChangeListener(this);
 //        test();
+
+        /* init dialog  */
+        dialog = DialogPlus.newDialog(this)
+                .setContentHolder(new com.orhanobut.dialogplus.ViewHolder(R.layout.dialog_inputinfo))
+                .setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(DialogPlus dialog, View view) {
+
+                        switch (view.getId()) {
+                            case R.id.btn_1:
+                                dialog.dismiss();
+                                break;
+                            case R.id.btn_2:
+                                EditText etName = (EditText) dialog.getHolderView().findViewById(R.id.et_name);
+                                String   robotName = etName.getEditableText().toString();
+
+                                if (TextUtils.isEmpty(robotName)){
+                                    ToastManager.show(mCtz,"您忘了为机器人命名噢", Toast.LENGTH_SHORT);
+                                }else {
+                                    mPresenter.saveMap(new GpsMap());
+                                }
+                                dialog.dismiss();
+                                break;
+                        }
+
+                    }
+                })
+                .setExpanded(false)
+                .setContentWidth(RelativeLayout.LayoutParams.WRAP_CONTENT)
+                .setGravity(Gravity.CENTER)
+                .create();
+
     }
 
     private void test() {
@@ -272,7 +313,18 @@ public class CreateActivity extends BaseActivity<CreateMapPresenter, CreateMapCo
     }
 
     @Override
+    public void showIutInfoDialog() {
+        dialog.show();
+    }
+
+    @Override
+    public void hideIutInfoDialog() {
+        dialog.dismiss();
+    }
+
+    @Override
     public void onStart() {
+
         super.onStart();
         mPresenter.subscribe();
         // 开始的时候 便开始获取机器人的位置

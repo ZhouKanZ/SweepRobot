@@ -47,4 +47,12 @@ public class RosProtrocol {
         public static final String TYPE  = "geometry_msgs/Pose";
     }
 
+    /**
+     * 激光点
+     */
+    public class LaserPose{
+        public static final String TOPIC = "laser_pose_picture";
+        public static final String TYPE  = "basic_msgs/laser_points";
+    }
+
 }

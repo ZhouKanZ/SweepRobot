@@ -19,6 +19,8 @@
  */
 package com.gps.ros.rosbridge.implementation;
 
+import android.util.Log;
+
 import com.alibaba.fastjson.JSONObject;
 import com.gps.ros.android.RxBus;
 import com.gps.ros.entity.PublishEvent;
@@ -73,13 +75,15 @@ public class ROSBridgeWebSocketClient extends WebSocketClient {
 
     @Override
     public void onMessage(String message) {
-//        if (debug) System.out.println("<ROS " + message);
+//        System.out.println("<ROS " + message);
+        if (debug) System.out.println("<ROS " + message);
 
         JSONObject jsonObject = (JSONObject) JSONObject.parse(message);
-        String op = jsonObject.getString("op");
+        Log.d("rosclient-------", "onMessage: " + jsonObject);
+        RxBus.getDefault().post(jsonObject);
 
         // 1.发送jsonobject类型的数据 -- 有的model需要接收多种类型的数据
-        RxBus.getDefault().post(jsonObject);
+        String op = jsonObject.getString("op");
 
         switch (op){
             case "publish":

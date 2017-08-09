@@ -2,6 +2,7 @@ package com.gps.sweeprobot.model.createmap.model;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -113,8 +114,8 @@ public class MapModel implements CreateMapContract.Model {
 
         /* 订阅机器人位置 */
         Subscribe subscribe = new Subscribe();
-        subscribe.topic = RosProtrocol.PicturePose.TOPIC;
-        subscribe.type = RosProtrocol.PicturePose.TYPE;
+        subscribe.topic     = RosProtrocol.PicturePose.TOPIC;
+        subscribe.type      = RosProtrocol.PicturePose.TYPE;
         WebSocketHelper.send(subscribe);
 
         /* 创建机器人可控制 advertise  */
@@ -123,8 +124,16 @@ public class MapModel implements CreateMapContract.Model {
         advertise.type      = RosProtrocol.Speed.TYPE;
         WebSocketHelper.send(advertise);
 
-        /* todo 订阅机器人激光点 */
+        /*  订阅机器人激光点 */
+        Subscribe laserPose = new Subscribe();
+        laserPose.topic     = RosProtrocol.LaserPose.TOPIC;
+        laserPose.type      = RosProtrocol.LaserPose.TYPE;
 
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("topic",RosProtrocol.LaserPose.TOPIC);
+        jsonObject.put("type",RosProtrocol.LaserPose.TYPE);
+
+        WebSocketHelper.send(laserPose);
     }
 
     /**
@@ -156,6 +165,9 @@ public class MapModel implements CreateMapContract.Model {
                 .subscribe(new Consumer<JSONObject>() {
                     @Override
                     public void accept(@NonNull JSONObject jsonObject) throws Exception {
+
+                        Log.d(TAG, "accept: " + jsonObject);
+
                         /**
                          * 接收到service的数据     ( 开始 -- 结束 )
                          * 接收到subscribe的数据
@@ -164,12 +176,19 @@ public class MapModel implements CreateMapContract.Model {
                             return;
                         }
 
-                        if (jsonObject.getString("op").equals("publish")){
-                            SubscribeResponse<PicturePose> picres = JSON.parseObject(jsonObject.toJSONString(),new TypeReference<SubscribeResponse<PicturePose>>(){});
-                            PicturePose poseResult = picres.getMsg();
-                            rosLisenter.OnReceiverPicture(poseResult);
-                        }
+                        String op = jsonObject.getString("op");
+                        String topic = jsonObject.getString("topic");
+                        switch (op){
+                            case "publish":
 
+                                if (topic.equals("")){
+
+                                }
+
+                                break;
+                            case "":
+                                break;
+                        }
                         // TODO: 2017/8/8 0008 机器人导航点
                     }
                 });

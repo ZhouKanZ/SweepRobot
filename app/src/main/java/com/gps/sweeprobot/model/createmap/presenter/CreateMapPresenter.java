@@ -75,6 +75,7 @@ public class CreateMapPresenter extends BasePresenter<CreateMapContract.View> im
 
     @Override
     public void finishScanMap() {
+        iView.showIutInfoDialog();
     }
 
     /* --------- 这两个方法之后必须得删掉 --------- */
