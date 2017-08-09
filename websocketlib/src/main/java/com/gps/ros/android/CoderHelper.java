@@ -22,7 +22,6 @@ public class CoderHelper {
     public static final String str = "hello";
     /**
      * @param imgStr base64编码字符串
-     * @param path   图片路径-具体到文件
      * @return
      * @Description: 将base64编码字符串转换为图片
      * @Author:

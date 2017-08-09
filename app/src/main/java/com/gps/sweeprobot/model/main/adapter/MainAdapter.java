@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.gps.sweeprobot.R;
 import com.gps.sweeprobot.model.createmap.view.activity.CreateActivity;
 import com.gps.sweeprobot.model.main.bean.MainTab;
+import com.gps.sweeprobot.model.mapmanager.view.activity.MapManagerActivity;
 import com.gps.sweeprobot.model.taskqueue.view.activity.TaskQueueActivity;
 
 import java.util.List;
@@ -92,13 +93,12 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
                     CreateActivity.startSelf(context,CreateActivity.class,null);
                     break;
                 case 1:
-
+                    MapManagerActivity.startSelf(context,MapManagerActivity.class,null);
                     break;
                 case 2:
                     TaskQueueActivity.startSelf(context,TaskQueueActivity.class,null);
                     break;
                 case 3:
-
                     break;
             }
 

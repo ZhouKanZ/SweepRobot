@@ -1,1 +1,1 @@
-include ':app', ':websocketlib', ':KqwRockerLibrary'
+include ':app', ':websocketlib'

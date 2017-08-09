@@ -2,8 +2,6 @@ package com.gps.sweeprobot.utils;
 
 import android.util.Log;
 
-import com.gps.sweeprobot.BuildConfig;
-
 
 /**
  * Created by gaosheng on 2016/7/29.
@@ -11,7 +9,7 @@ import com.gps.sweeprobot.BuildConfig;
 
 public class LogUtils {
 
-    public static final boolean isDebug = BuildConfig.DEBUG;
+    public static boolean isDebug = true;
 
     /**
      * 打印一个debug等级的 log

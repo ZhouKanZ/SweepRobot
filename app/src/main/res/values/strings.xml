@@ -4,6 +4,22 @@
     <string name="input_ip">请输入IP</string>
     <string name="login">登陆</string>
 
+    <!--activity_wifi-->
+    <string name="wifi_list_title">可用wifi列表</string>
+    <string name="connect_success">连接成功</string>
+    <string name="connect_failed">连接失败</string>
+
+    <!--dialog_input_wifi_pw-->
+    <string name="input_pw_hint"> 密码</string>
+    <string name="dialog_input_wifi_btn_cancel">取消</string>
+    <string name="dialog_input_wifi_btn_sure">确定</string>
+
+    <!--pinchImageView-->
+    <string name="un_effective">无效的目标点</string>
+    <string name="action_point">标记点</string>
+    <string name="action_path">路径</string>
+    <string name="action_obstacle">虚拟墙</string>
+    <string name="dialog_sure">确认</string>
     <string name="createMap">创建地图</string>
     <string name="createMap_desc">点击"创建地图"机器人将为您扫描出清洁区地图</string>
 
@@ -17,5 +33,16 @@
     <string name="setting_desc">改变机器人的属性</string>
     <string name="advertise">创建</string>
     <string name="commit">提交</string>
+    <string name="activity_edit_map_title">地图编辑</string>
+    <string name="activity_map_manager_title">地图管理</string>
+    <string name="input_name_hint">请输入名称</string>
+    <string name="dialog_add_point_title">标记点</string>
+    <string name="dialog_add_point_foot_cancel">取消</string>
+    <string name="input_name_must_not_null">名字不能为空</string>
+    <string name="dialog_Obstacle">虚拟墙</string>
+    <string name="dialog_point_rename">重命名</string>
+    <string name="namerobot">请为地图命名</string>
+    <string name="cancel">取消</string>
+    <string name="ensure">确定</string>
 
 </resources>
