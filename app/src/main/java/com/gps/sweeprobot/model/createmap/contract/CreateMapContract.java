@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.Point;
 
 import com.alibaba.fastjson.JSONObject;
+import com.gps.ros.response.LaserPose;
 import com.gps.sweeprobot.bean.GpsMap;
 import com.gps.sweeprobot.mvp.IView;
 import com.gps.sweeprobot.mvp.RxBusModel;
@@ -95,7 +96,7 @@ public class CreateMapContract {
          *  显示镭射点
          * @param points
          */
-        void showLaserPoints(List<Point> points);
+        void showLaserPoints(List<LaserPose.DataBean> points);
 
         void showIutInfoDialog();
         void hideIutInfoDialog();

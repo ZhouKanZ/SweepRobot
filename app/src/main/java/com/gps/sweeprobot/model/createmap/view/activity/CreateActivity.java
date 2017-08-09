@@ -22,6 +22,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.gps.ros.response.LaserPose;
 import com.gps.sweeprobot.R;
 import com.gps.sweeprobot.base.BaseActivity;
 import com.gps.sweeprobot.bean.GpsMap;
@@ -308,8 +309,8 @@ public class CreateActivity extends BaseActivity<CreateMapPresenter, CreateMapCo
     }
 
     @Override
-    public void showLaserPoints(List<Point> points) {
-
+    public void showLaserPoints(List<LaserPose.DataBean> points) {
+        gpsMapview.addLaserPoses(points);
     }
 
     @Override

@@ -48,7 +48,7 @@ gps project
    
    在response包中的serviceResponse 和 SubscribeResponse 分别表示接收
    服务类型的数据和订阅类型的数据，所有op = "call_service" ； 其对应的返回类型均为 serviceResponse;
-   op = "" 其他几种模式的返回类型均为 SubscribeResponse
+   op = "" 其他几种模式的返回类型均为 SubscribeResponse,详细的数据格式参考[data.md1](/data.md)  [data.md2](data.md)
    </br>
    </br>
    需要注意的是使用fastjson来解析JsonString的时候，如果接收类型中包含泛型需要用到下面的方法

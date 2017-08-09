@@ -2,6 +2,7 @@ package com.gps.sweeprobot.model.createmap.presenter;
 
 import android.support.v7.widget.RecyclerView;
 
+import com.gps.ros.response.LaserPose;
 import com.gps.ros.response.PicturePose;
 import com.gps.ros.rosbridge.operation.Subscribe;
 import com.gps.sweeprobot.base.BasePresenter;
@@ -14,6 +15,7 @@ import com.gps.sweeprobot.mvp.IModel;
 import com.gps.sweeprobot.utils.RosProtrocol;
 
 import java.util.HashMap;
+import java.util.List;
 
 import io.reactivex.disposables.Disposable;
 
@@ -121,5 +123,10 @@ public class CreateMapPresenter extends BasePresenter<CreateMapContract.View> im
     @Override
     public void OnReceiverPicture(PicturePose pose) {
         iView.changeRobotPos(pose.getPosition().getX(),pose.getPosition().getY());
+    }
+
+    @Override
+    public void onReceiVerLaserPose(List<LaserPose.DataBean> lasers) {
+        iView.showLaserPoints(lasers);
     }
 }

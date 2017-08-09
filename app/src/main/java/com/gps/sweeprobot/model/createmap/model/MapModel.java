@@ -8,6 +8,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.gps.ros.android.RxBus;
+import com.gps.ros.response.LaserPose;
 import com.gps.ros.response.PicturePose;
 import com.gps.ros.response.SubscribeResponse;
 import com.gps.ros.rosbridge.operation.Advertise;
@@ -19,6 +20,7 @@ import com.gps.sweeprobot.model.createmap.contract.CreateMapContract;
 import com.gps.sweeprobot.utils.JsonCreator;
 import com.gps.sweeprobot.utils.RosProtrocol;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
@@ -130,11 +132,6 @@ public class MapModel implements CreateMapContract.Model {
         Subscribe laserPose = new Subscribe();
         laserPose.topic = RosProtrocol.LaserPose.TOPIC;
         laserPose.type = RosProtrocol.LaserPose.TYPE;
-
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("topic", RosProtrocol.LaserPose.TOPIC);
-        jsonObject.put("type", RosProtrocol.LaserPose.TYPE);
-
         WebSocketHelper.send(laserPose);
     }
 
@@ -208,10 +205,15 @@ public class MapModel implements CreateMapContract.Model {
             case RosProtrocol.PicturePose.TOPIC:
                 SubscribeResponse<PicturePose> picturePose = JSON.parseObject(jsonObject.toJSONString(),
                         new TypeReference<SubscribeResponse<PicturePose>>(){});
+                rosLisenter.OnReceiverPicture(picturePose.getMsg());
+
                 break;
             case RosProtrocol.LaserPose.TOPIC:
                 SubscribeResponse<LaserPose> laserPose = JSON.parseObject(jsonObject.toJSONString(),
                         new TypeReference<SubscribeResponse<LaserPose>>(){});
+                List<LaserPose.DataBean> lasers = laserPose.getMsg().getData();
+                rosLisenter.onReceiVerLaserPose(lasers);
+
                 break;
         }
     }
