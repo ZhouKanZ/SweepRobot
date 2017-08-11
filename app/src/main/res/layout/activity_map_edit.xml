@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/color_grey_eaeaea"
+    >
+
+    <include
+        android:id="@+id/activity_map_edit_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        layout="@layout/layout_toolbar_"/>
+
+    <com.gps.sweeprobot.widget.GpsImageView
+        android:id="@+id/activity_map_edit_giv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/activity_map_edit_bar"
+     />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/activity_map_edit_rv"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_below="@id/activity_map_edit_bar"
+        android:visibility="gone"/>
+
+    <ImageView
+        android:id="@+id/activity_map_flag"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@mipmap/flag"
+        android:layout_centerInParent="true"
+        android:paddingLeft="14dp"
+        android:paddingBottom="2dp"
+        android:visibility="gone"
+        android:background="#5500ae8c"/>
+
+    <ImageView
+        android:id="@+id/activity_map_add"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:src="@drawable/add_sel"
+        android:scaleType="centerCrop"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="70dp"
+        android:layout_marginRight="17dp"/>
+
+    <ImageView
+        android:id="@+id/activity_map_sub"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:src="@drawable/sub_sel"
+        android:scaleType="centerCrop"
+        android:layout_below="@id/activity_map_add"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="@dimen/edit_map_space"
+        android:layout_marginRight="17dp"/>
+
+    <ImageView
+        android:id="@+id/activity_map_info"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:src="@drawable/info_sel"
+        android:scaleType="centerCrop"
+        android:layout_below="@id/activity_map_sub"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="@dimen/edit_map_space"
+        android:layout_marginRight="17dp"/>
+
+    <ImageView
+        android:id="@+id/activity_map_position"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:src="@drawable/position_sel"
+        android:scaleType="centerCrop"
+        android:layout_below="@id/activity_map_info"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="@dimen/edit_map_space"
+        android:layout_marginRight="17dp"
+        android:visibility="gone"/>
+
+    <ImageView
+        android:id="@+id/activity_map_commit"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:src="@mipmap/round_check_fill"
+        android:scaleType="centerCrop"
+        android:layout_below="@id/activity_map_position"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="@dimen/edit_map_space"
+        android:layout_marginRight="17dp"
+        android:visibility="gone"/>
+
+</RelativeLayout>

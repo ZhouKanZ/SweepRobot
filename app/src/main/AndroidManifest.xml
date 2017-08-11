@@ -5,18 +5,31 @@
 
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:name=".MainApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:name"
+        android:hardwareAccelerated="false"
         >
+
+        <!--WangJun Begin-->
+        <activity android:name=".model.main.view.activity.WifiActivity"/>
+
+        <activity android:name=".model.mapmanager.view.activity.MapManagerActivity"></activity>
+
+        <activity
+            android:name=".model.mapmanager.view.activity.MapEditActivity"
+            android:screenOrientation="landscape"
+            android:configChanges="orientation|keyboardHidden|screenSize">
+
+        </activity>
+        <!--wangJun end-->
 
         <activity android:name=".model.main.view.activity.WelcomeActivity"
             >
@@ -30,9 +43,14 @@
         <!-- ZHOUKAN - BEGINNING -->
         <activity android:name=".model.main.view.activity.MainActivity"
             android:launchMode="singleTask"
-            />
+            >
+
+        </activity>
+
         <activity android:name=".model.main.view.activity.IpActivity"/>
+
         <activity android:name=".model.createmap.view.activity.CreateActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="landscape"
             />
         <activity android:name=".model.taskqueue.view.activity.TaskQueueActivity"
@@ -44,6 +62,17 @@
             />
 
         <!-- ZHOUKAN - ENDING -->
+
+        <activity android:name=".test.TestActivity"/>
+
+
+        <activity android:name=".test.TestActivity2">
+            <!--<intent-filter>
+               <action android:name="android.intent.action.MAIN" />
+
+               <category android:name="android.intent.category.LAUNCHER" />
+           </intent-filter>-->
+        </activity>
 
     </application>
 

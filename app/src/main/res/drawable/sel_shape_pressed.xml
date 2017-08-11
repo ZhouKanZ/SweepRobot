@@ -4,7 +4,7 @@
     >
 
     <!-- 填充色 -->
-    <solid android:color="#39b0ff"/>
+    <solid android:color="@color/colorPrimary"/>
     <!---->
     <corners android:radius="21dp"/>
 

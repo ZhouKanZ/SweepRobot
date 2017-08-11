@@ -15,7 +15,7 @@ import java.util.List;
 public class Task extends DataSupport{
 
     /* 任务id */
-    private String id;
+    private int id;
 
     /* 任务状态 excute prepare finish  执行中 待执行 任务完成 */
     private String status;
@@ -26,16 +26,16 @@ public class Task extends DataSupport{
     /* 该任务的点 */
     private List<TaskPoint> taskPoints;
 
-    public Task(String id, String status) {
+    public Task(int id, String status) {
         this.id = id;
         this.status = status;
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 

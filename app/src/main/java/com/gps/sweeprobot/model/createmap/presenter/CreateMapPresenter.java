@@ -1,56 +1,43 @@
 package com.gps.sweeprobot.model.createmap.presenter;
 
-import android.content.Context;
+import android.support.v7.widget.RecyclerView;
 
-import com.gps.ros.android.RosService;
+import com.gps.ros.response.LaserPose;
+import com.gps.ros.response.PicturePose;
+import com.gps.ros.rosbridge.operation.Subscribe;
 import com.gps.sweeprobot.base.BasePresenter;
+import com.gps.sweeprobot.bean.GpsMap;
+import com.gps.sweeprobot.http.WebSocketHelper;
 import com.gps.sweeprobot.model.createmap.contract.CreateMapContract;
-import com.gps.sweeprobot.model.createmap.model.RosModel;
-import com.gps.sweeprobot.model.createmap.view.activity.CreateActivity;
+import com.gps.sweeprobot.model.createmap.model.MapModel;
+import com.gps.sweeprobot.model.createmap.model.RosResponseLisenter;
 import com.gps.sweeprobot.mvp.IModel;
-import com.gps.sweeprobot.mvp.IView;
+import com.gps.sweeprobot.utils.RosProtrocol;
 
 import java.util.HashMap;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
-import jrosbridge.Ros;
+import io.reactivex.Observable;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+
 
 /**
  * @Author : zhoukan
  * @CreateDate : 2017/7/14 0014
  * @Descriptiong : xxx
  */
-public class CreateMapPresenter extends BasePresenter<CreateMapContract.View> implements CreateMapContract.Presenter {
+public class CreateMapPresenter extends BasePresenter<CreateMapContract.View> implements CreateMapContract.Presenter ,RosResponseLisenter {
 
-    private Context mContext;
+    private static String modelKey = "CreateMapPresenter";
+    private Disposable disposable;
+    private Disposable loopDispose;
+    private MapModel model;
 
-    private HashMap<String, IModel> modelHashMap;
-
-    private RosModel rosModel;
-
-    public CreateMapPresenter(Context mContext) {
-        this.mContext = mContext;
-        this.modelHashMap = new HashMap<>();
-        this.rosModel = new RosModel();
-    }
-
-    @Override
-    public void attachView(IView iView) {
-        super.attachView(iView);
-    }
-
-    @Override
-    public void detachView() {
-        super.detachView();
-    }
-
-    @Override
-    public HashMap<String, IModel> getiModelMap() {
-        return null;
-    }
-
-    @Override
-    public HashMap<String, IModel> loadModelMap(IModel... models) {
-        return null;
+    public CreateMapPresenter() {
+        model =  ((MapModel)getiModelMap().get(modelKey));
     }
 
     /**
@@ -58,24 +45,111 @@ public class CreateMapPresenter extends BasePresenter<CreateMapContract.View> im
      */
     @Override
     public void startScanMap() {
-        iView.showGetRobotsAnimation();
-
-//        if (null != RosService.getRosBridgeClient() && !RosService.getRosBridgeClient().isClosed()){
-//            RosService.getRosBridgeClient().send("");
-//            Ros
-//        }
-        rosModel.send();
-
+        disposable = model.startScan(getIView().getConsumer());
     }
 
     @Override
     public void stopScanMap() {
-        RosService.getRosBridgeClient().send("");
+        model.stopScan(disposable);
     }
 
     @Override
     public void sendCommandToRos() {
-        RosService.getRosBridgeClient().send("");
+        model.sendVelocityToRos(iView.getVelocity()[0], (float) iView.getVelocity()[1]);
     }
 
+    @Override
+    public void getRosPosition() {
+        /**
+         *  subscribe
+         */
+        Subscribe subscribe = new Subscribe();
+        subscribe.topic = RosProtrocol.NaviPosition.TOPIC;
+        subscribe.type  = RosProtrocol.NaviPosition.TYPE;
+        WebSocketHelper.send(subscribe.toJSON());
+
+    }
+
+    @Override
+    public void saveMap(GpsMap map) {
+        model.saveMap(null);
+    }
+
+    @Override
+    public void subscribe() {
+        model.subscribe();
+    }
+
+    @Override
+    public void finishScanMap() {
+        iView.showIutInfoDialog();
+    }
+
+    /* --------- 这两个方法之后必须得删掉 --------- */
+    @Override
+    public HashMap<String, IModel> getiModelMap() {
+        model = new MapModel();
+        model.setRosLisenter(this);
+        return loadModelMap(model);
+    }
+
+    @Override
+    public HashMap<String, IModel> loadModelMap(IModel... models) {
+        HashMap<String, IModel> map = new HashMap<>();
+        map.put(modelKey,models[0]);
+        return map;
+    }
+
+    /* --------- 这两个方法之后必须得删掉 --------- */
+
+    /* unused method */
+    @Override
+    public RecyclerView.Adapter initAdapter() {
+        return null;
+    }
+
+    @Override
+    public void setData() {
+    }
+
+
+    @Override
+    public void registerRxBus() {
+        model.registerRxBus();
+    }
+
+    @Override
+    public void unregisterRxBus() {
+        model.unregisterRxBus();
+    }
+
+
+    /* rxBus 传递过来的数据 */
+    @Override
+    public void OnReceiverPicture(PicturePose pose) {
+        iView.changeRobotPos(pose.getPosition().getX(),pose.getPosition().getY());
+    }
+
+    @Override
+    public void onReceiVerLaserPose(List<LaserPose.DataBean> lasers) {
+        iView.showLaserPoints(lasers);
+    }
+
+    @Override
+    public void loopSendCommandToRos() {
+        // 开始轮询给机器人发送指令
+        loopDispose = Observable
+                .interval(100, TimeUnit.MILLISECONDS)
+                .subscribe(new Consumer<Long>() {
+                    @Override
+                    public void accept(@NonNull Long aLong) throws Exception {
+                        model.sendVelocityToRos(iView.getVelocity()[0], (float) iView.getVelocity()[1]);
+                    }
+                });
+    }
+
+    @Override
+    public void stopLoop() {
+        loopDispose.dispose();
+    }
 }
