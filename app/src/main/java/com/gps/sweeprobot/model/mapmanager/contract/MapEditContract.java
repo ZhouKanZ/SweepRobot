@@ -18,6 +18,9 @@ import java.util.List;
 
 public class MapEditContract {
 
+    public static final int TYPE_POINT = 1;
+    public static final int TYPE_OBSTACLE = 2;
+
     public interface presenter{}
 
     public interface view extends IView {
@@ -58,7 +61,7 @@ public class MapEditContract {
         void setObstacleRect(PointF pointF);
 
         //更新标记点名称
-        void updateName(String name,int position);
+        void updateName(String name,int position,int type);
 
         //移除标记点
         void removePoint(String name,int position);

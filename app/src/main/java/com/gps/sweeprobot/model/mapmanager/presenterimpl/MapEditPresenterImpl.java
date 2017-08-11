@@ -63,6 +63,7 @@ public class MapEditPresenterImpl extends MapEditPresenter {
     public static final int INPUT_DIALOG_ADD = 0;
     public static final int INPUT_DIALOG_RENAME = 1;
     public static final int INPUT_DIALOG_OBSTACLE = 2;
+    public static final int DIALOG_STATUS_RESET = 101;
 
     private int dialogStatus;
     private int position;
@@ -273,7 +274,11 @@ public class MapEditPresenterImpl extends MapEditPresenter {
 
     @Override
     public void positionViewOnClick() {
-        setObstacleRect();
+        //在添加虚拟墙的状态下
+        if (mAction == OPERATE_ADD_OBSTACLE){
+
+            setObstacleRect();
+        }
     }
 
     @Override
@@ -316,10 +321,21 @@ public class MapEditPresenterImpl extends MapEditPresenter {
             rename(name, position);
 
         } else if (dialogStatus == INPUT_DIALOG_OBSTACLE) {
-            VirtualObstacleBean obstacleBean = mapEditView.setObstacleName(name);
-            obstacleBeanList.add(obstacleBean);
-            mapEditView.updateAdapter(obstacleBeanList);
+
+            addObstacleData(name);
         }
+    }
+
+    /**
+     * 添加虚拟墙数据
+     * @param name
+     */
+    private void addObstacleData(String name){
+
+        VirtualObstacleBean obstacleBean = mapEditView.setObstacleName(name);
+        obstacleBeanList.add(obstacleBean);
+        mapEditView.updateAdapter(obstacleBeanList);
+        ((ActionModel) getiModelMap().get(ACTION_KEY)).setObstacle2Ros(obstacleBean);
     }
 
     /**
@@ -411,17 +427,42 @@ public class MapEditPresenterImpl extends MapEditPresenter {
      */
     public void rename(String name, int position) {
 
+        if (isPoint){
+            pointRename(name,position);
+        }else {
+            obstacleRename(name,position);
+        }
+    }
+
+    private void pointRename(String name,int position){
+
         //更新数据库
         PointBean pointBean = DataSupport.find(PointBean.class, pointsList.get(position).getId());
         pointBean.setPointName(name);
         pointBean.save();
 
         //更新view
-        mapEditView.updateName(name, position);
+        mapEditView.updateName(name, position, MapEditContract.TYPE_POINT);
         //刷新adapter
         pointsList.set(position, pointBean);
         mapEditView.updateAdapter(pointsList);
         //通知服务器
+    }
+
+    private void obstacleRename(String name,int position){
+
+        //update sql
+        VirtualObstacleBean ob = obstacleBeanList.get(position);
+        ob.setName(name);
+        ob.setMyPointFs(ob.getMyPointFs());
+        ob.save();
+
+        //update view
+        mapEditView.updateName(name,position,MapEditContract.TYPE_OBSTACLE);
+        //notify adapter
+        obstacleBeanList.set(position,ob);
+        mapEditView.updateAdapter(obstacleBeanList);
+        //notify server
 
     }
 
@@ -468,5 +509,6 @@ public class MapEditPresenterImpl extends MapEditPresenter {
         DataSupport.delete(VirtualObstacleBean.class, obstacleBeanList.get(position).getId());
         obstacleBeanList.remove(position);
         mapEditView.updateAdapter(obstacleBeanList);
+        //通知服务器
     }
 }

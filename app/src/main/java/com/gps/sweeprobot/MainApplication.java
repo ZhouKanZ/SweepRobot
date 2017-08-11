@@ -23,15 +23,10 @@ public class MainApplication extends LitePalApplication {
         app = this;
         /* 初始化LitePal数据库 */
         LitePal.initialize(this);
-
     }
 
     public static MainApplication getContext() {
         return app;
-    }
-
-    public String getThreadName() {
-        return "name=================" + Thread.currentThread().getName();
     }
 
     @Override
@@ -45,5 +40,9 @@ public class MainApplication extends LitePalApplication {
 
     public void setRosBridgeClient(ROSBridgeClient rosBridgeClient) {
         this.rosBridgeClient = rosBridgeClient;
+    }
+
+    public String getThreadName() {
+        return "name=================" + Thread.currentThread().getName();
     }
 }

@@ -48,8 +48,6 @@ public class IpPresenter extends BasePresenter<IpContract.View> implements IpCon
     }
 
     @Override
-
-
     public void setData() {
     }
 

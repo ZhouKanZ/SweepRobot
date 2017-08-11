@@ -59,12 +59,12 @@ public class VirtualObstacleView extends View {
 
         linePaint = new Paint();
         linePaint.setAntiAlias(true);
-        linePaint.setStyle(Paint.Style.STROKE);
-        linePaint.setColor(getResources().getColor(R.color.color_yellow_b39729));
+        linePaint.setStyle(Paint.Style.FILL_AND_STROKE);
+        linePaint.setColor(getResources().getColor(R.color.color_red_ccfa3c55));
         linePaint.setStrokeWidth(DensityUtil.dip2px(getContext(), 2.0f));
 
         polygonPaint = new Paint();
-        polygonPaint.setStyle(Paint.Style.STROKE);
+        polygonPaint.setStyle(Paint.Style.FILL_AND_STROKE);
         polygonPaint.setColor(getResources().getColor(R.color.color_yellow_b39729));
         polygonPaint.setStrokeWidth(DensityUtil.dip2px(getContext(), 2.0f));
 
@@ -74,7 +74,7 @@ public class VirtualObstacleView extends View {
         circlePaint.setStrokeWidth(DensityUtil.dip2px(getContext(), 5.0f));
 
         textPaint = new TextPaint(1);
-        textPaint.setColor(getResources().getColor(R.color.color_yellow_b39729));
+        textPaint.setColor(getResources().getColor(R.color.color_red_f04c62));
         textPaint.setTextSize(DensityUtil.getDimen(R.dimen.text_size_12));
 
 //        setBackgroundColor(getResources().getColor(R.color.color_activity_blue_bg));
@@ -107,25 +107,31 @@ public class VirtualObstacleView extends View {
         LogManager.i("drawPolygons size==========" + myPointFs.size());
 
         Path path = new Path();
-        PointF start = null;
-        PointF intermediate;
+        float nameX = 0,nameY = 0;
+
         for (int i = 0; i < myPointFs.size(); i++) {
 
             if (i == 0) {
-                start = DegreeManager.changeAbsolutePoint(myPointFs.get(i).getX(), myPointFs.get(i).getY(), mMatrix);
+                PointF start = DegreeManager.changeAbsolutePoint(myPointFs.get(i).getX(), myPointFs.get(i).getY(), mMatrix);
                 LogManager.i("start =========[" + start.x + "," + start.y + "]");
                 path.moveTo(start.x, start.y);
+                nameX = start.x;
+                nameY = start.y;
             } else {
 
-                intermediate = DegreeManager.changeAbsolutePoint(myPointFs.get(i).getX(), myPointFs.get(i).getY(), mMatrix);
+                PointF intermediate = DegreeManager.changeAbsolutePoint(myPointFs.get(i).getX(), myPointFs.get(i).getY(), mMatrix);
                 LogManager.i("intermediate =========[" + intermediate.x + "," + intermediate.y + "]");
                 path.lineTo(intermediate.x, intermediate.y);
+                nameX += intermediate.x;
+                nameY += intermediate.y;
             }
-        }
-        canvas.drawPath(path, linePaint);
-        if (start != null && getName() != null){
 
-            canvas.drawText(getName(),start.x,start.y+DensityUtil.dip2px(getContext(),15.0f),textPaint);
+        }
+
+        canvas.drawPath(path, linePaint);
+        if ( getName() != null){
+
+            canvas.drawText(getName(),nameX/myPointFs.size(),nameY/myPointFs.size() - DensityUtil.dip2px(getContext(),15.0f),textPaint);
         }
     }
 

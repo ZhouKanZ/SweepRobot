@@ -16,7 +16,7 @@ public class PublishEvent {
 
     public PublishEvent(Operation operation, String name, String content) {
         if(operation != null) {
-            id = operation.id;
+//            id = operation.id;
             op = operation.op;
         }
         this.name = name;

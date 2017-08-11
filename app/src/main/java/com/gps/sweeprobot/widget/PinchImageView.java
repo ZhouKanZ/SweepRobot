@@ -1,23 +1,23 @@
 package com.gps.sweeprobot.widget;
 
 import android.animation.ValueAnimator;
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.PointF;
 import android.graphics.RectF;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.widget.ImageView;
 
-import com.gps.sweeprobot.MainApplication;
-import com.gps.sweeprobot.R;
 import com.gps.sweeprobot.utils.DegreeManager;
 import com.gps.sweeprobot.utils.LogManager;
 import com.gps.sweeprobot.utils.RGBUtil;
-import com.gps.sweeprobot.utils.ToastManager;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -203,6 +203,9 @@ public class PinchImageView extends ImageView {
             MathUtils.rectFGiven(tempDst);
             MathUtils.rectFGiven(tempSrc);
         }
+
+        // 需要添加监听 将内部变换矩阵 抛出去
+
         return matrix;
     }
 
@@ -233,6 +236,7 @@ public class PinchImageView extends ImageView {
     public Matrix getCurrentImageMatrix(Matrix matrix) {
         //获取内部变换矩阵
         matrix = getInnerMatrix(matrix);
+
         //乘上外部变换矩阵
         matrix.postConcat(mOuterMatrix);
         return matrix;
@@ -356,6 +360,7 @@ public class PinchImageView extends ImageView {
      *
      * @see #getOuterMatrix(Matrix)
      */
+    @RequiresApi(api = Build.VERSION_CODES.HONEYCOMB)
     public void outerMatrixTo(Matrix endMatrix, long duration) {
         if (endMatrix == null) {
             return;
@@ -388,6 +393,7 @@ public class PinchImageView extends ImageView {
      *
      * @see #getMask()
      */
+    @RequiresApi(api = Build.VERSION_CODES.HONEYCOMB)
     public void zoomMaskTo(RectF mask, long duration) {
         if (mask == null) {
             return;
@@ -417,6 +423,7 @@ public class PinchImageView extends ImageView {
      * 重置位置到fit center状态,清空mask,停止所有手势,停止所有动画.
      * 但不清空drawable,以及事件绑定相关数据.
      */
+    @RequiresApi(api = Build.VERSION_CODES.HONEYCOMB)
     public void reset() {
         //重置位置到fit
         mOuterMatrix.reset();
@@ -656,7 +663,9 @@ public class PinchImageView extends ImageView {
             Matrix matrix = MathUtils.matrixTake();
             Log.d(TAG, "onDraw: " + System.currentTimeMillis());
             Log.d(TAG, "onDraw: " + getCurrentImageMatrix());
+            Log.d(TAG, "onDraw: " + getCurrentImageMatrix(matrix));
             setImageMatrix(getCurrentImageMatrix(matrix));
+            dispatchOuterMatrixChanged();
             MathUtils.matrixGiven(matrix);
             dispatchOuterMatrixChanged();
         }
@@ -703,6 +712,7 @@ public class PinchImageView extends ImageView {
      *
      * 将mask从一个rect动画到另外一个rect
      */
+    @RequiresApi(api = Build.VERSION_CODES.HONEYCOMB)
     private class MaskAnimator extends ValueAnimator implements ValueAnimator.AnimatorUpdateListener {
 
         /**
@@ -829,6 +839,7 @@ public class PinchImageView extends ImageView {
      */
     private GestureDetector mGestureDetector = new GestureDetector(PinchImageView.this.getContext(), new GestureDetector.SimpleOnGestureListener() {
 
+        @TargetApi(Build.VERSION_CODES.HONEYCOMB)
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
             //只有在单指模式结束之后才允许执行fling
             if (mPinchMode == PINCH_MODE_FREE && !(mScaleAnimator != null && mScaleAnimator.isRunning())) {
@@ -844,6 +855,7 @@ public class PinchImageView extends ImageView {
             }
         }
 
+        @RequiresApi(api = Build.VERSION_CODES.HONEYCOMB)
         public boolean onDoubleTap(MotionEvent e) {
             //当手指快速第二次按下触发,此时必须是单指模式才允许执行doubleTap
             if (mPinchMode == PINCH_MODE_SCROLL && !(mScaleAnimator != null && mScaleAnimator.isRunning())) {
@@ -861,7 +873,6 @@ public class PinchImageView extends ImageView {
             PointF relativePoint = DegreeManager.changeRelativePoint(e.getX(), e.getY(),
                     PinchImageView.this.getCurrentImageMatrix());
 
-
             /**
              * 获取按下坐标点的颜色值
              */
@@ -874,12 +885,13 @@ public class PinchImageView extends ImageView {
             if (addPointListener!=null && redValue!=200){
                 addPointListener.addPoint(PinchImageView.this,relativePoint.x,relativePoint.y);
             }else {
-                ToastManager.showShort(MainApplication.getContext(), R.string.un_effective);
+//                ToastManager.showShort(MainApplication.getContext(), R.string.un_effective);
             }
             return true;
         }
     });
 
+    @RequiresApi(api = Build.VERSION_CODES.ECLAIR)
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         super.onTouchEvent(event);

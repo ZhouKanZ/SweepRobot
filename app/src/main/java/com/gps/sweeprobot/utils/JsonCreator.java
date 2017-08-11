@@ -15,6 +15,11 @@ public class JsonCreator {
     private static final String TAG = "JsonCreator";
 
     /**
+     *  ros的最大速度
+     */
+    private static final double MAX_VELOCITY = 0.5;
+
+    /**
      *  将角度个长度转成速度
      * @param angle
      * @param length
@@ -22,12 +27,11 @@ public class JsonCreator {
      */
     public static JSONObject convertToRosSpeed(double angle, float length) {
 
-
         Log.d(TAG, "convertToRosSpeed: " + "angle :" + angle + ",length :" + length);
 
         JSONObject msg = new JSONObject();
         JSONObject linear = new JSONObject();
-        linear.put("x", -length * Math.sin(convertAngleToRadians(angle)) * 0.5);
+        linear.put("x", -length * Math.sin(convertAngleToRadians(angle)) * MAX_VELOCITY);
         linear.put("y", 0);
         linear.put("z", 0);
         JSONObject angular = new JSONObject();
@@ -52,7 +56,6 @@ public class JsonCreator {
 
         Log.d(TAG, "convertToRosSpeed: " + publish.toString());
 
-
         return publish;
     }
 
@@ -64,6 +67,25 @@ public class JsonCreator {
      */
     public static double convertAngleToRadians(double angle) {
         return angle * (2 * (Math.PI / 360));
+    }
+
+    /**
+     *
+     * @param   type 0 开始  1暂停  2 结束
+     * @return  返回
+     */
+    public static JSONObject mappingStatus(int type){
+        /* 0表示开始  1 暂停 2 结束*/
+        JSONObject msg = new JSONObject();
+        msg.put("data",type);
+
+        JSONObject mappingStatus = new JSONObject();
+        mappingStatus.put("op","call_service");
+        mappingStatus.put("service","/mapping_status");
+        mappingStatus.put("args",msg);
+
+        return mappingStatus;
+
     }
 
 }

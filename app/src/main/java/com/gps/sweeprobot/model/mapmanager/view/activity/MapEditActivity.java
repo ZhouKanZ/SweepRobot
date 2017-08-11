@@ -47,6 +47,7 @@ import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Consumer;
 
 /**
+ * 地图编辑
  * Create by WangJun on 2017/7/19
  */
 
@@ -102,6 +103,7 @@ public class MapEditActivity extends BaseActivity<MapEditPresenter, IView> imple
         for (ImageView imageView : nameViews) {
             imageView.setOnClickListener(this);
         }
+
     }
 
     @Override
@@ -134,6 +136,7 @@ public class MapEditActivity extends BaseActivity<MapEditPresenter, IView> imple
                 break;
 
             case R.id.activity_map_position:
+
                 mPresenter.positionViewOnClick();
                 break;
 
@@ -226,8 +229,7 @@ public class MapEditActivity extends BaseActivity<MapEditPresenter, IView> imple
     }
 
     /**
-     * dialog
-     *
+     *创建标记点，路径，虚拟墙的选项dialog
      * @param contentView
      */
     public void addAction(View contentView) {
@@ -273,9 +275,9 @@ public class MapEditActivity extends BaseActivity<MapEditPresenter, IView> imple
     }
 
     @Override
-    public void updateName(String newName, int position) {
+    public void updateName(String newName, int position,int type) {
 
-        gpsImageView.updateName(newName, position);
+        gpsImageView.updateName(newName, position,type);
     }
 
     @Override
@@ -287,7 +289,7 @@ public class MapEditActivity extends BaseActivity<MapEditPresenter, IView> imple
     @Override
     public void showToast() {
 
-        ToastManager.showShort(this, getString(R.string.input_name_must_not_null));
+        ToastManager.showShort(getString(R.string.input_name_must_not_null));
     }
 
     @Override
@@ -299,7 +301,7 @@ public class MapEditActivity extends BaseActivity<MapEditPresenter, IView> imple
                 .setGravity(Gravity.CENTER)
                 .setHeader(R.layout.dialog_add_point_head)
                 .setFooter(R.layout.dialog_add_point_foot)
-                .setContentWidth(1500)
+                .setContentWidth(1300)
                 .setInAnimation(R.anim.fade_in_center)
                 .setOutAnimation(R.anim.fade_out_center)
                 .create();

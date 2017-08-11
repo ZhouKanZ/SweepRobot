@@ -3,6 +3,8 @@ package com.gps.sweeprobot.utils;
 import android.content.Context;
 import android.widget.Toast;
 
+import com.gps.sweeprobot.MainApplication;
+
 /**
  * @Author : WangJun
  * @CreateDate : 2017/7/4.
@@ -22,13 +24,12 @@ public class ToastManager {
     /**
      * 短时间显示Toast
      *
-     * @param context
      * @param message
      */
-    public static void showShort(Context context, CharSequence message)
+    public static void showShort( CharSequence message)
     {
         if (isShow)
-            Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainApplication.getContext(), message, Toast.LENGTH_SHORT).show();
     }
 
     /**

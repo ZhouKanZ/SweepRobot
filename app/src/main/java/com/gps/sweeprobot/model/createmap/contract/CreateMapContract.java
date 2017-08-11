@@ -3,9 +3,13 @@ package com.gps.sweeprobot.model.createmap.contract;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 
+import com.alibaba.fastjson.JSONObject;
 import com.gps.sweeprobot.bean.GpsMap;
-import com.gps.sweeprobot.mvp.IModel;
 import com.gps.sweeprobot.mvp.IView;
+import com.gps.sweeprobot.mvp.RxBusModel;
+import com.gps.sweeprobot.mvp.RxBusPresenter;
+
+import java.util.List;
 
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
@@ -18,8 +22,7 @@ import io.reactivex.functions.Consumer;
 
 public class CreateMapContract {
 
-    public interface Presenter {
-
+    public interface Presenter extends RxBusPresenter{
         /**
          *  开始扫描地图
          */
@@ -43,6 +46,12 @@ public class CreateMapContract {
         void saveMap(GpsMap map);
 
         void subscribe();
+        /**
+         *  结束扫描地图
+         */
+        void finishScanMap();
+
+
 
     }
 
@@ -57,9 +66,8 @@ public class CreateMapContract {
 
         /**
          *  改变机器人的位置
-         * @param point
          */
-        void changeRobotPos(Point point);
+        void changeRobotPos(double x,double y);
 
         /**
          *  首次进入页面时 加载机器人位置
@@ -82,9 +90,18 @@ public class CreateMapContract {
          * @return 得到速度  0位置表示角度  1 位置表示length
          */
         double[] getVelocity();
+
+        /**
+         *  显示镭射点
+         * @param points
+         */
+        void showLaserPoints(List<Point> points);
+
+        void showIutInfoDialog();
+        void hideIutInfoDialog();
     }
 
-    public interface Model extends IModel {
+    public interface Model extends RxBusModel<JSONObject> {
 
         /**
          *  扫描地图
@@ -111,5 +128,6 @@ public class CreateMapContract {
         void sendVelocityToRos(double angel, float length);
 
         void subscribe();
+
     }
 }

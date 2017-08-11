@@ -9,7 +9,7 @@ package com.gps.sweeprobot.http;
 public class Constant {
 
     /* 焦建 */
-    public static String JiaoJian = "192.168.2.136";
+    public static String JiaoJian = "192.168.2.117:9090";
 
     /* 域名 */
     public static String DOMAIN = "http://192.168.2.136:82";

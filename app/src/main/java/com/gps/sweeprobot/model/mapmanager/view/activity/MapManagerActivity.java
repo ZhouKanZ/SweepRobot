@@ -63,7 +63,6 @@ public class MapManagerActivity extends BaseActivity<MapManagerPresenter,IView> 
         recyclerView.setLayoutManager(manager);
         recyclerView.setAdapter(mPresenter.initAdapter());
 
-
     }
 
     @Override

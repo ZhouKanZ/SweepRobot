@@ -3,6 +3,7 @@ package com.gps.sweeprobot.model.mapmanager.model;
 import com.gps.sweeprobot.database.PointBean;
 import com.gps.sweeprobot.database.VirtualObstacleBean;
 import com.gps.sweeprobot.mvp.IModel;
+import com.gps.sweeprobot.utils.CommunicationUtil;
 import com.gps.sweeprobot.utils.LogManager;
 
 import org.litepal.crud.DataSupport;
@@ -104,6 +105,11 @@ public class ActionModel implements IModel {
      */
     private void getDataFromServer(){
 
+    }
+
+    public void setObstacle2Ros(VirtualObstacleBean bean){
+
+        CommunicationUtil.sendObstacle2Ros(bean);
     }
 
     public interface InfoMessager {

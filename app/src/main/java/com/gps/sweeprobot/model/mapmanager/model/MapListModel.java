@@ -66,7 +66,7 @@ public class MapListModel implements IModel {
 
                     @Override
                     public void onError(@NonNull Throwable e) {
-                        ToastManager.showShort(MainApplication.getContext(),"have a error by request map data from server");
+                        ToastManager.showShort("have a error by request map data from server");
                         infoHint.failInfo(e);
                     }
 

@@ -34,7 +34,7 @@
         android:paddingLeft="14dp"
         android:paddingBottom="2dp"
         android:visibility="gone"
-        android:background="#5500ae8c"/>
+        />
 
     <ImageView
         android:id="@+id/activity_map_add"

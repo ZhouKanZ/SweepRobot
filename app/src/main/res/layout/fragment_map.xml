@@ -6,19 +6,13 @@
     android:paddingLeft="10dp"
     android:paddingTop="12dp"
     android:paddingBottom="13dp"
+    xmlns:img ="http://schemas.android.com/apk/com.gps.sweeprobot"
     >
 
-    <com.gps.sweeprobot.widget.GpsImageView
+<!--    <com.gps.sweeprobot.widget.GpsImageView
         android:id="@+id/frag_map_giv"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-
-    <ImageView
-        android:id="@+id/frag_map_edit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@mipmap/edit"
-        android:layout_alignParentRight="true"/>
+        android:layout_height="match_parent"/>-->
 
     <LinearLayout
         android:layout_width="match_parent"
