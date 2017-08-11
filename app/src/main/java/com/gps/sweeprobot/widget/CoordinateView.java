@@ -27,6 +27,7 @@ public class CoordinateView extends ViewGroup {
 
     private static final String TAG = "CoordinateView";
     private static final int VIEWSIZE = 10;
+
     private float angle;
     public float imageViewX;
     public float imageViewY;
@@ -48,46 +49,42 @@ public class CoordinateView extends ViewGroup {
     private int textSize = 25;
     private int textWidth;
 
-    public CoordinateView(Context context, int defStyleRes)
-    {
+    public CoordinateView(Context context, int defStyleRes) {
         super(context);
         this.mainPositionRes = defStyleRes;
         initPaint();
     }
 
-    public CoordinateView(Context context, AttributeSet attrs, int defStyleRes)
-    {
+    public CoordinateView(Context context, AttributeSet attrs, int defStyleRes) {
         super(context, attrs);
         this.mainPositionRes = defStyleRes;
         initPaint();
     }
 
-    public CoordinateView(Context paramContext, AttributeSet attrs, int defStyleAttr, int defStyleRes)
-    {
+    public CoordinateView(Context paramContext, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(paramContext, attrs, defStyleAttr);
         this.mainPositionRes = defStyleRes;
         initPaint();
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public CoordinateView(Context paramContext, AttributeSet paramAttributeSet, int paramInt1, int paramInt2, int paramInt3)
-    {
+    public CoordinateView(Context paramContext, AttributeSet paramAttributeSet, int paramInt1, int paramInt2, int paramInt3) {
         super(paramContext, paramAttributeSet, paramInt1, paramInt2);
         this.mainPositionRes = paramInt3;
         initPaint();
     }
 
-    private int computeMaxStringWidth(String paramString, Paint paramPaint)
-    {
+    private int computeMaxStringWidth(String paramString, Paint paramPaint) {
         return (int)(Math.max(paramPaint.measureText(paramString), 0.0F) + 0.5D);
     }
 
-    private void initPaint()
-    {
+    private void initPaint() {
+
         ViewGroup.LayoutParams localLayoutParams = new ViewGroup.LayoutParams(DensityUtil.dip2px(getContext(), 10.0F),
                 DensityUtil.dip2px(getContext(), 10.0F));
 
         setBackgroundColor(0x00f);
+
         getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener()
         {
             public boolean onPreDraw()
@@ -98,8 +95,10 @@ public class CoordinateView extends ViewGroup {
                 return true;
             }
         });
+
         this.mainPosition = new ImageView(getContext());
         this.mainPosition.setImageResource(this.mainPositionRes);
+        this.mainPosition.setScaleType(ImageView.ScaleType.FIT_XY);
         this.mainPosition.setLayoutParams(localLayoutParams);
         addView(this.mainPosition);
         this.textPaint = new TextPaint(1);
@@ -111,10 +110,8 @@ public class CoordinateView extends ViewGroup {
 
     }
 
-    public void draw(Canvas canvas)
-    {
+    public void draw(Canvas canvas) {
         super.draw(canvas);
-
         if (this.isShowPointName)
         {
             int i = 0;
@@ -129,7 +126,6 @@ public class CoordinateView extends ViewGroup {
             canvas.drawBitmap(this.mArrow, this.moveX, this.mainPosition.getTop(), new Paint());
             canvas.restore();
         }
-
     }
 
     public float getAngle()
@@ -167,8 +163,7 @@ public class CoordinateView extends ViewGroup {
         return this.isShowPointName;
     }
 
-    protected void onLayout(boolean changed, int left, int top, int right, int bottom)
-    {
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         getChildAt(0).layout(getMeasuredWidth() / 2 - DensityUtil.dip2px(getContext(), 10.0F) / 2,
                 getMeasuredHeight() - DensityUtil.dip2px(getContext(), 10.0F) - DensityUtil.dip2px(this.paddingBottom),
                 getMeasuredWidth() / 2 + DensityUtil.dip2px(getContext(), 10.0F) / 2,
@@ -176,8 +171,7 @@ public class CoordinateView extends ViewGroup {
 
     }
 
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec)
-    {
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         if (this.textWidth > DensityUtil.dip2px(getContext(), 10.0F));
         for (widthMeasureSpec = this.textWidth; ; widthMeasureSpec = DensityUtil.dip2px(getContext(), 10.0F))
         {
@@ -200,8 +194,7 @@ public class CoordinateView extends ViewGroup {
         this.mainPosition.setImageResource(this.mainPositionRes);
     }
 
-    public void setAngle(float angle)
-    {
+    public void setAngle(float angle) {
         if (this.isShowArrow)
         {
             this.angle = angle;
@@ -224,8 +217,7 @@ public class CoordinateView extends ViewGroup {
         this.mainPosition.setImageResource(imageRes);
     }
 
-    public void setMatrixRotateAngle(float matrixRotateAngle)
-    {
+    public void setMatrixRotateAngle(float matrixRotateAngle) {
         if (this.isShowArrow)
         {
             this.matrixRotateAngle = matrixRotateAngle;
@@ -233,8 +225,7 @@ public class CoordinateView extends ViewGroup {
         }
     }
 
-    public void setPositionName(String positionName)
-    {
+    public void setPositionName(String positionName) {
         this.positionName = positionName;
         this.textWidth = computeMaxStringWidth(positionName, this.textPaint);
     }
@@ -249,14 +240,12 @@ public class CoordinateView extends ViewGroup {
         setY(positionViewY - this.moveY);
     }
 
-    public void setShowArrow(boolean isShowArrow)
-    {
+    public void setShowArrow(boolean isShowArrow) {
         this.isShowArrow = isShowArrow;
         postInvalidate();
     }
 
-    public void setShowPointName(boolean isShowPointName)
-    {
+    public void setShowPointName(boolean isShowPointName) {
         if (this.isShowPointName == isShowPointName)
             return;
         this.isShowPointName = isShowPointName;

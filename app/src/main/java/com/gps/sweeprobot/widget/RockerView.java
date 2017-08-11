@@ -386,7 +386,7 @@ public class RockerView extends View {
     private void callBackStart() {
         tempDirection = Direction.DIRECTION_CENTER;
         if (null != mOnAngleChangeListener) {
-            mOnAngleChangeListener.onStart();
+            mOnAngleChangeListener.onStarting();
         }
 
         if (null != mOnShakeListener) {
@@ -689,7 +689,7 @@ public class RockerView extends View {
      */
     public interface OnAngleChangeListener {
         // 开始
-        void onStart();
+        void onStarting();
 
         /**
          * 摇杆角度变化

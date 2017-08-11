@@ -165,7 +165,6 @@ public class MapModel implements CreateMapContract.Model {
                     @Override
                     public void accept(@NonNull JSONObject jsonObject) throws Exception {
 
-                        Log.d(TAG, "accept: " + jsonObject);
                         if (null == rosLisenter) {
                             return;
                         }
@@ -209,6 +208,7 @@ public class MapModel implements CreateMapContract.Model {
 
                 break;
             case RosProtrocol.LaserPose.TOPIC:
+
                 SubscribeResponse<LaserPose> laserPose = JSON.parseObject(jsonObject.toJSONString(),
                         new TypeReference<SubscribeResponse<LaserPose>>(){});
                 List<LaserPose.DataBean> lasers = laserPose.getMsg().getData();

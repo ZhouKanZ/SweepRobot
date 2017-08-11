@@ -52,8 +52,9 @@ public class CreateMapContract {
          */
         void finishScanMap();
 
+        void loopSendCommandToRos();
 
-
+        void stopLoop();
     }
 
     public interface View extends IView{

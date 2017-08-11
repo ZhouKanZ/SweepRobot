@@ -3,6 +3,7 @@ package com.gps.sweeprobot.widget;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.PointF;
 import android.graphics.drawable.Drawable;
@@ -10,6 +11,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 
 import com.gps.ros.response.LaserPose;
 import com.gps.sweeprobot.MainApplication;
@@ -19,6 +21,7 @@ import com.gps.sweeprobot.database.PointBean;
 import com.gps.sweeprobot.database.VirtualObstacleBean;
 import com.gps.sweeprobot.utils.CommunicationUtil;
 import com.gps.sweeprobot.utils.DegreeManager;
+import com.gps.sweeprobot.utils.DensityUtil;
 import com.gps.sweeprobot.utils.LogManager;
 import com.gps.sweeprobot.utils.RGBUtil;
 import com.gps.sweeprobot.utils.ToastManager;
@@ -57,7 +60,7 @@ public class GpsImageView extends FrameLayout {
 
     private OnObstacleViewClick obstacleListener;
 
-    private CoordinateView robotPoint;
+    private ImageView robotPoint;
 
     /* 镭射点集合 */
     private List<CoordinateView> laserPoses;
@@ -144,14 +147,25 @@ public class GpsImageView extends FrameLayout {
                         virtualObstacleView.setmMatrix(matrix);
                     }
                 });
-
         obstacleView.setmMatrix(matrix);
-//        LogManager.i("change point"+matrix.toString());
+
+        Flowable.fromIterable(laserPoses)
+                .subscribe(new Consumer<CoordinateView>() {
+                    @Override
+                    public void accept(@NonNull CoordinateView coor) throws Exception {
+                        PointF pointF = DegreeManager.changeAbsolutePoint(coor.imageViewX, coor.imageViewY, matrix);
+                        coor.setPositionViewX(pointF.x);
+                        coor.setPositionViewY(pointF.y);
+                    }
+                });
 
         if (robotPoint != null) {
-            PointF pointF = DegreeManager.changeAbsolutePoint(robotPoint.imageViewX, robotPoint.imageViewY, matrix);
-            robotPoint.setPositionViewX(pointF.x);
-            robotPoint.setPositionViewY(pointF.y);
+            PointF pointF = DegreeManager.changeAbsolutePoint(robotPoint.getX(), robotPoint.getY(), matrix);
+            // scrollTo 看不见机器人的位置
+//            robotPoint.scrollTo((int) pointF.x,(int) pointF.y);
+            robotPoint.setX(pointF.x);
+            robotPoint.setY(pointF.y);
+            robotPoint.postInvalidate();
         }
     }
 
@@ -186,7 +200,7 @@ public class GpsImageView extends FrameLayout {
      * @param positionName
      */
     public void addPoint(float locationX, float locationY, String positionName) {
-        pointsList.add(addMarkPoint(locationX,locationY,positionName));
+        pointsList.add(addMarkPoint(locationX, locationY, positionName, null));
         LogManager.i(mapView.getCurrentImageMatrix().toString());
     }
 
@@ -215,8 +229,26 @@ public class GpsImageView extends FrameLayout {
             return;
         }
 
+//        // 雷射点集合不为空的时，将镭射点中的位置改变一下
+//        if (laserPoses.size() > 0){
+//
+//            for (int i=0;i<laserPoses.size();i++){
+//                laserPoses.get(i).setPositionViewX((float)lasers.get(i).getX());
+//                laserPoses.get(i).setPositionViewY((float)lasers.get(i).getY());
+//                postInvalidate();
+//            }
+//
+//        }else {
+//
+//            for (LaserPose.DataBean dataBean : lasers) {
+//                CoordinateView coor = addMarkPoint((float) dataBean.getX(), (float) dataBean.getY(), "", BitmapFactory.decodeResource(getResources(), R.mipmap.point));
+//                laserPoses.add(coor);
+//            }
+//        }
+
+        // 在remove的过程中会让屏幕出现闪烁的效果;需要对view进行滑动或者直接改变位置
         /* removeAll laserPose */
-        for (int i = 0; i <laserPoses.size() ; i++) {
+        for (int i = 0; i < laserPoses.size(); i++) {
             removeView(laserPoses.get(i));
         }
 
@@ -224,10 +256,9 @@ public class GpsImageView extends FrameLayout {
 
         /* add new pose */
         for (LaserPose.DataBean dataBean : lasers) {
-            CoordinateView coor = addMarkPoint((float) dataBean.getX(),(float)dataBean.getY(),"");
+            CoordinateView coor = addMarkPoint((float) dataBean.getX(), (float) dataBean.getY(), "", BitmapFactory.decodeResource(getResources(), R.mipmap.point));
             laserPoses.add(coor);
         }
-
     }
 
     /**
@@ -238,34 +269,20 @@ public class GpsImageView extends FrameLayout {
      */
     public void addRobotPoint(float locationX, float locationY) {
 
-
         if (null == robotPoint) {
-            robotPoint = addMarkPoint(locationX,locationY,"robot");
-                    /*= new CoordinateView(MainApplication.getContext(), point);
-            robotPoint.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT));
-
-            robotPoint.setPositionName("robot");
-            robotPoint.setShowPointName(true);
-            //求出标记点相对于图片的坐标
-            Log.d(TAG, "addPoint: " + System.currentTimeMillis());
-            Log.d(TAG, "addPoint: " + mapView.getCurrentImageMatrix());
+            ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(DensityUtil.dip2px(20), DensityUtil.dip2px(20));
+            robotPoint = new RobotView(this.getContext());
+            robotPoint.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.mipmap.sweeprobot));
             PointF pointF = DegreeManager.changeAbsolutePoint(locationX, locationY, mapView.getCurrentImageMatrix());
-            robotPoint.setLocationX(pointF.x);
-            robotPoint.setLocationY(pointF.y);
-            robotPoint.imageViewX = locationX;
-            robotPoint.imageViewY = locationY;
-            robotPoint.setmArrow(BitmapFactory.decodeResource(getResources(), R.mipmap.sweeprobot));
-            addView(robotPoint);*/
+            robotPoint.setLayoutParams(params);
+            robotPoint.setX(pointF.x);
+            robotPoint.setY(pointF.y);
+            addView(robotPoint);
         } else {
             PointF pointF = DegreeManager.changeAbsolutePoint(locationX, locationY, mapView.getCurrentImageMatrix());
-            robotPoint.setLocationX(pointF.x);
-            robotPoint.setLocationY(pointF.y);
-            robotPoint.imageViewX = locationX;
-            robotPoint.imageViewY = locationY;
-            postInvalidate();
+            robotPoint.setX(pointF.x);
+            robotPoint.setY(pointF.y);
         }
-
     }
 
     /*
@@ -319,7 +336,6 @@ public class GpsImageView extends FrameLayout {
     }
 
     public void setLocation(float locationX, float locationY, double d) {
-
     }
 
     /**
@@ -359,28 +375,25 @@ public class GpsImageView extends FrameLayout {
     }
 
     public void removeObstacleView(String name, int position) {
-
-//        if (obstacleViews.get(position).getName().equals(name)){
-
         removeView(obstacleViews.get(position));
         obstacleViews.remove(position);
         postInvalidate();
-//        }
     }
 
     public interface OnObstacleViewClick {
-
         void obstacleViewOnClick();
     }
 
     /**
-     *  添加标记点
+     * 添加标记点
+     *
      * @param locationX
      * @param locationY
      * @param positionName
      */
-    private CoordinateView addMarkPoint(float locationX, float locationY, String positionName){
-        CoordinateView coordinateView = new CoordinateView(MainApplication.getContext(), point);
+    private CoordinateView addMarkPoint(float locationX, float locationY, String positionName, Bitmap mArrow) {
+
+        CoordinateView coordinateView = new CoordinateView(MainApplication.getContext(), 0);
         coordinateView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT));
 
@@ -393,15 +406,19 @@ public class GpsImageView extends FrameLayout {
         coordinateView.setLayoutParams(commonParams);
         coordinateView.setPositionName(positionName);
         coordinateView.setShowPointName(true);
+
+        if (mArrow != null) {
+            coordinateView.setShowArrow(true);
+            coordinateView.setmArrow(mArrow);
+        }
+
         //求出标记点相对于图片的坐标
         PointF pointF = DegreeManager.changeAbsolutePoint(locationX, locationY, this.mapView.getCurrentImageMatrix());
         coordinateView.setLocationX(pointF.x);
         coordinateView.setLocationY(pointF.y);
-        coordinateView.imageViewX = locationX;
-        coordinateView.imageViewY = locationY;
+//        coordinateView.imageViewX = locationX;
+//        coordinateView.imageViewY = locationY;
         addView(coordinateView);
-
-        return  coordinateView;
+        return coordinateView;
     }
-
 }

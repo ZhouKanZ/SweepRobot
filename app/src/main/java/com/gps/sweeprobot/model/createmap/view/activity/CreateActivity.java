@@ -324,11 +324,8 @@ public class CreateActivity extends BaseActivity<CreateMapPresenter, CreateMapCo
     }
 
     @Override
-    public void onStart() {
-
-        super.onStart();
+    public void onStarting() {
         mPresenter.subscribe();
-        // 开始的时候 便开始获取机器人的位置
     }
 
     @Override
@@ -375,7 +372,6 @@ public class CreateActivity extends BaseActivity<CreateMapPresenter, CreateMapCo
 
     @Override
     public void onAnimationRepeat(Animator animation) {
-
     }
 
     @Override

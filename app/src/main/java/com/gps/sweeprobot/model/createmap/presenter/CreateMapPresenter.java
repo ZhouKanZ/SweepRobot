@@ -16,8 +16,12 @@ import com.gps.sweeprobot.utils.RosProtrocol;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+import io.reactivex.Observable;
+import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 
 
 /**
@@ -29,6 +33,7 @@ public class CreateMapPresenter extends BasePresenter<CreateMapContract.View> im
 
     private static String modelKey = "CreateMapPresenter";
     private Disposable disposable;
+    private Disposable loopDispose;
     private MapModel model;
 
     public CreateMapPresenter() {
@@ -128,5 +133,23 @@ public class CreateMapPresenter extends BasePresenter<CreateMapContract.View> im
     @Override
     public void onReceiVerLaserPose(List<LaserPose.DataBean> lasers) {
         iView.showLaserPoints(lasers);
+    }
+
+    @Override
+    public void loopSendCommandToRos() {
+        // 开始轮询给机器人发送指令
+        loopDispose = Observable
+                .interval(100, TimeUnit.MILLISECONDS)
+                .subscribe(new Consumer<Long>() {
+                    @Override
+                    public void accept(@NonNull Long aLong) throws Exception {
+                        model.sendVelocityToRos(iView.getVelocity()[0], (float) iView.getVelocity()[1]);
+                    }
+                });
+    }
+
+    @Override
+    public void stopLoop() {
+        loopDispose.dispose();
     }
 }

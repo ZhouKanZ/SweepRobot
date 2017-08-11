@@ -61,6 +61,18 @@ gps project
 * 创建地图
 
    发送指令<br>
+   
+   ex: RockerView 的三个方法
+   
+       onstart()
+       onchange()
+       onstop()
+       
+       当onstart被触发后，执行轮询 
+         --- > onchange的时候确定速度
+       
+   
+   
    接收消息<br>
    保存数据<br>
 

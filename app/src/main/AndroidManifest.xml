@@ -14,7 +14,9 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        tools:replace="android:name">
+        tools:replace="android:name"
+        android:hardwareAccelerated="false"
+        >
 
         <!--WangJun Begin-->
         <activity android:name=".model.main.view.activity.WifiActivity"/>
@@ -60,6 +62,17 @@
             />
 
         <!-- ZHOUKAN - ENDING -->
+
+        <activity android:name=".test.TestActivity"/>
+
+
+        <activity android:name=".test.TestActivity2">
+            <!--<intent-filter>
+               <action android:name="android.intent.action.MAIN" />
+
+               <category android:name="android.intent.category.LAUNCHER" />
+           </intent-filter>-->
+        </activity>
 
     </application>
 
