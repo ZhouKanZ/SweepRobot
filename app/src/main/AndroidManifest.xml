@@ -14,19 +14,20 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        tools:replace="android:name">
+        tools:replace="android:name"
+        android:hardwareAccelerated="false"
+        >
 
         <!--WangJun Begin-->
         <activity android:name=".model.main.view.activity.WifiActivity"/>
 
-        <activity android:name=".model.mapmanager.view.activity.MapManagerActivity"></activity>
+        <activity android:name=".model.mapmanager.view.activity.MapManagerActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"/>
 
         <activity
             android:name=".model.mapmanager.view.activity.MapEditActivity"
             android:screenOrientation="landscape"
-            android:configChanges="orientation|keyboardHidden|screenSize">
-
-        </activity>
+            android:configChanges="orientation|keyboardHidden|screenSize"/>
 
         <activity android:name=".model.setting.view.SettingActivity"></activity>
         <activity android:name=".model.setting.view.SpeedActivity"></activity>
@@ -66,6 +67,14 @@
             />
 
         <!-- ZHOUKAN - ENDING -->
+
+        <activity android:name=".test.TestActivity2">
+            <!--<intent-filter>
+               <action android:name="android.intent.action.MAIN" />
+
+               <category android:name="android.intent.category.LAUNCHER" />
+           </intent-filter>-->
+        </activity>
 
     </application>
 

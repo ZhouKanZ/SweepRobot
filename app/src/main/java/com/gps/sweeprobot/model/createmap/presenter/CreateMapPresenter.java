@@ -2,10 +2,11 @@ package com.gps.sweeprobot.model.createmap.presenter;
 
 import android.support.v7.widget.RecyclerView;
 
+import com.gps.ros.response.LaserPose;
 import com.gps.ros.response.PicturePose;
 import com.gps.ros.rosbridge.operation.Subscribe;
 import com.gps.sweeprobot.base.BasePresenter;
-import com.gps.sweeprobot.bean.GpsMap;
+import com.gps.sweeprobot.database.GpsMapBean;
 import com.gps.sweeprobot.http.WebSocketHelper;
 import com.gps.sweeprobot.model.createmap.contract.CreateMapContract;
 import com.gps.sweeprobot.model.createmap.model.MapModel;
@@ -14,8 +15,13 @@ import com.gps.sweeprobot.mvp.IModel;
 import com.gps.sweeprobot.utils.RosProtrocol;
 
 import java.util.HashMap;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+import io.reactivex.Observable;
+import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 
 
 /**
@@ -27,6 +33,7 @@ public class CreateMapPresenter extends BasePresenter<CreateMapContract.View> im
 
     private static String modelKey = "CreateMapPresenter";
     private Disposable disposable;
+    private Disposable loopDispose;
     private MapModel model;
 
     public CreateMapPresenter() {
@@ -64,8 +71,8 @@ public class CreateMapPresenter extends BasePresenter<CreateMapContract.View> im
     }
 
     @Override
-    public void saveMap(GpsMap map) {
-        model.saveMap(null);
+    public void saveMap(GpsMapBean map) {
+        model.sendMapInfoToRos(map);
     }
 
     @Override
@@ -121,5 +128,28 @@ public class CreateMapPresenter extends BasePresenter<CreateMapContract.View> im
     @Override
     public void OnReceiverPicture(PicturePose pose) {
         iView.changeRobotPos(pose.getPosition().getX(),pose.getPosition().getY());
+    }
+
+    @Override
+    public void onReceiVerLaserPose(List<LaserPose.DataBean> lasers) {
+        iView.showLaserPoints(lasers);
+    }
+
+    @Override
+    public void loopSendCommandToRos() {
+        // 开始轮询给机器人发送指令
+        loopDispose = Observable
+                .interval(100, TimeUnit.MILLISECONDS)
+                .subscribe(new Consumer<Long>() {
+                    @Override
+                    public void accept(@NonNull Long aLong) throws Exception {
+                        model.sendVelocityToRos(iView.getVelocity()[0], (float) iView.getVelocity()[1]);
+                    }
+                });
+    }
+
+    @Override
+    public void stopLoop() {
+        loopDispose.dispose();
     }
 }

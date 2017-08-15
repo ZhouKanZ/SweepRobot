@@ -2,21 +2,23 @@ package com.gps.sweeprobot.model.mapmanager.presenterimpl;
 
 import android.graphics.Bitmap;
 import android.graphics.PointF;
-import android.graphics.drawable.Drawable;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 
 import com.gps.sweeprobot.MainApplication;
 import com.gps.sweeprobot.R;
 import com.gps.sweeprobot.bean.IAction;
+import com.gps.sweeprobot.database.GpsMapBean;
+import com.gps.sweeprobot.database.MyPointF;
 import com.gps.sweeprobot.database.PointBean;
 import com.gps.sweeprobot.database.VirtualObstacleBean;
 import com.gps.sweeprobot.model.mapmanager.adaper.item.ActionItem;
-import com.gps.sweeprobot.model.mapmanager.bean.MapListBean;
 import com.gps.sweeprobot.model.mapmanager.contract.MapEditContract;
 import com.gps.sweeprobot.model.mapmanager.model.ActionModel;
 import com.gps.sweeprobot.model.mapmanager.model.MapListModel;
 import com.gps.sweeprobot.model.mapmanager.presenter.MapEditPresenter;
+import com.gps.sweeprobot.model.mapmanager.view.activity.MapManagerActivity;
 import com.gps.sweeprobot.model.view.adapter.CommonRcvAdapter;
 import com.gps.sweeprobot.model.view.adapter.item.AdapterItem;
 import com.gps.sweeprobot.mvp.IModel;
@@ -32,6 +34,8 @@ import java.util.List;
 import io.reactivex.Observable;
 import io.reactivex.functions.Consumer;
 
+import static com.gps.sweeprobot.R.mipmap.point;
+
 /**
  * Create by WangJun on 2017/7/19
  */
@@ -42,7 +46,7 @@ public class MapEditPresenterImpl extends MapEditPresenter {
     private static String ACTION_KEY = "action_key";
 
     private List<IAction> actionList;
-    private List<MapListBean> mapList;
+    private List<GpsMapBean> mapList;
     private ActionItem.ActionOnItemListener listener;
     private MapEditContract.view mapEditView;
 
@@ -73,6 +77,10 @@ public class MapEditPresenterImpl extends MapEditPresenter {
     private List<PointBean> pointsList;
     //虚拟墙数据
     private List<VirtualObstacleBean> obstacleBeanList;
+    //地图数据model
+    private MapListModel mapListModel;
+
+    private int mapid;
 
     public MapEditPresenterImpl(ActionItem.ActionOnItemListener listener, MapEditContract.view mapEditView) {
 
@@ -149,36 +157,30 @@ public class MapEditPresenterImpl extends MapEditPresenter {
     @Override
     public void setData() {
 
+
         //获取地图img
-        setMapData();
+        setMapData(mapid);
         //从数据库获取标记点,虚拟墙数据
         setActionData();
 
     }
 
-    private void setMapData() {
+    private void setMapData(final int mapId) {
 
-        Observable.just(getiModelMap().get(MAP_KEY))
+        mapListModel = (MapListModel) getiModelMap().get(MAP_KEY);
+
+        Observable.just(mapListModel)
                 .subscribe(new Consumer<IModel>() {
                     @Override
                     public void accept(@io.reactivex.annotations.NonNull IModel iModel) throws Exception {
 
-                        ((MapListModel) iModel).downMapImg(new MapListModel.InfoHint() {
-                            @Override
-                            public void successInfo(Drawable drawable) {
-                                mapEditView.getData(drawable, null);
-                            }
+                        ((MapListModel) iModel).downMapImg(mapId,new MapListModel.InfoHint() {
 
                             @Override
                             public void successInfo(Bitmap map) {
                                 mapEditView.getData(map);
                             }
 
-                            @Override
-                            public void successMapListData(List<MapListBean> data) {
-                                mapList.clear();
-                                mapList.addAll(data);
-                            }
 
                             @Override
                             public void failInfo(Throwable e) {
@@ -191,6 +193,7 @@ public class MapEditPresenterImpl extends MapEditPresenter {
     }
 
     public void setActionData() {
+
 
         //获取action的数据
         Observable.just(((ActionModel) getiModelMap().get(ACTION_KEY)))
@@ -255,7 +258,7 @@ public class MapEditPresenterImpl extends MapEditPresenter {
         isPoint = true;
         actionList.clear();
         actionList.addAll(pointsList);
-        itemIconResid = R.mipmap.point;
+        itemIconResid = point;
         mapEditView.setActionRecyclerView();
 
     }
@@ -332,10 +335,8 @@ public class MapEditPresenterImpl extends MapEditPresenter {
      */
     private void addObstacleData(String name){
 
-        VirtualObstacleBean obstacleBean = mapEditView.setObstacleName(name);
-        obstacleBeanList.add(obstacleBean);
-        mapEditView.updateAdapter(obstacleBeanList);
-        ((ActionModel) getiModelMap().get(ACTION_KEY)).setObstacle2Ros(obstacleBean);
+        mapEditView.setObstacleName(name);
+
     }
 
     /**
@@ -380,6 +381,31 @@ public class MapEditPresenterImpl extends MapEditPresenter {
         mapEditView.createInputNameDialog(getIView().getString(R.string.dialog_Obstacle));
     }
 
+    @Override
+    public void setBundle(Bundle bundle) {
+        this.mapid = bundle.getInt(MapManagerActivity.BUNDLE_KEY);
+
+    }
+
+    @Override
+    public void savePoint(PointF pointF, String pointName) {
+
+        mapListModel.savePoint(pointF,pointName,mapid);
+    }
+
+    @Override
+    public void saveObstacle(List<MyPointF> myPointFs, String name) {
+        mapListModel.saveObstacle(myPointFs,name,mapid);
+
+        VirtualObstacleBean virtualObstacleBean = new VirtualObstacleBean();
+        virtualObstacleBean.setName(name);
+        virtualObstacleBean.setMyPointFs(myPointFs);
+
+        //刷新adapter
+        obstacleBeanList.add(virtualObstacleBean);
+        mapEditView.updateAdapter(obstacleBeanList);
+    }
+
     /**
      * 添加标记点
      */
@@ -388,7 +414,8 @@ public class MapEditPresenterImpl extends MapEditPresenter {
         if (pointName != null) {
 
             //添加新加入数据库的pointBean
-            PointBean pointBean = mapEditView.addPointWrapper(getFlagXY().x, getFlagXY().y, pointName);
+            PointBean pointBean = mapEditView.addPointWrapper(getFlagXY().x, getFlagXY().y,pointName);
+
             if (pointBean != null) {
 
                 pointsList.add(pointBean);

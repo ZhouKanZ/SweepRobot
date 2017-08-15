@@ -9,4 +9,5 @@ import com.gps.sweeprobot.model.mapmanager.view.activity.MapManagerActivity;
 
 public abstract class MapManagerPresenter extends BasePresenter<MapManagerActivity> {
 
+    public abstract int getMapId(int presenter);
 }

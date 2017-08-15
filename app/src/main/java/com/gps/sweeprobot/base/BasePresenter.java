@@ -53,4 +53,6 @@ public abstract class BasePresenter<V extends IView> implements IPresenter {
     public abstract RecyclerView.Adapter initAdapter();
 
     public abstract void setData();
+
+
 }

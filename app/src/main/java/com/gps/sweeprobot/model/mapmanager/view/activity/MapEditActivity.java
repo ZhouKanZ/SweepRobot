@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.PointF;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.widget.LinearLayoutManager;
@@ -22,7 +23,6 @@ import com.gps.sweeprobot.R;
 import com.gps.sweeprobot.base.BaseActivity;
 import com.gps.sweeprobot.database.MyPointF;
 import com.gps.sweeprobot.database.PointBean;
-import com.gps.sweeprobot.database.VirtualObstacleBean;
 import com.gps.sweeprobot.model.main.bean.ToolbarOptions;
 import com.gps.sweeprobot.model.mapmanager.adaper.item.ActionItem;
 import com.gps.sweeprobot.model.mapmanager.bean.MapListBean;
@@ -35,6 +35,7 @@ import com.gps.sweeprobot.utils.LogManager;
 import com.gps.sweeprobot.utils.LogUtils;
 import com.gps.sweeprobot.utils.ToastManager;
 import com.gps.sweeprobot.widget.GpsImageView;
+import com.gps.sweeprobot.widget.VirtualObstacleView;
 import com.orhanobut.dialogplus.DialogPlus;
 import com.orhanobut.dialogplus.ViewHolder;
 
@@ -52,7 +53,7 @@ import io.reactivex.functions.Consumer;
  */
 
 public class MapEditActivity extends BaseActivity<MapEditPresenter, IView> implements ActionItem.ActionOnItemListener
-        , MapEditContract.view,GpsImageView.OnObstacleViewClick {
+        , MapEditContract.view ,GpsImageView.SavePointDataListener, VirtualObstacleView.SaveObstacleListener {
 
 
     @BindView(R.id.activity_map_edit_giv)
@@ -70,6 +71,8 @@ public class MapEditActivity extends BaseActivity<MapEditPresenter, IView> imple
     private TextInputEditText inputName;
 
     private DialogPlus dialogPlus;
+    private Bundle bundle;
+//    private Bundle bundle = new Bundle();
 
     @Override
     protected TextView getTitleTextView() {
@@ -94,7 +97,12 @@ public class MapEditActivity extends BaseActivity<MapEditPresenter, IView> imple
         options.titleId = R.string.activity_edit_map_title;
         setToolBar(R.id.toolbar, options);
 
+        bundle = getIntent().getBundleExtra(this.getClass().getSimpleName());
+        mPresenter.setBundle(bundle);
         mPresenter.setData();
+
+        gpsImageView.setOnSaveListener(this);
+        gpsImageView.setOnSaveObstacleListener(this);
     }
 
     @Override
@@ -332,8 +340,8 @@ public class MapEditActivity extends BaseActivity<MapEditPresenter, IView> imple
     }
 
     @Override
-    public VirtualObstacleBean setObstacleName(String name) {
-        return gpsImageView.setObstacleName(name);
+    public void setObstacleName(String name) {
+        gpsImageView.setObstacleName(name);
     }
 
     @Override
@@ -410,13 +418,22 @@ public class MapEditActivity extends BaseActivity<MapEditPresenter, IView> imple
     }
 
     /**
-     *  虚拟墙view点击监听
+     * 保存标记点的监听
+     * @param pointF
+     * @param name
      */
     @Override
-    public void obstacleViewOnClick() {
-
-        mPresenter.obstacleViewOnClick();
+    public void onSavePoint(PointF pointF, String name) {
+        mPresenter.savePoint(pointF,name);
     }
 
-
+    /**
+     * 保存虚拟墙的监听
+     * @param myPointFs
+     * @param name
+     */
+    @Override
+    public void onSaveObstacle(List<MyPointF> myPointFs, String name) {
+        mPresenter.saveObstacle(myPointFs,name);
+    }
 }

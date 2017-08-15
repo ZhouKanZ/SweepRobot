@@ -12,12 +12,9 @@ import android.view.View;
 
 import com.gps.sweeprobot.R;
 import com.gps.sweeprobot.database.MyPointF;
-import com.gps.sweeprobot.database.VirtualObstacleBean;
 import com.gps.sweeprobot.utils.DegreeManager;
 import com.gps.sweeprobot.utils.DensityUtil;
 import com.gps.sweeprobot.utils.LogManager;
-
-import org.litepal.crud.DataSupport;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +32,7 @@ public class VirtualObstacleView extends View {
     private Paint circlePaint;
     private TextPaint textPaint;
     private String name;
+    private SaveObstacleListener saveObstacleListener;
 
     public VirtualObstacleView(Context context) {
         super(context);
@@ -51,6 +49,9 @@ public class VirtualObstacleView extends View {
         init();
     }
 
+    public void setSaveObstacleListener(SaveObstacleListener saveObstacleListener) {
+        this.saveObstacleListener = saveObstacleListener;
+    }
 
     private void init() {
 
@@ -79,6 +80,7 @@ public class VirtualObstacleView extends View {
 
 //        setBackgroundColor(getResources().getColor(R.color.color_activity_blue_bg));
     }
+
 
     public void setmMatrix(Matrix mMatrix) {
         this.mMatrix = mMatrix;
@@ -150,16 +152,14 @@ public class VirtualObstacleView extends View {
         return name;
     }
 
-    public VirtualObstacleBean saveObstacleBean(){
+    public void saveObstacleBean(){
 
-        //将虚拟墙数据存进数据库
-        DataSupport.saveAll(myPointFs);
-        VirtualObstacleBean virtualObstacleBean = new VirtualObstacleBean();
-        virtualObstacleBean.setName(name);
-        virtualObstacleBean.setMyPointFs(myPointFs);
-        virtualObstacleBean.save();
+        saveObstacleListener.onSaveObstacle(myPointFs,name);
 
-        //通知服务器
-        return virtualObstacleBean;
+    }
+
+    public interface SaveObstacleListener{
+
+        void onSaveObstacle(List<MyPointF> myPointFs,String name);
     }
 }

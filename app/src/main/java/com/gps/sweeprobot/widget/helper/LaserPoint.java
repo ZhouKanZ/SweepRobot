@@ -1,20 +1,17 @@
-package com.gps.sweeprobot.database;
-
-import org.litepal.crud.DataSupport;
+package com.gps.sweeprobot.widget.helper;
 
 /**
- * Create by WangJun on 2017/8/4
+ * @Author : zhoukan
+ * @CreateDate : 2017/8/10 0010
+ * @Descriptiong : xxx
  */
 
-public class MyPointF extends DataSupport{
+public class LaserPoint {
 
     private float x;
     private float y;
 
-    public MyPointF() {
-    }
-
-    public MyPointF(float x, float y) {
+    public LaserPoint(float x, float y) {
         this.x = x;
         this.y = y;
     }

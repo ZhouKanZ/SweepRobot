@@ -1,9 +1,11 @@
 package com.gps.sweeprobot.model.mapmanager.view.activity;
 
 import android.os.Build;
+import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -24,6 +26,7 @@ import butterknife.BindView;
 public class MapManagerActivity extends BaseActivity<MapManagerPresenter,IView> implements
         MapListItem.MOnItemClickListener {
 
+    public static final String BUNDLE_KEY = "bundle_key";
     @BindView(R.id.activity_map_manager_rv)
     RecyclerView recyclerView;
 
@@ -77,13 +80,16 @@ public class MapManagerActivity extends BaseActivity<MapManagerPresenter,IView> 
 
     @Override
     protected void otherViewClick(View view) {
-
-
     }
 
     @Override
     public void onItemClickListener(View view, int position) {
 
-        startSelf(this,MapEditActivity.class,null);
+        Bundle bundle = new Bundle();
+        bundle.putInt(BUNDLE_KEY,mPresenter.getMapId(position));
+
+        MapEditActivity.startSelf(this,MapEditActivity.class,bundle);
+
+        Log.d("test", "onItemClickListener: " + MapEditActivity.class.getSimpleName() +"id:"+ mPresenter.getMapId(position));
     }
 }

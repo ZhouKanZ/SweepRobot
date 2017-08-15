@@ -1,10 +1,11 @@
 package com.gps.sweeprobot.model.createmap.contract;
 
 import android.graphics.Bitmap;
-import android.graphics.Point;
 
 import com.alibaba.fastjson.JSONObject;
+import com.gps.ros.response.LaserPose;
 import com.gps.sweeprobot.bean.GpsMap;
+import com.gps.sweeprobot.database.GpsMapBean;
 import com.gps.sweeprobot.mvp.IView;
 import com.gps.sweeprobot.mvp.RxBusModel;
 import com.gps.sweeprobot.mvp.RxBusPresenter;
@@ -43,7 +44,7 @@ public class CreateMapContract {
          */
         void getRosPosition();
 
-        void saveMap(GpsMap map);
+        void saveMap(GpsMapBean map);
 
         void subscribe();
         /**
@@ -51,8 +52,9 @@ public class CreateMapContract {
          */
         void finishScanMap();
 
+        void loopSendCommandToRos();
 
-
+        void stopLoop();
     }
 
     public interface View extends IView{
@@ -95,7 +97,7 @@ public class CreateMapContract {
          *  显示镭射点
          * @param points
          */
-        void showLaserPoints(List<Point> points);
+        void showLaserPoints(List<LaserPose.DataBean> points);
 
         void showIutInfoDialog();
         void hideIutInfoDialog();
@@ -114,10 +116,6 @@ public class CreateMapContract {
          */
         void stopScan(Disposable disposable);
 
-        /**
-         * 保存地图
-         */
-        void saveMap(GpsMap gpsMap);
 
 
         /**
@@ -129,5 +127,6 @@ public class CreateMapContract {
 
         void subscribe();
 
+        void sendMapInfoToRos(GpsMapBean gpsMapBean);
     }
 }

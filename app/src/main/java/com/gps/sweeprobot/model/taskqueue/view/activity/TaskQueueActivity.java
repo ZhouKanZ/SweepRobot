@@ -1,6 +1,6 @@
 package com.gps.sweeprobot.model.taskqueue.view.activity;
 
-import android.graphics.BitmapFactory;
+import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -8,14 +8,18 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.gps.sweeprobot.R;
 import com.gps.sweeprobot.base.BaseActivity;
-import com.gps.sweeprobot.base.BasePresenter;
-import com.gps.sweeprobot.bean.GpsMap;
+import com.gps.sweeprobot.database.GpsMapBean;
+import com.gps.sweeprobot.http.Constant;
+import com.gps.sweeprobot.model.taskqueue.contract.TaskQueueContract;
+import com.gps.sweeprobot.model.taskqueue.presenter.TaskQuenePresenter;
 import com.zhy.adapter.recyclerview.CommonAdapter;
 import com.zhy.adapter.recyclerview.base.ViewHolder;
 
-import java.util.ArrayList;
+import org.litepal.crud.DataSupport;
+
 import java.util.List;
 
 import butterknife.BindView;
@@ -26,8 +30,7 @@ import butterknife.OnClick;
  * @CreateDate : 2017/7/13 0013
  * @Descriptiong : xxx
  */
-
-public class TaskQueueActivity extends BaseActivity {
+public class TaskQueueActivity extends BaseActivity<TaskQuenePresenter, TaskQueueContract.View> {
 
     @BindView(R.id.iv_back)
     ImageView ivBack;
@@ -40,7 +43,7 @@ public class TaskQueueActivity extends BaseActivity {
     @BindView(R.id.rv_tasks)
     RecyclerView rvTasks;
 
-    private List<GpsMap> tasks;
+    private List<GpsMapBean> tasks;
 
     @Override
     protected TextView getTitleTextView() {
@@ -53,36 +56,40 @@ public class TaskQueueActivity extends BaseActivity {
     }
 
     @Override
-    protected BasePresenter loadPresenter() {
-        return null;
+    protected TaskQuenePresenter loadPresenter() {
+        return new TaskQuenePresenter();
     }
+
 
     @Override
     protected void initData() {
 
-        tasks = new ArrayList<>();
-        tasks.add(new GpsMap(1,R.mipmap.map_test,"测试地图1","2017-7-18",1));
-        tasks.add(new GpsMap(2,R.mipmap.map_test,"测试地图2","2017-7-18",2));
-        tasks.add(new GpsMap(3,R.mipmap.map_test,"测试地图3","2017-7-18",3));
-        tasks.add(new GpsMap(4,R.mipmap.map_test,"测试地图4","2017-7-18",4));
-
+        tasks = DataSupport.findAll(GpsMapBean.class);
         setLeftVisiable(true);
 
         rvTasks.setLayoutManager(new LinearLayoutManager(this));
 
 
-        rvTasks.setAdapter(new CommonAdapter<GpsMap>(this,R.layout.item_task,tasks) {
+        rvTasks.setAdapter(new CommonAdapter<GpsMapBean>(this,R.layout.item_task,tasks) {
 
             @Override
-            protected void convert(ViewHolder holder, GpsMap gpsMap, int position) {
-                GpsMap gps = tasks.get(position);
-                holder.setText(R.id.tv_title,gps.getMapName());
-                holder.setText(R.id.tv_date,gps.getCreateDate());
-                holder.setImageBitmap(R.id.iv_map, BitmapFactory.decodeResource(TaskQueueActivity.this.getResources(),gps.getMapResId()));
+            protected void convert(ViewHolder holder, final GpsMapBean gpsMap, int position) {
+                GpsMapBean gps = tasks.get(position);
+                holder.setText(R.id.tv_title,gps.getName());
+                holder.setText(R.id.tv_date,gps.getDate());
+
+                Glide.with(mCtz)
+                        .load(Constant.DOMAIN + gps.getCompletedMapUrl())
+                        .into((ImageView) holder.getView(R.id.iv_map));
+
                 holder.setOnClickListener(R.id.layout_task_item, new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        TaskTypeActivity.startSelf(TaskQueueActivity.this,TaskTypeActivity.class,null);
+
+                        Bundle bundle = new Bundle();
+                        bundle.putInt(TaskTypeActivity.ID,gpsMap.getId());
+                        TaskTypeActivity.startSelf(TaskQueueActivity.this,TaskTypeActivity.class,bundle);
+
                     }
                 });
             }
@@ -100,9 +107,7 @@ public class TaskQueueActivity extends BaseActivity {
     }
 
     @Override
-    protected void otherViewClick(View view) {
-
-    }
+    protected void otherViewClick(View view) {}
 
     @Override
     public ImageView getLeftImageView() {

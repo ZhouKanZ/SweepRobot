@@ -23,7 +23,6 @@ import io.reactivex.schedulers.Schedulers;
 
 public class ActionModel implements IModel {
 
-
     /**
      * 先从数据库中读取数据，若无则从服务器获取
      * @param messager 回调接口

@@ -52,4 +52,6 @@ dependencies {
     compile('cn.qqtheme.framework:WheelPicker:1.5.1') {
         exclude group: 'com.android.support'
     }
+    compile 'com.alexvasilkov:gesture-views:2.3.1'
+
 }

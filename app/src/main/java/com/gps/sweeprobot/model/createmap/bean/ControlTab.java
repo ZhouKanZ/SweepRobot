@@ -9,9 +9,11 @@ package com.gps.sweeprobot.model.createmap.bean;
 public class ControlTab {
 
     private int resId;
+    private String controllName;
 
-    public ControlTab(int resId) {
+    public ControlTab(int resId,String controllName) {
         this.resId = resId;
+        this.controllName = controllName;
     }
 
     public int getResId() {
@@ -20,5 +22,13 @@ public class ControlTab {
 
     public void setResId(int resId) {
         this.resId = resId;
+    }
+
+    public void setControllName(String controllName) {
+        this.controllName = controllName;
+    }
+
+    public String getControllName() {
+        return controllName;
     }
 }

@@ -2,19 +2,24 @@ package com.gps.sweeprobot.model.createmap.model;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.util.Log;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
 import com.gps.ros.android.RxBus;
+import com.gps.ros.response.LaserPose;
+import com.gps.ros.response.PicturePose;
+import com.gps.ros.response.SubscribeResponse;
 import com.gps.ros.rosbridge.operation.Advertise;
 import com.gps.ros.rosbridge.operation.Subscribe;
-import com.gps.sweeprobot.bean.GpsMap;
+import com.gps.sweeprobot.database.GpsMapBean;
 import com.gps.sweeprobot.http.Http;
 import com.gps.sweeprobot.http.WebSocketHelper;
 import com.gps.sweeprobot.model.createmap.contract.CreateMapContract;
 import com.gps.sweeprobot.utils.JsonCreator;
 import com.gps.sweeprobot.utils.RosProtrocol;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
@@ -40,11 +45,13 @@ public class MapModel implements CreateMapContract.Model {
     private Disposable dispose;
     private Disposable rxBusDispose;
     private RosResponseLisenter rosLisenter;
+    private Bitmap bitmap;
 
     /* 图片的刷新频率 */
     private final static int INTERVAL = 2;
 
-    public MapModel() {}
+    public MapModel() {
+    }
 
     /**
      * 扫描地图 http
@@ -54,48 +61,46 @@ public class MapModel implements CreateMapContract.Model {
 
         askStart();
 
-        /**
-         *  rxjava 实现轮询
-         */
-        dispose = Observable
-                .interval(INTERVAL, TimeUnit.SECONDS)
-                .flatMap(new Function<Long, ObservableSource<ResponseBody>>() {
-                    @Override
-                    public ObservableSource<ResponseBody> apply(@NonNull Long aLong) throws Exception {
-                        return Http.getHttpService().downImage();
-                    }
-                })
-                .map(new Function<ResponseBody, Bitmap>() {
-                    @Override
-                    public Bitmap apply(@NonNull ResponseBody responseBody) throws Exception {
-                        Bitmap bitmap = BitmapFactory.decodeStream(responseBody.byteStream());
-                        return bitmap;
-                    }
-                })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(consumer);
-
+        if (dispose == null || dispose.isDisposed()){
+            /**
+             *  rxjava 实现轮询
+             */
+            dispose = Observable
+                    .interval(INTERVAL, TimeUnit.SECONDS)
+                    .flatMap(new Function<Long, ObservableSource<ResponseBody>>() {
+                        @Override
+                        public ObservableSource<ResponseBody> apply(@NonNull Long aLong) throws Exception {
+                            return Http.getHttpService().downImage();
+                        }
+                    })
+                    .map(new Function<ResponseBody, Bitmap>() {
+                        @Override
+                        public Bitmap apply(@NonNull ResponseBody responseBody) throws Exception {
+                            bitmap = BitmapFactory.decodeStream(responseBody.byteStream());
+                            return bitmap;
+                        }
+                    })
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(consumer);
+        }
         return dispose;
     }
 
     @Override
     public void stopScan(Disposable dispose) {
-        if (null != dispose) {
+        if (dispose != null && !dispose.isDisposed()) {
             dispose.dispose();
         }
         askStop();
     }
 
-    @Override
-    public void saveMap(GpsMap gpsMap) {
-
-    }
 
     /**
-     *  控制机器人行走
-     * @param angel    角度
-     * @param length   长度
+     * 控制机器人行走
+     *
+     * @param angel  角度
+     * @param length 长度
      */
     @Override
     public void sendVelocityToRos(double angel, float length) {
@@ -110,26 +115,33 @@ public class MapModel implements CreateMapContract.Model {
 
         /* 订阅机器人位置 */
         Subscribe subscribe = new Subscribe();
-        subscribe.topic     = RosProtrocol.PicturePose.TOPIC;
-        subscribe.type      = RosProtrocol.PicturePose.TYPE;
+        subscribe.topic = RosProtrocol.PicturePose.TOPIC;
+        subscribe.type = RosProtrocol.PicturePose.TYPE;
         WebSocketHelper.send(subscribe);
 
         /* 创建机器人可控制 advertise  */
         Advertise advertise = new Advertise();
-        advertise.topic     = RosProtrocol.Speed.TOPIC;
-        advertise.type      = RosProtrocol.Speed.TYPE;
+        advertise.topic = RosProtrocol.Speed.TOPIC;
+        advertise.type = RosProtrocol.Speed.TYPE;
         WebSocketHelper.send(advertise);
 
         /*  订阅机器人激光点 */
         Subscribe laserPose = new Subscribe();
-        laserPose.topic     = RosProtrocol.LaserPose.TOPIC;
-        laserPose.type      = RosProtrocol.LaserPose.TYPE;
-
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("topic",RosProtrocol.LaserPose.TOPIC);
-        jsonObject.put("type",RosProtrocol.LaserPose.TYPE);
-
+        laserPose.topic = RosProtrocol.LaserPose.TOPIC;
+        laserPose.type = RosProtrocol.LaserPose.TYPE;
         WebSocketHelper.send(laserPose);
+    }
+
+    @Override
+    public void sendMapInfoToRos(GpsMapBean gpsMapBean) {
+
+        WebSocketHelper.send(
+                JsonCreator
+                .postMapInfo(gpsMapBean.getId(),
+                        gpsMapBean.getName())
+                .toJSONString());
+
+        gpsMapBean.save();
     }
 
     /**
@@ -154,7 +166,7 @@ public class MapModel implements CreateMapContract.Model {
 
     @Override
     public void registerRxBus() {
-        rxBusDispose =  RxBus.getDefault()
+        rxBusDispose = RxBus.getDefault()
                 .toObservable(JSONObject.class)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -162,43 +174,66 @@ public class MapModel implements CreateMapContract.Model {
                     @Override
                     public void accept(@NonNull JSONObject jsonObject) throws Exception {
 
-                        Log.d(TAG, "accept: " + jsonObject);
-
-                        /**
-                         * 接收到service的数据     ( 开始 -- 结束 )
-                         * 接收到subscribe的数据
-                         */
-                        if (null == rosLisenter){
+                        if (null == rosLisenter) {
                             return;
                         }
 
                         String op = jsonObject.getString("op");
                         String topic = jsonObject.getString("topic");
-                        switch (op){
+                        switch (op) {
                             case "publish":
-
-                                if (topic.equals("")){
-
-                                }
-
+                                postMsgByTopic(topic, jsonObject);
                                 break;
-                            case "":
+                            case "service_response":
+                                postMsgByService();
                                 break;
                         }
-                        // TODO: 2017/8/8 0008 机器人导航点
                     }
+
+                    
                 });
     }
 
-    @Override
-    public void unregisterRxBus(){
+    /**
+     *  根据接收到的消息来做消息分发和ui上的处理
+     */
+    private void postMsgByService() {
 
-        if (null != rxBusDispose){
+    }
+
+    @Override
+    public void unregisterRxBus() {
+
+        if (null != rxBusDispose) {
             rxBusDispose.dispose();
         }
     }
 
     public void setRosLisenter(RosResponseLisenter rosLisenter) {
         this.rosLisenter = rosLisenter;
+    }
+
+    /**
+     * 根据topic的值  以不同的class来post出去
+     *
+     * @param topic
+     */
+    private void postMsgByTopic(String topic, JSONObject jsonObject) {
+        switch (topic) {
+            case RosProtrocol.PicturePose.TOPIC:
+                SubscribeResponse<PicturePose> picturePose = JSON.parseObject(jsonObject.toJSONString(),
+                        new TypeReference<SubscribeResponse<PicturePose>>(){});
+                rosLisenter.OnReceiverPicture(picturePose.getMsg());
+
+                break;
+            case RosProtrocol.LaserPose.TOPIC:
+
+                SubscribeResponse<LaserPose> laserPose = JSON.parseObject(jsonObject.toJSONString(),
+                        new TypeReference<SubscribeResponse<LaserPose>>(){});
+                List<LaserPose.DataBean> lasers = laserPose.getMsg().getData();
+                rosLisenter.onReceiVerLaserPose(lasers);
+
+                break;
+        }
     }
 }

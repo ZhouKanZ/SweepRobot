@@ -2,16 +2,23 @@ package com.gps.sweeprobot.model.mapmanager.model;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
+import android.graphics.PointF;
 
 import com.gps.sweeprobot.MainApplication;
+import com.gps.sweeprobot.database.GpsMapBean;
+import com.gps.sweeprobot.database.MyPointF;
+import com.gps.sweeprobot.database.PointBean;
+import com.gps.sweeprobot.database.VirtualObstacleBean;
 import com.gps.sweeprobot.http.Http;
-import com.gps.sweeprobot.model.mapmanager.bean.MapListBean;
 import com.gps.sweeprobot.model.mapmanager.service.CommonService;
 import com.gps.sweeprobot.mvp.IModel;
+import com.gps.sweeprobot.url.UrlHelper;
+import com.gps.sweeprobot.utils.CommunicationUtil;
 import com.gps.sweeprobot.utils.LogManager;
 import com.gps.sweeprobot.utils.LogUtils;
 import com.gps.sweeprobot.utils.ToastManager;
+
+import org.litepal.crud.DataSupport;
 
 import java.util.List;
 
@@ -19,7 +26,6 @@ import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.ResponseBody;
@@ -34,14 +40,17 @@ import retrofit2.Response;
 
 public class MapListModel implements IModel {
 
+
     /***
      * 获取地图图片
      * @param infoHint
      */
-    public void downMapImg(final InfoHint infoHint) {
+    public void downMapImg(int mapId,final InfoHint infoHint) {
+
+        GpsMapBean gpsMapBean = DataSupport.find(GpsMapBean.class, mapId);
 
         Http.getHttpService()
-                .downImage()
+                .getMapList(UrlHelper.BASE_URL + gpsMapBean.getCompletedMapUrl())
                 .subscribeOn(Schedulers.io())
                 .map(new Function<ResponseBody, Bitmap>() {
                     @Override
@@ -77,7 +86,55 @@ public class MapListModel implements IModel {
                 });
     }
 
+    /**
+     * 保存标记点数据，并通知服务器
+     * @param pointF
+     * @param pointName
+     * @param mapid
+     */
+    public void savePoint(PointF pointF,String pointName,int mapid){
 
+        //将标记点数据存进数据库
+        PointBean pointBean = new PointBean();
+        pointBean.setX(pointF.x);
+        pointBean.setY(pointF.y);
+        pointBean.setPointName(pointName);
+        pointBean.save();
+
+        //将标记点存进地图数据中
+        GpsMapBean mapBean = DataSupport.find(GpsMapBean.class,mapid);
+        List<PointBean> all = DataSupport.findAll(PointBean.class);
+        mapBean.setPointBeanList(all);
+        mapBean.save();
+
+        //通知服务器
+        CommunicationUtil.sendPoint2Ros(pointBean);
+    }
+
+    /**
+     * 保存虚拟墙数据，并通知服务器
+     * @param myPointFs
+     * @param name
+     * @param mapid
+     */
+    public void saveObstacle(List<MyPointF> myPointFs,String name,int mapid){
+
+        //将虚拟墙数据存进数据库
+        DataSupport.saveAll(myPointFs);
+        VirtualObstacleBean virtualObstacleBean = new VirtualObstacleBean();
+        virtualObstacleBean.setName(name);
+        virtualObstacleBean.setMyPointFs(myPointFs);
+        virtualObstacleBean.save();
+
+        //将虚拟墙存进地图数据中
+        GpsMapBean mapBean = DataSupport.find(GpsMapBean.class, mapid);
+        List<VirtualObstacleBean> all = DataSupport.findAll(VirtualObstacleBean.class);
+        mapBean.setVirtualObstacleBeanList(all);
+        mapBean.save();
+
+        //通知服务器
+        CommunicationUtil.sendObstacle2Ros(virtualObstacleBean);
+    }
 
     public void test(final InfoHint infoHint){
 
@@ -103,36 +160,10 @@ public class MapListModel implements IModel {
 
     }
 
-    /**
-     *
-     * @param infoHint
-     */
-    public void requestMapListData(final InfoHint infoHint) {
-
-        Http.getHttpService()
-                .getMapList()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<List<MapListBean>>() {
-                    @Override
-                    public void accept(@NonNull List<MapListBean> mapListBeen) throws Exception {
-                        infoHint.successMapListData(mapListBeen);
-                    }
-                });
-    }
-
-    public void getMapListDataFromDatabase(){
-
-    }
-
 
     public interface InfoHint {
 
-        void successInfo(Drawable drawable);
-
         void successInfo(Bitmap map);
-
-        void successMapListData(List<MapListBean> data);
 
         void failInfo(Throwable e);
     }
