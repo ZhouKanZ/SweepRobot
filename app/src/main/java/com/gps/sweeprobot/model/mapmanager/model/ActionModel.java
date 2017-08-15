@@ -30,8 +30,6 @@ public class ActionModel implements IModel {
      */
     public void getActionData(final InfoMessager messager) {
 
-        //从服务器获取数据 rosclient ?
-
         //从数据库获取数据
         Observable.fromArray(DataSupport.findAll(PointBean.class))
                 .subscribeOn(Schedulers.io())
