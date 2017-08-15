@@ -32,11 +32,13 @@ import io.reactivex.functions.Consumer;
 public class GpsImage extends View {
 
     private static final String TAG = "GpsImage";
-    
+
     private List<LaserPose.DataBean> laserPoints;
     private Bitmap robot;
     private Bitmap map;
-    private @IdRes int laserPointColor;
+    private
+    @IdRes
+    int laserPointColor;
     private int laserRadius;
 
     private Paint mPaint;
@@ -51,6 +53,7 @@ public class GpsImage extends View {
     private float robotY;
 
     private Canvas canvasBitmap;
+    private Matrix matrix;
 
 
     public GpsImage(Context context) {
@@ -95,27 +98,31 @@ public class GpsImage extends View {
 
 
         canvas.save();
-        final Matrix matrix = caculateMatrix(map);
-        canvas.drawBitmap(map,matrix,mPaint);
-
-        if (isRobotShow){
-            PointF pointF = DegreeManager.changeAbsolutePoint(robotX,robotY,matrix);
-            canvas.drawBitmap(robot,pointF.x,pointF.y,mPaint);
+        if (null != map) {
+            matrix = caculateMatrix(map);
+            canvas.drawBitmap(map, matrix, mPaint);
         }
 
-        if (isLaserShow){
+
+        if (isRobotShow) {
+            PointF pointF = DegreeManager.changeAbsolutePoint(robotX, robotY, matrix);
+            canvas.drawBitmap(robot, pointF.x, pointF.y, mPaint);
+        }
+
+        if (isLaserShow) {
             Flowable
                     .fromIterable(laserPoints)
                     .subscribe(new Consumer<LaserPose.DataBean>() {
                         @Override
                         public void accept(@NonNull LaserPose.DataBean laserPoint) throws Exception {
-                            PointF pointF = DegreeManager.changeAbsolutePoint((float) laserPoint.getX(),(float)laserPoint.getY(),matrix);
-                            canvas.drawPoint(pointF.x,pointF.y,mPaint);
+                            PointF pointF = DegreeManager.changeAbsolutePoint((float) laserPoint.getX(), (float) laserPoint.getY(), matrix);
+                            canvas.drawPoint(pointF.x, pointF.y, mPaint);
                         }
                     });
         }
 
         canvas.restore();
+//        map.recycle();
     }
 
     @Override
@@ -147,31 +154,32 @@ public class GpsImage extends View {
 
     /**
      * 计算bitmap在以fitCenter模式时图片的变换矩阵
+     *
      * @param bitmap
      * @return
      */
-    private Matrix caculateMatrix(Bitmap bitmap){
+    private Matrix caculateMatrix(Bitmap bitmap) {
 
         Matrix matrix = new Matrix();
 
-        int w  = bitmap.getWidth();
-        int h  = bitmap.getHeight();
+        int w = bitmap.getWidth();
+        int h = bitmap.getHeight();
 
         width = getWidth();
         height = getHeight();
 
-        float widthRatio = width / (float)w;
-        float heightRatio = height / (float)h;
+        float widthRatio = width / (float) w;
+        float heightRatio = height / (float) h;
 
-        if (h*widthRatio <= heightRatio){
-            matrix.postScale(widthRatio,widthRatio);
-            matrix.postTranslate((getWidth()-w*widthRatio)/2,0);
+        if (h * widthRatio <= heightRatio) {
+            matrix.postScale(widthRatio, widthRatio);
+            matrix.postTranslate((getWidth() - w * widthRatio) / 2, 0);
             return matrix;
         }
 
-        if (w*heightRatio <= width){
-            matrix.postScale(heightRatio,heightRatio);
-            matrix.postTranslate((getWidth()-w*heightRatio)/2,0);
+        if (w * heightRatio <= width) {
+            matrix.postScale(heightRatio, heightRatio);
+            matrix.postTranslate((getWidth() - w * heightRatio) / 2, 0);
             return matrix;
         }
         return null;
@@ -180,10 +188,11 @@ public class GpsImage extends View {
 
     /**
      * 设置机器人位置
+     *
      * @param robotX
      * @param robotY
      */
-    public void setRobotPosition(float robotX,float robotY) {
+    public void setRobotPosition(float robotX, float robotY) {
         isRobotShow = true;
         this.robotX = robotX;
         this.robotY = robotY;

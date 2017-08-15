@@ -9,7 +9,7 @@
         layout="@layout/layout_toolbar" />
 
 
-    <!-- 点 轨迹 覆盖物 -->
+    <!-- 点 轨迹 覆盖物
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_task_detail"
         android:layout_width="100dp"
@@ -53,6 +53,6 @@
                 android:src="@mipmap/sub" />
 
         </RelativeLayout>
-    </com.gps.sweeprobot.ui.gps_map.GpsImageView>
+    </com.gps.sweeprobot.ui.gps_map.GpsImageView>-->
 
 </RelativeLayout>

@@ -14,6 +14,7 @@ import com.gps.ros.response.SubscribeResponse;
 import com.gps.ros.rosbridge.operation.Advertise;
 import com.gps.ros.rosbridge.operation.Subscribe;
 import com.gps.sweeprobot.bean.GpsMap;
+import com.gps.sweeprobot.database.GpsMapBean;
 import com.gps.sweeprobot.http.Http;
 import com.gps.sweeprobot.http.WebSocketHelper;
 import com.gps.sweeprobot.model.createmap.contract.CreateMapContract;
@@ -46,6 +47,7 @@ public class MapModel implements CreateMapContract.Model {
     private Disposable dispose;
     private Disposable rxBusDispose;
     private RosResponseLisenter rosLisenter;
+    private Bitmap bitmap;
 
     /* 图片的刷新频率 */
     private final static int INTERVAL = 2;
@@ -61,43 +63,40 @@ public class MapModel implements CreateMapContract.Model {
 
         askStart();
 
-        /**
-         *  rxjava 实现轮询
-         */
-        dispose = Observable
-                .interval(INTERVAL, TimeUnit.SECONDS)
-                .flatMap(new Function<Long, ObservableSource<ResponseBody>>() {
-                    @Override
-                    public ObservableSource<ResponseBody> apply(@NonNull Long aLong) throws Exception {
-                        return Http.getHttpService().downImage();
-                    }
-                })
-                .map(new Function<ResponseBody, Bitmap>() {
-                    @Override
-                    public Bitmap apply(@NonNull ResponseBody responseBody) throws Exception {
-                        Bitmap bitmap = BitmapFactory.decodeStream(responseBody.byteStream());
-                        return bitmap;
-                    }
-                })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(consumer);
-
+        if (dispose == null || dispose.isDisposed()){
+            /**
+             *  rxjava 实现轮询
+             */
+            dispose = Observable
+                    .interval(INTERVAL, TimeUnit.SECONDS)
+                    .flatMap(new Function<Long, ObservableSource<ResponseBody>>() {
+                        @Override
+                        public ObservableSource<ResponseBody> apply(@NonNull Long aLong) throws Exception {
+                            return Http.getHttpService().downImage();
+                        }
+                    })
+                    .map(new Function<ResponseBody, Bitmap>() {
+                        @Override
+                        public Bitmap apply(@NonNull ResponseBody responseBody) throws Exception {
+                            bitmap = BitmapFactory.decodeStream(responseBody.byteStream());
+                            return bitmap;
+                        }
+                    })
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(consumer);
+        }
         return dispose;
     }
 
     @Override
     public void stopScan(Disposable dispose) {
-        if (null != dispose) {
+        if (dispose != null && !dispose.isDisposed()) {
             dispose.dispose();
         }
         askStop();
     }
 
-    @Override
-    public void saveMap(GpsMap gpsMap) {
-
-    }
 
     /**
      * 控制机器人行走
@@ -133,6 +132,18 @@ public class MapModel implements CreateMapContract.Model {
         laserPose.topic = RosProtrocol.LaserPose.TOPIC;
         laserPose.type = RosProtrocol.LaserPose.TYPE;
         WebSocketHelper.send(laserPose);
+    }
+
+    @Override
+    public void sendMapInfoToRos(GpsMapBean gpsMapBean) {
+
+        WebSocketHelper.send(
+                JsonCreator
+                .postMapInfo(gpsMapBean.getId(),
+                        gpsMapBean.getName())
+                .toJSONString());
+
+        gpsMapBean.save();
     }
 
     /**
@@ -176,10 +187,20 @@ public class MapModel implements CreateMapContract.Model {
                                 postMsgByTopic(topic, jsonObject);
                                 break;
                             case "service_response":
+                                postMsgByService();
                                 break;
                         }
                     }
+
+                    
                 });
+    }
+
+    /**
+     *  根据接收到的消息来做消息分发和ui上的处理
+     */
+    private void postMsgByService() {
+
     }
 
     @Override

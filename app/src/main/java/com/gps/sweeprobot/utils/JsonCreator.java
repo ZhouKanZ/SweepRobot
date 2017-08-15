@@ -65,7 +65,7 @@ public class JsonCreator {
      * @param angle
      * @return
      */
-    public static double convertAngleToRadians(double angle) {
+    private static double convertAngleToRadians(double angle) {
         return angle * (2 * (Math.PI / 360));
     }
 
@@ -85,7 +85,27 @@ public class JsonCreator {
         mappingStatus.put("args",msg);
 
         return mappingStatus;
+    }
 
+    /**
+     * 给机器人发送地图相关的信息
+     * @param id    地图id
+     * @param name  地图的名字
+     * @return
+     */
+    public static JSONObject postMapInfo(int id,String name){
+
+       /* 0表示开始  1 暂停 2 结束*/
+        JSONObject msg = new JSONObject();
+        msg.put("id",id);
+        msg.put("name",name);
+
+        JSONObject mappingStatus = new JSONObject();
+        mappingStatus.put("op","call_service");
+        mappingStatus.put("service","/post_mapinfo");
+        mappingStatus.put("args",msg);
+
+        return msg;
     }
 
 }

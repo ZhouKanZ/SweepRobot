@@ -63,9 +63,6 @@
 
         <!-- ZHOUKAN - ENDING -->
 
-        <activity android:name=".test.TestActivity"/>
-
-
         <activity android:name=".test.TestActivity2">
             <!--<intent-filter>
                <action android:name="android.intent.action.MAIN" />

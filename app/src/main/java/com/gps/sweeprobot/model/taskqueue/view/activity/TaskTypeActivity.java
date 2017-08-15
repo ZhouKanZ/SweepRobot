@@ -29,6 +29,7 @@ import butterknife.OnClick;
 
 public class TaskTypeActivity extends BaseActivity {
 
+    public static final String ID = "tasktypeactivity_id";
     @BindView(R.id.iv_back)
     ImageView ivBack;
     @BindView(R.id.title)

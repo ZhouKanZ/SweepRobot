@@ -41,14 +41,6 @@ public class TaskDetailActivity extends BaseActivity {
     ImageView ivBack;
     @BindView(R.id.title)
     TextView title;
-    @BindView(R.id.add)
-    ImageView add;
-    @BindView(R.id.sub)
-    ImageView sub;
-    @BindView(R.id.gps_mapview_task)
-    GpsImageView gpsMapviewTask;
-    @BindView(R.id.rv_task_detail)
-    RecyclerView rvTaskDetail;
 
     private List<TaskPoint> points;
 
@@ -74,38 +66,14 @@ public class TaskDetailActivity extends BaseActivity {
         return null;
     }
 
-    @Override
     protected void initData() {
         setLeftVisiable(true);
-
         points = new ArrayList<>();
-        initAdapter();
-
         points.add(new TaskPoint(100f,200f,"第一个点"));
         points.add(new TaskPoint(200f,200f,"第二个点"));
         points.add(new TaskPoint(300f,200f,"第三个点"));
         points.add(new TaskPoint(200f,300f,"第四个点"));
 
-        rvTaskDetail.setLayoutManager(new LinearLayoutManager(mCtz));
-        rvTaskDetail.setAdapter(adapter);
-
-        adapter.notifyDataSetChanged();
-
-        gpsMapviewTask.setImageView(BitmapFactory.decodeResource(getResources(),R.mipmap.map_test));
-    }
-
-    private void initAdapter() {
-        adapter = new CommonAdapter<TaskPoint>(mCtz,R.layout.item_point_task,points) {
-            @Override
-            protected void convert(ViewHolder holder, TaskPoint taskPoint, int position) {
-                // 将taskPoint绘制到GpsImageView上
-                gpsMapviewTask.addPoint(taskPoint.getX(),taskPoint.getY(),taskPoint.getTaskName());
-                holder.setText(R.id.tv_name,taskPoint.getTaskName());
-                if (position == points.size() - 1){
-                    holder.setVisible(R.id.line_horizontal,false);
-                }
-            }
-        };
     }
 
     @Override

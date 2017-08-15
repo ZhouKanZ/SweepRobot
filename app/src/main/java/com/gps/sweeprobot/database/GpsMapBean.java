@@ -1,10 +1,9 @@
 package com.gps.sweeprobot.database;
 
-import com.gps.sweeprobot.model.taskqueue.bean.TaskPoint;
-
 import org.litepal.crud.DataSupport;
 
-import java.sql.Date;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -29,7 +28,7 @@ public class GpsMapBean extends DataSupport {
     private int status;
 
     /* 地图的创建日期 */
-    private Date data;
+    private String date;
 
     /* 构建地图的Image对应的地址 */
     private String creatingMapUrl;
@@ -37,43 +36,19 @@ public class GpsMapBean extends DataSupport {
     /* 地图构建成功后Image对应的地址 */
     private String completedMapUrl;
 
-    /* 任务  导航任务  路径任务 清洁任务 */
-    private List<Task> tasks;
+    /* 障碍物 */
+    private List<VirtualObstacleBean> virtualObstacleBeanList;
 
-    /* 任务点 */
-    private List<TaskPoint> taskPoints;
+    /* 标记点 */
+    private List<PointBean> pointBeanList;
 
-    public GpsMapBean(int id, String name,
-                      int status, Date data,
-                      String creatingMapUrl,
-                      String completedMapUrl,
-                      List<Task> tasks,
-                      List<TaskPoint> taskPoints) {
-        this.id = id;
-        this.name = name;
-        this.status = status;
-        this.data = data;
-        this.creatingMapUrl = creatingMapUrl;
-        this.completedMapUrl = completedMapUrl;
-        this.tasks = tasks;
-        this.taskPoints = taskPoints;
-    }
 
-    public GpsMapBean(int id, String name, int status, Date data, String creatingMapUrl, String completedMapUrl) {
-        this.id = id;
-        this.name = name;
-        this.status = status;
-        this.data = data;
-        this.creatingMapUrl = creatingMapUrl;
-        this.completedMapUrl = completedMapUrl;
+
+    public GpsMapBean() {
     }
 
     public int getId() {
         return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getName() {
@@ -92,12 +67,13 @@ public class GpsMapBean extends DataSupport {
         this.status = status;
     }
 
-    public Date getData() {
-        return data;
+    public String getDate() {
+        return date;
     }
 
-    public void setData(Date data) {
-        this.data = data;
+    public void setDate(Date date) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        this.date = sdf.format(date);
     }
 
     public String getCreatingMapUrl() {
@@ -116,19 +92,21 @@ public class GpsMapBean extends DataSupport {
         this.completedMapUrl = completedMapUrl;
     }
 
-    public List<Task> getTasks() {
-        return tasks;
+    public List<VirtualObstacleBean> getVirtualObstacleBeanList() {
+        return virtualObstacleBeanList;
     }
 
-    public void setTasks(List<Task> tasks) {
-        this.tasks = tasks;
+    public void setVirtualObstacleBeanList(List<VirtualObstacleBean> virtualObstacleBeanList) {
+        this.virtualObstacleBeanList = virtualObstacleBeanList;
     }
 
-    public List<TaskPoint> getTaskPoints() {
-        return taskPoints;
+    public List<PointBean> getPointBeanList() {
+        return pointBeanList;
     }
 
-    public void setTaskPoints(List<TaskPoint> taskPoints) {
-        this.taskPoints = taskPoints;
+    public void setPointBeanList(List<PointBean> pointBeanList) {
+        this.pointBeanList = pointBeanList;
     }
+
+
 }

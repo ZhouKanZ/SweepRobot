@@ -10,7 +10,6 @@ public class MyPointF extends DataSupport{
 
     private float x;
     private float y;
-    private VirtualObstacleBean obstacleBean;
 
     public MyPointF() {
     }
@@ -34,13 +33,5 @@ public class MyPointF extends DataSupport{
 
     public void setY(float y) {
         this.y = y;
-    }
-
-    public VirtualObstacleBean getObstacleBean() {
-        return obstacleBean;
-    }
-
-    public void setObstacleBean(VirtualObstacleBean obstacleBean) {
-        this.obstacleBean = obstacleBean;
     }
 }

@@ -6,7 +6,7 @@ import com.gps.ros.response.LaserPose;
 import com.gps.ros.response.PicturePose;
 import com.gps.ros.rosbridge.operation.Subscribe;
 import com.gps.sweeprobot.base.BasePresenter;
-import com.gps.sweeprobot.bean.GpsMap;
+import com.gps.sweeprobot.database.GpsMapBean;
 import com.gps.sweeprobot.http.WebSocketHelper;
 import com.gps.sweeprobot.model.createmap.contract.CreateMapContract;
 import com.gps.sweeprobot.model.createmap.model.MapModel;
@@ -71,8 +71,8 @@ public class CreateMapPresenter extends BasePresenter<CreateMapContract.View> im
     }
 
     @Override
-    public void saveMap(GpsMap map) {
-        model.saveMap(null);
+    public void saveMap(GpsMapBean map) {
+        model.sendMapInfoToRos(map);
     }
 
     @Override
