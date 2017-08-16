@@ -152,9 +152,9 @@ public class VirtualObstacleView extends View {
         return name;
     }
 
-    public void saveObstacleBean(){
+    public void saveObstacleBean(SaveObstacleListener listener){
 
-        saveObstacleListener.onSaveObstacle(myPointFs,name);
+        listener.onSaveObstacle(myPointFs,name);
 
     }
 

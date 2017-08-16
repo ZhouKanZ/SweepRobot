@@ -79,7 +79,7 @@ public class MapManagerModel implements IModel,MapListItem.RequestMapListener{
      *
      * @param infoHint
      */
-    public void requestMapListData(final MapListModel.InfoHint infoHint) {
+    public void requestMapListData(final MapInfoModel.InfoHint infoHint) {
 
 
     }

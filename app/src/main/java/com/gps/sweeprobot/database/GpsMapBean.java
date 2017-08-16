@@ -3,6 +3,7 @@ package com.gps.sweeprobot.database;
 import org.litepal.crud.DataSupport;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -37,10 +38,10 @@ public class GpsMapBean extends DataSupport {
     private String completedMapUrl;
 
     /* 障碍物 */
-    private List<VirtualObstacleBean> virtualObstacleBeanList;
+    private List<VirtualObstacleBean> virtualObstacleBeanList = new ArrayList<>();
 
     /* 标记点 */
-    private List<PointBean> pointBeanList;
+    private List<PointBean> pointBeanList = new ArrayList<>();
 
 
 

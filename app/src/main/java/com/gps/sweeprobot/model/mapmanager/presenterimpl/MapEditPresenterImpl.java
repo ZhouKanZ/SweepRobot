@@ -16,7 +16,7 @@ import com.gps.sweeprobot.database.VirtualObstacleBean;
 import com.gps.sweeprobot.model.mapmanager.adaper.item.ActionItem;
 import com.gps.sweeprobot.model.mapmanager.contract.MapEditContract;
 import com.gps.sweeprobot.model.mapmanager.model.ActionModel;
-import com.gps.sweeprobot.model.mapmanager.model.MapListModel;
+import com.gps.sweeprobot.model.mapmanager.model.MapInfoModel;
 import com.gps.sweeprobot.model.mapmanager.presenter.MapEditPresenter;
 import com.gps.sweeprobot.model.mapmanager.view.activity.MapManagerActivity;
 import com.gps.sweeprobot.model.view.adapter.CommonRcvAdapter;
@@ -24,6 +24,7 @@ import com.gps.sweeprobot.model.view.adapter.item.AdapterItem;
 import com.gps.sweeprobot.mvp.IModel;
 import com.gps.sweeprobot.utils.LogManager;
 import com.gps.sweeprobot.utils.ScreenUtils;
+import com.gps.sweeprobot.utils.ToastManager;
 
 import org.litepal.crud.DataSupport;
 
@@ -78,7 +79,7 @@ public class MapEditPresenterImpl extends MapEditPresenter {
     //虚拟墙数据
     private List<VirtualObstacleBean> obstacleBeanList;
     //地图数据model
-    private MapListModel mapListModel;
+    private MapInfoModel mapInfoModel;
 
     private int mapid;
 
@@ -124,7 +125,7 @@ public class MapEditPresenterImpl extends MapEditPresenter {
     @Override
     public HashMap<String, IModel> getiModelMap() {
 
-        return loadModelMap(new MapListModel(), new ActionModel());
+        return loadModelMap(new MapInfoModel(), new ActionModel());
     }
 
     @Override
@@ -167,14 +168,14 @@ public class MapEditPresenterImpl extends MapEditPresenter {
 
     private void setMapData(final int mapId) {
 
-        mapListModel = (MapListModel) getiModelMap().get(MAP_KEY);
+        mapInfoModel = (MapInfoModel) getiModelMap().get(MAP_KEY);
 
-        Observable.just(mapListModel)
+        Observable.just(mapInfoModel)
                 .subscribe(new Consumer<IModel>() {
                     @Override
                     public void accept(@io.reactivex.annotations.NonNull IModel iModel) throws Exception {
 
-                        ((MapListModel) iModel).downMapImg(mapId,new MapListModel.InfoHint() {
+                        ((MapInfoModel) iModel).downMapImg(mapId,new MapInfoModel.InfoHint() {
 
                             @Override
                             public void successInfo(Bitmap map) {
@@ -194,7 +195,6 @@ public class MapEditPresenterImpl extends MapEditPresenter {
 
     public void setActionData() {
 
-
         //获取action的数据
         Observable.just(((ActionModel) getiModelMap().get(ACTION_KEY)))
                 .subscribe(new Consumer<ActionModel>() {
@@ -202,7 +202,7 @@ public class MapEditPresenterImpl extends MapEditPresenter {
                     public void accept(@io.reactivex.annotations.NonNull final ActionModel actionModel) throws Exception {
 
                         //获取标记点数据
-                        actionModel.getActionData(new ActionModel.InfoMessager() {
+                        actionModel.getActionData(mapid,new ActionModel.InfoMessager() {
                             @Override
                             public void successInfo(List<PointBean> data) {
 
@@ -213,12 +213,12 @@ public class MapEditPresenterImpl extends MapEditPresenter {
 
                             @Override
                             public void failInfo(Throwable e) {
-                                LogManager.e(e.getMessage());
+                                ToastManager.showShort("point"+e.getMessage());
                             }
                         });
 
                         //获取虚拟墙数据
-                        actionModel.getObstacleData(new ActionModel.ObstacleInfo() {
+                        actionModel.getObstacleData(mapid,new ActionModel.ObstacleInfo() {
                             @Override
                             public void successInfo(List<VirtualObstacleBean> data) {
 
@@ -229,6 +229,7 @@ public class MapEditPresenterImpl extends MapEditPresenter {
                             @Override
                             public void errorInfo(Throwable e) {
 
+                                ToastManager.showShort("obstacle"+e.getMessage());
                             }
                         });
                     }
@@ -390,12 +391,13 @@ public class MapEditPresenterImpl extends MapEditPresenter {
     @Override
     public void savePoint(PointF pointF, String pointName) {
 
-        mapListModel.savePoint(pointF,pointName,mapid);
+        mapInfoModel.savePoint(pointF,pointName,mapid);
     }
 
     @Override
     public void saveObstacle(List<MyPointF> myPointFs, String name) {
-        mapListModel.saveObstacle(myPointFs,name,mapid);
+
+        mapInfoModel.saveObstacle(myPointFs,name,mapid);
 
         VirtualObstacleBean virtualObstacleBean = new VirtualObstacleBean();
         virtualObstacleBean.setName(name);

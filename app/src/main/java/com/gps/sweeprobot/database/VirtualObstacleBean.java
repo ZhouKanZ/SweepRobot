@@ -15,6 +15,7 @@ import java.util.List;
 public class VirtualObstacleBean extends IAction{
 
     private int id;
+    private int mapId;
     private String name;
     private String createDate;
     private String description;
@@ -22,6 +23,14 @@ public class VirtualObstacleBean extends IAction{
 
     public int getId() {
         return id;
+    }
+
+    public int getMapId() {
+        return mapId;
+    }
+
+    public void setMapId(int mapId) {
+        this.mapId = mapId;
     }
 
     public String getName() {

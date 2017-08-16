@@ -35,6 +35,13 @@ public class PinchImageView extends ImageView {
     private static final String TAG = "PinchImageView";
     ////////////////////////////////配置参数////////////////////////////////
 
+    private boolean isFristDraw = true;
+
+
+    public void setFristDraw(boolean fristDraw) {
+        isFristDraw = fristDraw;
+    }
+
     /**
      * 图片缩放动画时间
      */
@@ -665,9 +672,12 @@ public class PinchImageView extends ImageView {
             Log.d(TAG, "onDraw: " + getCurrentImageMatrix());
             Log.d(TAG, "onDraw: " + getCurrentImageMatrix(matrix));
             setImageMatrix(getCurrentImageMatrix(matrix));
-            dispatchOuterMatrixChanged();
             MathUtils.matrixGiven(matrix);
-            dispatchOuterMatrixChanged();
+            if (isFristDraw){
+                dispatchOuterMatrixChanged();
+                this.isFristDraw = !isFristDraw;
+            }
+
         }
         //对图像做遮罩处理
         if (mMask != null) {

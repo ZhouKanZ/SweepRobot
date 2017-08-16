@@ -9,16 +9,12 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 
 import com.gps.sweeprobot.MainApplication;
 import com.gps.sweeprobot.R;
-import com.gps.sweeprobot.database.GpsMapBean;
 import com.gps.sweeprobot.database.MyPointF;
 import com.gps.sweeprobot.database.PointBean;
-import com.gps.sweeprobot.database.VirtualObstacleBean;
 import com.gps.sweeprobot.model.mapmanager.contract.MapEditContract;
-import com.gps.sweeprobot.utils.CommunicationUtil;
 import com.gps.sweeprobot.utils.DegreeManager;
 import com.gps.sweeprobot.utils.LogManager;
 import com.gps.sweeprobot.utils.RGBUtil;
@@ -105,7 +101,7 @@ public class GpsImageView extends FrameLayout {
         );
 
         mapView.setLayoutParams(layoutParams);
-        mapView.setImageResource(R.mipmap.fb_map);
+//        mapView.setImageResource(R.mipmap.fb_map);
         mapView.setLayoutParams(layoutParams);
         addView(mapView);
 
@@ -118,14 +114,13 @@ public class GpsImageView extends FrameLayout {
 
         obstacleView = new VirtualObstacleView(getContext());
         obstacleView.setLayoutParams(commonParams);
-        obstacleView.setSaveObstacleListener(onSaveObstacleListener);
+//        obstacleView.setSaveObstacleListener(onSaveObstacleListener);
         addView(obstacleView);
 
     }
 
     /**
      * 矩阵变化监听
-     *
      * @param matrix
      */
     private void changePoint(final Matrix matrix) {
@@ -147,7 +142,7 @@ public class GpsImageView extends FrameLayout {
                     @Override
                     public void accept(@NonNull VirtualObstacleView virtualObstacleView) throws Exception {
                         virtualObstacleView.setmMatrix(matrix);
-                        virtualObstacleView.setSaveObstacleListener(onSaveObstacleListener);
+//                        virtualObstacleView.setSaveObstacleListener(onSaveObstacleListener);
                     }
                 });
         obstacleView.setmMatrix(matrix);
@@ -300,9 +295,11 @@ public class GpsImageView extends FrameLayout {
      *
      * @param name
      */
-    public void setObstacleName(String name) {
+    public void setObstacleName(String name, VirtualObstacleView.SaveObstacleListener listener) {
 
         obstacleView.setName(name);
+        obstacleView.saveObstacleBean(listener);
+
     }
 
     /**

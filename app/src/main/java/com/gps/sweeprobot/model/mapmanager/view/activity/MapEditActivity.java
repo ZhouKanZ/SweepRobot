@@ -101,8 +101,7 @@ public class MapEditActivity extends BaseActivity<MapEditPresenter, IView> imple
         mPresenter.setBundle(bundle);
         mPresenter.setData();
 
-        gpsImageView.setOnSaveListener(this);
-        gpsImageView.setOnSaveObstacleListener(this);
+
     }
 
     @Override
@@ -112,6 +111,8 @@ public class MapEditActivity extends BaseActivity<MapEditPresenter, IView> imple
             imageView.setOnClickListener(this);
         }
 
+        gpsImageView.setOnSaveListener(this);
+        gpsImageView.setOnSaveObstacleListener(this);
     }
 
     @Override
@@ -341,7 +342,7 @@ public class MapEditActivity extends BaseActivity<MapEditPresenter, IView> imple
 
     @Override
     public void setObstacleName(String name) {
-        gpsImageView.setObstacleName(name);
+        gpsImageView.setObstacleName(name,this);
     }
 
     @Override
