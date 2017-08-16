@@ -22,9 +22,11 @@ import com.gps.ros.response.LaserPose;
 import com.gps.sweeprobot.R;
 import com.gps.sweeprobot.base.BaseActivity;
 import com.gps.sweeprobot.database.GpsMapBean;
+import com.gps.sweeprobot.http.WebSocketHelper;
 import com.gps.sweeprobot.model.createmap.bean.ControlTab;
 import com.gps.sweeprobot.model.createmap.contract.CreateMapContract;
 import com.gps.sweeprobot.model.createmap.presenter.CreateMapPresenter;
+import com.gps.sweeprobot.utils.JsonCreator;
 import com.gps.sweeprobot.utils.ToastManager;
 import com.gps.sweeprobot.widget.GpsImage;
 import com.gps.sweeprobot.widget.RockerView;
@@ -142,6 +144,7 @@ public class CreateActivity extends BaseActivity<CreateMapPresenter, CreateMapCo
                                     gpsMapBean.setCompletedMapUrl("/maps/maps1/3f975d03-a803-4483-b62d-dc2341f13eb4.png");
                                     gpsMapBean.setDate( Calendar.getInstance().getTime());
                                     mPresenter.saveMap(gpsMapBean);
+                                    WebSocketHelper.send(JsonCreator.mappingStatus(2).toJSONString());
                                 }
                                 dialog.dismiss();
                                 break;

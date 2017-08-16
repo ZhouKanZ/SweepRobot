@@ -14,4 +14,10 @@ public class ExampleUnitTest {
     public void addition_isCorrect() throws Exception {
         assertEquals(4, 2 + 2);
     }
+
+    @Test
+    public void testCacl() throws Exception{
+        System.out.println(256 / 1984f);
+        System.out.println(1984 * (256 / 1984f));
+    }
 }

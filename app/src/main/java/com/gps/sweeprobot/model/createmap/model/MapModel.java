@@ -157,7 +157,7 @@ public class MapModel implements CreateMapContract.Model {
      * ask ros stop
      */
     public void askStop() {
-        WebSocketHelper.send(JsonCreator.mappingStatus(2).toJSONString());
+        WebSocketHelper.send(JsonCreator.mappingStatus(1).toJSONString());
     }
 
 
@@ -200,7 +200,6 @@ public class MapModel implements CreateMapContract.Model {
      *  根据接收到的消息来做消息分发和ui上的处理
      */
     private void postMsgByService() {
-
     }
 
     @Override

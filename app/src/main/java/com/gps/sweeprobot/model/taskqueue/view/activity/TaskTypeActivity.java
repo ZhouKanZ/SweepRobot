@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -29,6 +30,7 @@ import butterknife.OnClick;
 
 public class TaskTypeActivity extends BaseActivity {
 
+    private static final String TAG = "TaskTypeActivity";
     public static final String ID = "tasktypeactivity_id";
     @BindView(R.id.iv_back)
     ImageView ivBack;
@@ -42,6 +44,8 @@ public class TaskTypeActivity extends BaseActivity {
     RecyclerView rvTaskList;
 
     List<TaskTab>  tabs ;
+
+    int mapId;
 
     @Override
     protected TextView getTitleTextView() {
@@ -65,6 +69,9 @@ public class TaskTypeActivity extends BaseActivity {
 
     @Override
     protected void initData() {
+
+        mapId = getIntent().getBundleExtra(TaskTypeActivity.class.getSimpleName()).getInt(ID);
+        Log.d(TAG, "initData: " + mapId);
 
         tabs = new ArrayList<>();
         tabs.add(new TaskTab("导航任务"));

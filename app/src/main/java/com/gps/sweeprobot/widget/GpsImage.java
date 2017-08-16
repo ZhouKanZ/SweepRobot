@@ -10,6 +10,7 @@ import android.graphics.PointF;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 
 import com.gps.ros.response.LaserPose;
@@ -165,18 +166,28 @@ public class GpsImage extends View {
         int w = bitmap.getWidth();
         int h = bitmap.getHeight();
 
+        Log.d(TAG, "caculateMatrix: w:" + w + "\nh:"+h);
+
         width = getWidth();
         height = getHeight();
+
+        Log.d(TAG, "caculateMatrix: width:" + width + "\nheight:"+height);
 
         float widthRatio = width / (float) w;
         float heightRatio = height / (float) h;
 
-        if (h * widthRatio <= heightRatio) {
+        /**
+         *  宽度刚好铺满的情况
+         */
+        if (h * widthRatio <= height) {
             matrix.postScale(widthRatio, widthRatio);
-            matrix.postTranslate((getWidth() - w * widthRatio) / 2, 0);
+            matrix.postTranslate(0,(getHeight() - h * widthRatio) / 2);
             return matrix;
         }
 
+        /**
+         *  高度刚好铺满的情况
+         */
         if (w * heightRatio <= width) {
             matrix.postScale(heightRatio, heightRatio);
             matrix.postTranslate((getWidth() - w * heightRatio) / 2, 0);
