@@ -17,6 +17,7 @@ import android.widget.Toast;
 import android.widget.Toolbar;
 
 import com.gps.sweeprobot.model.main.bean.ToolbarOptions;
+import com.gps.sweeprobot.model.taskqueue.view.activity.TaskDetailActivity;
 import com.gps.sweeprobot.mvp.IView;
 import com.gps.sweeprobot.utils.LogUtils;
 
@@ -45,11 +46,17 @@ public abstract class BaseActivity<P extends BasePresenter,V extends IView> exte
     private boolean leftImageViewVisiable = false;
     private boolean rightImageViewVisiable = false;
 
+    public Bundle savedInstanceState;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(getView());
+
+        if (null != savedInstanceState){
+            this.savedInstanceState = savedInstanceState;
+        }
 
         Log.d("BaseActivity", "onCreate: ");
 

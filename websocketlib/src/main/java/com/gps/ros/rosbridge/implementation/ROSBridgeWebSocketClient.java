@@ -23,14 +23,11 @@ import android.util.Log;
 
 import com.alibaba.fastjson.JSONObject;
 import com.gps.ros.android.RxBus;
-import com.gps.ros.entity.PublishEvent;
-import com.gps.ros.response.SubscribeResponse;
-import com.gps.ros.rosbridge.ROSClient;
 import com.gps.ros.message.Message;
+import com.gps.ros.response.SubscribeResponse;
 import com.gps.ros.rosbridge.FullMessageHandler;
+import com.gps.ros.rosbridge.ROSClient;
 import com.gps.ros.rosbridge.operation.Operation;
-import com.gps.ros.rosbridge.operation.Publish;
-import com.gps.ros.rosbridge.operation.ServiceResponse;
 
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.framing.CloseFrame;
@@ -41,7 +38,6 @@ import java.net.Socket;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.channels.SocketChannel;
-import java.text.ParseException;
 
 public class ROSBridgeWebSocketClient extends WebSocketClient {
     private Registry<Class> classes;
@@ -79,7 +75,7 @@ public class ROSBridgeWebSocketClient extends WebSocketClient {
         if (debug) System.out.println("<ROS " + message);
 
         JSONObject jsonObject = (JSONObject) JSONObject.parse(message);
-        Log.d("rosclient-------", "onMessage: " + jsonObject);
+        Log.i("rosclient-------", "onMessage: " + jsonObject);
         RxBus.getDefault().post(jsonObject);
 
         // 1.发送jsonobject类型的数据 -- 有的model需要接收多种类型的数据

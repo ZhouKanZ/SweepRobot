@@ -2,15 +2,27 @@ package com.gps.sweeprobot.utils;
 
 import com.alibaba.fastjson.JSON;
 import com.gps.sweeprobot.MainApplication;
+import com.gps.sweeprobot.bean.NavPose;
+import com.gps.sweeprobot.bean.NavPoseWrap;
+import com.gps.sweeprobot.bean.ObstaclePose;
+import com.gps.sweeprobot.bean.ObstaclePoseWrap;
 import com.gps.sweeprobot.bean.Test;
 import com.gps.sweeprobot.bean.WebSocketResult;
+import com.gps.sweeprobot.database.MyPointF;
 import com.gps.sweeprobot.database.PointBean;
+import com.gps.sweeprobot.database.VirtualObstacleBean;
+import com.gps.sweeprobot.http.WebSocketHelper;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import io.reactivex.Flowable;
 import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -74,31 +86,29 @@ public class CommunicationUtil {
         test.setGoal(goal);
 
         WebSocketResult<Test> webSocketResult = new WebSocketResult<>();
-        webSocketResult.setMsg(test);
-        webSocketResult.setOp(RosProtrocol.Point.OPERATE);
-        webSocketResult.setTopic(RosProtrocol.Point.TOPIC);
+        webSocketResult.setArgs(test);
+//        webSocketResult.op = RosProtrocol.Point.OPERATE;
+//        webSocketResult.setTopic(RosProtrocol.Point.TOPIC);
 
-        Observable.just(JSON.toJSONString(webSocketResult))
+        Observable.just(webSocketResult)
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .observeOn(Schedulers.io())
-                .subscribe(new Observer<String>() {
+                .subscribe(new Observer<WebSocketResult<Test>>() {
                     @Override
                     public void onSubscribe(@NonNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(@NonNull String s) {
+                    public void onNext(@NonNull WebSocketResult<Test> testWebSocketResult) {
 
-                        LogManager.i(MainApplication.getContext().getThreadName()+"\njson========="+s);
-//                        RosService.getRosBridgeClient().send(s);
+                        LogManager.i(MainApplication.getContext().getThreadName());
+//                        MainApplication.getContext().getRosBridgeClient().send(testWebSocketResult);
                     }
 
                     @Override
                     public void onError(@NonNull Throwable e) {
 
-//                        LogManager.e(e.getMessage());
-                        throw new RuntimeException(e);
                     }
 
                     @Override
@@ -107,4 +117,94 @@ public class CommunicationUtil {
                     }
                 });
     }
+
+    public static void sendPoint2Ros(PointBean pointBean){
+
+        NavPose navPose = new NavPose();
+        navPose.setName(pointBean.getPointName());
+        navPose.setMapname(pointBean.getMapName());
+        navPose.setId(pointBean.getId());
+        navPose.setMapid(pointBean.getMapId());
+
+        NavPose.Pose pose = new NavPose.Pose();
+        NavPose.Pose.Point point = new NavPose.Pose.Point();
+        NavPose.Pose.Quaternion quaternion = new NavPose.Pose.Quaternion();
+        point.setX(pointBean.getX());
+        point.setY(pointBean.getY());
+
+        pose.setPosition(point);
+        pose.setOrientation(quaternion);
+        navPose.setWorldposition(pose);
+
+        NavPoseWrap navPose_Wrap_ = new NavPoseWrap();
+        navPose_Wrap_.setNav_pose(navPose);
+
+        WebSocketResult<NavPoseWrap> webSocketResult = new WebSocketResult<>();
+        webSocketResult.setOp(RosProtrocol.Point.OPERATE);
+        webSocketResult.setService(RosProtrocol.Point.SERVICE);
+//        webSocketResult.setTopic(RosProtrocol.Point.TOPIC);
+//        webSocketResult.setType(RosProtrocol.Point.TYPE);
+        webSocketResult.setArgs(navPose_Wrap_);
+
+        // 向服务器发送数据
+//        ROSBridgeWebSocketClient.create(Constant.JiaoJian).send(JSON.toJSONString(webSocketResult));
+        WebSocketHelper.send(JSON.toJSONString(webSocketResult));
+        LogManager.i(JSON.toJSONString(webSocketResult));
+
+ /*       Flowable.just(JSON.toJSONString(webSocketResult))
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .observeOn(Schedulers.io())
+                .subscribe(new Consumer<String>() {
+                    @Override
+                    public void accept(@NonNull String s) throws Exception {
+
+                        // 向服务器发送数据
+                        ROSBridgeWebSocketClient.create(Constant.JiaoJian).send(JSON.toJSONString(webSocketResult));
+                        LogManager.i(MainApplication.getContext().getThreadName()+"send point to ros");
+                    }
+                });*/
+    }
+
+    public static void sendObstacle2Ros(VirtualObstacleBean bean){
+
+        ObstaclePose mObstacle = new ObstaclePose();
+        mObstacle.setName(bean.getName());
+        mObstacle.setId(bean.getId());
+
+        final List<NavPose.Pose> poses = new ArrayList<>();
+
+        Flowable.fromIterable(bean.getMyPointFs())
+                .subscribe(new Consumer<MyPointF>() {
+                    @Override
+                    public void accept(@NonNull MyPointF myPointF) throws Exception {
+
+                        NavPose.Pose.Point point = new NavPose.Pose.Point();
+                        point.setX(myPointF.getX());
+                        point.setY(myPointF.getY());
+
+                        NavPose.Pose.Quaternion quaternion = new NavPose.Pose.Quaternion();
+
+                        NavPose.Pose pose = new NavPose.Pose();
+
+                        pose.setPosition(point);
+                        pose.setOrientation(quaternion);
+
+                        poses.add(pose);
+                    }
+                });
+
+        mObstacle.setWorldposition(poses);
+
+        ObstaclePoseWrap wrap = new ObstaclePoseWrap();
+        wrap.setWall_pose(mObstacle);
+
+        WebSocketResult<ObstaclePoseWrap> webSocketResult = new WebSocketResult<>();
+        webSocketResult.setOp(RosProtrocol.Obstacle.OPERATE);
+        webSocketResult.setService(RosProtrocol.Obstacle.SERVICE);
+        webSocketResult.setArgs(wrap);
+
+        WebSocketHelper.send(JSON.toJSONString(webSocketResult));
+        LogManager.i(JSON.toJSONString(webSocketResult));
+    }
+
 }

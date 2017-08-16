@@ -28,9 +28,16 @@ public class RosProtrocol {
      * 标记点
      */
     public class Point{
-        public static final String TOPIC = "/move_base/goal";
-        public static final String OPERATE = "publish";
+
+        public static final String OPERATE = "call_service";
+        public static final String SERVICE = "nav_pose_set";
         public static final String FRAME_ID = "map";
+    }
+
+    public class Obstacle{
+
+        public static final String OPERATE = "call_service";
+        public static final String SERVICE = "wall_pose_set";
     }
     
 

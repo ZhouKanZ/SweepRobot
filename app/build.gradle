@@ -49,6 +49,9 @@ dependencies {
     compile 'com.orhanobut:dialogplus:1.11@aar'
     compile 'com.zhy:base-rvadapter:3.0.3'
     compile 'org.litepal.android:core:1.5.1'
+    compile('cn.qqtheme.framework:WheelPicker:1.5.1') {
+        exclude group: 'com.android.support'
+    }
     compile 'com.alexvasilkov:gesture-views:2.3.1'
 
 }

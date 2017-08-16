@@ -14,6 +14,7 @@ import com.gps.sweeprobot.R;
 import com.gps.sweeprobot.model.createmap.view.activity.CreateActivity;
 import com.gps.sweeprobot.model.main.bean.MainTab;
 import com.gps.sweeprobot.model.mapmanager.view.activity.MapManagerActivity;
+import com.gps.sweeprobot.model.setting.view.SettingActivity;
 import com.gps.sweeprobot.model.taskqueue.view.activity.TaskQueueActivity;
 
 import java.util.List;
@@ -99,7 +100,9 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
                     TaskQueueActivity.startSelf(context,TaskQueueActivity.class,null);
                     break;
                 case 3:
+                    SettingActivity.startSelf(context,SettingActivity.class,null);
                     break;
+
             }
 
         }

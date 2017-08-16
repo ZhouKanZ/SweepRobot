@@ -87,9 +87,8 @@ public class TaskQueueActivity extends BaseActivity<TaskQuenePresenter, TaskQueu
                     public void onClick(View view) {
 
                         Bundle bundle = new Bundle();
-                        bundle.putInt(TaskTypeActivity.ID,gpsMap.getId());
-                        TaskTypeActivity.startSelf(TaskQueueActivity.this,TaskTypeActivity.class,bundle);
-
+                        bundle.putInt(TaskDetailActivity.ID,gpsMap.getId());
+                        TaskDetailActivity.startSelf(TaskQueueActivity.this,TaskDetailActivity.class,bundle);
                     }
                 });
             }

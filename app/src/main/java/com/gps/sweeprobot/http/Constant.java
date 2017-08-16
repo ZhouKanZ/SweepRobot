@@ -14,7 +14,7 @@ public class Constant {
     public static String test = "http://192.168.2.117:82";
 
     /* 焦建 */
-    public static String JiaoJian = "192.168.2.117:9090";
+    public static String JiaoJian = "192.168.2.133:9090";
 
     /* 域名 */
     public static String DOMAIN = Robot_Domain;

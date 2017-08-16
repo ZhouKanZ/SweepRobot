@@ -11,5 +11,6 @@
         android:layout_height="@dimen/action_bar_height"
         android:hint="@string/input_name_hint"
         android:shadowColor="@color/action_bar_tittle_color_555555"
+
         />
 </LinearLayout>

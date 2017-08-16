@@ -35,7 +35,6 @@ import com.orhanobut.dialogplus.OnClickListener;
 import com.zhy.adapter.recyclerview.CommonAdapter;
 import com.zhy.adapter.recyclerview.base.ViewHolder;
 
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -141,10 +140,11 @@ public class CreateActivity extends BaseActivity<CreateMapPresenter, CreateMapCo
                                     ToastManager.show(mCtz,"您忘了为机器人命名噢", Toast.LENGTH_SHORT);
                                 }else {
                                     gpsMapBean.setName(robotName);
-                                    gpsMapBean.setCompletedMapUrl("/maps/maps1/3f975d03-a803-4483-b62d-dc2341f13eb4.png");
+                                    gpsMapBean.setCompletedMapUrl("/maps/map_pose_0809.jpg");
                                     gpsMapBean.setDate( Calendar.getInstance().getTime());
                                     mPresenter.saveMap(gpsMapBean);
-                                    WebSocketHelper.send(JsonCreator.mappingStatus(2).toJSONString());
+                                    WebSocketHelper.send(JsonCreator.mappingStatus(2,gpsMapBean.getId(),gpsMapBean.getName(),"/var/www/maps").toJSONString());
+                                    Log.d(TAG, "onClick: " + "" + "\n id" + gpsMapBean.getId() + "\n + name" + gpsMapBean.getName());
                                 }
                                 dialog.dismiss();
                                 break;
@@ -321,7 +321,6 @@ public class CreateActivity extends BaseActivity<CreateMapPresenter, CreateMapCo
 
     @Override
     public void accept(@NonNull Bitmap bitmap) throws Exception {
-        Log.d("test", "accept: " + bitmap);
         gpsImage.setMap(bitmap);
     }
 

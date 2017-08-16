@@ -1,9 +1,5 @@
 package com.gps.sweeprobot.http;
 
-import com.gps.sweeprobot.model.mapmanager.bean.MapListBean;
-
-import java.util.List;
-
 import io.reactivex.Observable;
 import okhttp3.ResponseBody;
 import retrofit2.http.GET;
@@ -19,12 +15,13 @@ import retrofit2.http.Url;
 
 public interface HttpService {
 
-    @GET("maps/map_pose_0809.jpg")
+    @GET("/maps/now/map.jpg")
     @Streaming
     Observable<ResponseBody> downImage();
 
-    @GET("maps/map_testmap.json")
-    Observable<List<MapListBean>> getMapList();
+    @GET
+    @Streaming
+    Observable<ResponseBody> getMapList(@Url String url);
 
     @GET
     @Streaming

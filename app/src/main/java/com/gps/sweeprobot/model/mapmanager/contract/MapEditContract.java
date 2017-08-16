@@ -6,7 +6,6 @@ import android.graphics.drawable.Drawable;
 
 import com.gps.sweeprobot.database.MyPointF;
 import com.gps.sweeprobot.database.PointBean;
-import com.gps.sweeprobot.database.VirtualObstacleBean;
 import com.gps.sweeprobot.model.mapmanager.bean.MapListBean;
 import com.gps.sweeprobot.mvp.IView;
 
@@ -17,6 +16,9 @@ import java.util.List;
  */
 
 public class MapEditContract {
+
+    public static final int TYPE_POINT = 1;
+    public static final int TYPE_OBSTACLE = 2;
 
     public interface presenter{}
 
@@ -58,13 +60,13 @@ public class MapEditContract {
         void setObstacleRect(PointF pointF);
 
         //更新标记点名称
-        void updateName(String name,int position);
+        void updateName(String name,int position,int type);
 
         //移除标记点
         void removePoint(String name,int position);
 
         //设置虚拟墙名称
-        VirtualObstacleBean setObstacleName(String name);
+        void setObstacleName(String name);
 
         //添加虚拟墙
         void addObstacle(List<MyPointF> data,String name);

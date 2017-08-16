@@ -71,13 +71,18 @@ public class JsonCreator {
 
     /**
      *
-     * @param   type 0 开始  1暂停  2 结束
-     * @return  返回
+     * @param args 可变参数 用于给服务器传值
+     * @return
      */
-    public static JSONObject mappingStatus(int type){
+    public static JSONObject mappingStatus(Object...args){
         /* 0表示开始  1 暂停 2 结束*/
         JSONObject msg = new JSONObject();
-        msg.put("data",type);
+        msg.put("data",args[0]);
+        if (args.length >= 4){
+            msg.put("map_id",args[1] + "");
+            msg.put("map_name",args[2]);
+            msg.put("map_path",args[3]);
+        }
 
         JSONObject mappingStatus = new JSONObject();
         mappingStatus.put("op","call_service");
@@ -105,7 +110,7 @@ public class JsonCreator {
         mappingStatus.put("service","/post_mapinfo");
         mappingStatus.put("args",msg);
 
-        return msg;
+        return mappingStatus;
     }
 
 }

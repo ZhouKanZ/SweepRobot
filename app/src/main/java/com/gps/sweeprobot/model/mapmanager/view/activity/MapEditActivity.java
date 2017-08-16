@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.PointF;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.widget.LinearLayoutManager;
@@ -22,7 +23,6 @@ import com.gps.sweeprobot.R;
 import com.gps.sweeprobot.base.BaseActivity;
 import com.gps.sweeprobot.database.MyPointF;
 import com.gps.sweeprobot.database.PointBean;
-import com.gps.sweeprobot.database.VirtualObstacleBean;
 import com.gps.sweeprobot.model.main.bean.ToolbarOptions;
 import com.gps.sweeprobot.model.mapmanager.adaper.item.ActionItem;
 import com.gps.sweeprobot.model.mapmanager.bean.MapListBean;
@@ -35,6 +35,7 @@ import com.gps.sweeprobot.utils.LogManager;
 import com.gps.sweeprobot.utils.LogUtils;
 import com.gps.sweeprobot.utils.ToastManager;
 import com.gps.sweeprobot.widget.GpsImageView;
+import com.gps.sweeprobot.widget.VirtualObstacleView;
 import com.orhanobut.dialogplus.DialogPlus;
 import com.orhanobut.dialogplus.ViewHolder;
 
@@ -47,11 +48,12 @@ import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Consumer;
 
 /**
+ * 地图编辑
  * Create by WangJun on 2017/7/19
  */
 
 public class MapEditActivity extends BaseActivity<MapEditPresenter, IView> implements ActionItem.ActionOnItemListener
-        , MapEditContract.view,GpsImageView.OnObstacleViewClick {
+        , MapEditContract.view ,GpsImageView.SavePointDataListener, VirtualObstacleView.SaveObstacleListener {
 
 
     @BindView(R.id.activity_map_edit_giv)
@@ -69,6 +71,8 @@ public class MapEditActivity extends BaseActivity<MapEditPresenter, IView> imple
     private TextInputEditText inputName;
 
     private DialogPlus dialogPlus;
+    private Bundle bundle;
+//    private Bundle bundle = new Bundle();
 
     @Override
     protected TextView getTitleTextView() {
@@ -93,7 +97,11 @@ public class MapEditActivity extends BaseActivity<MapEditPresenter, IView> imple
         options.titleId = R.string.activity_edit_map_title;
         setToolBar(R.id.toolbar, options);
 
+        bundle = getIntent().getBundleExtra(this.getClass().getSimpleName());
+        mPresenter.setBundle(bundle);
         mPresenter.setData();
+
+
     }
 
     @Override
@@ -102,6 +110,9 @@ public class MapEditActivity extends BaseActivity<MapEditPresenter, IView> imple
         for (ImageView imageView : nameViews) {
             imageView.setOnClickListener(this);
         }
+
+        gpsImageView.setOnSaveListener(this);
+        gpsImageView.setOnSaveObstacleListener(this);
     }
 
     @Override
@@ -134,6 +145,7 @@ public class MapEditActivity extends BaseActivity<MapEditPresenter, IView> imple
                 break;
 
             case R.id.activity_map_position:
+
                 mPresenter.positionViewOnClick();
                 break;
 
@@ -226,8 +238,7 @@ public class MapEditActivity extends BaseActivity<MapEditPresenter, IView> imple
     }
 
     /**
-     * dialog
-     *
+     *创建标记点，路径，虚拟墙的选项dialog
      * @param contentView
      */
     public void addAction(View contentView) {
@@ -273,9 +284,9 @@ public class MapEditActivity extends BaseActivity<MapEditPresenter, IView> imple
     }
 
     @Override
-    public void updateName(String newName, int position) {
+    public void updateName(String newName, int position,int type) {
 
-        gpsImageView.updateName(newName, position);
+        gpsImageView.updateName(newName, position,type);
     }
 
     @Override
@@ -287,7 +298,7 @@ public class MapEditActivity extends BaseActivity<MapEditPresenter, IView> imple
     @Override
     public void showToast() {
 
-        ToastManager.showShort(this, getString(R.string.input_name_must_not_null));
+        ToastManager.showShort(getString(R.string.input_name_must_not_null));
     }
 
     @Override
@@ -299,7 +310,7 @@ public class MapEditActivity extends BaseActivity<MapEditPresenter, IView> imple
                 .setGravity(Gravity.CENTER)
                 .setHeader(R.layout.dialog_add_point_head)
                 .setFooter(R.layout.dialog_add_point_foot)
-                .setContentWidth(1500)
+                .setContentWidth(1300)
                 .setInAnimation(R.anim.fade_in_center)
                 .setOutAnimation(R.anim.fade_out_center)
                 .create();
@@ -330,8 +341,8 @@ public class MapEditActivity extends BaseActivity<MapEditPresenter, IView> imple
     }
 
     @Override
-    public VirtualObstacleBean setObstacleName(String name) {
-        return gpsImageView.setObstacleName(name);
+    public void setObstacleName(String name) {
+        gpsImageView.setObstacleName(name,this);
     }
 
     @Override
@@ -408,13 +419,22 @@ public class MapEditActivity extends BaseActivity<MapEditPresenter, IView> imple
     }
 
     /**
-     *  虚拟墙view点击监听
+     * 保存标记点的监听
+     * @param pointF
+     * @param name
      */
     @Override
-    public void obstacleViewOnClick() {
-
-        mPresenter.obstacleViewOnClick();
+    public void onSavePoint(PointF pointF, String name) {
+        mPresenter.savePoint(pointF,name);
     }
 
-
+    /**
+     * 保存虚拟墙的监听
+     * @param myPointFs
+     * @param name
+     */
+    @Override
+    public void onSaveObstacle(List<MyPointF> myPointFs, String name) {
+        mPresenter.saveObstacle(myPointFs,name);
+    }
 }

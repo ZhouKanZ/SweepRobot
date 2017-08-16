@@ -8,51 +8,35 @@
         android:id="@+id/toolbar"
         layout="@layout/layout_toolbar" />
 
-
-    <!-- 点 轨迹 覆盖物
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rv_task_detail"
-        android:layout_width="100dp"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/toolbar"
-        android:background="@color/white"
-        />
-
-
-    <com.gps.sweeprobot.ui.gps_map.GpsImageView
-        android:id="@+id/gps_mapview_task"
+    <!-- 执行页面 -->
+    <com.alexvasilkov.gestures.views.GestureFrameLayout
+        android:id="@+id/layout_gesture"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/toolbar"
-        android:layout_toRightOf="@+id/rv_task_detail"
-        android:layout_toEndOf="@+id/rv_task_detail"
         >
 
-
-        <RelativeLayout
+        <com.gps.sweeprobot.widget.GpsImage
+            android:id="@+id/gps_image"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="10dp"
-            android:padding="5dp">
+            android:layout_height="match_parent" />
 
-            <ImageView
-                android:id="@+id/add"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:src="@mipmap/add" />
+    </com.alexvasilkov.gestures.views.GestureFrameLayout>
 
-            <ImageView
-                android:id="@+id/sub"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignLeft="@+id/add"
-                android:layout_below="@+id/add"
-                android:layout_marginLeft="5dp"
-                android:layout_marginTop="10dp"
-                android:src="@mipmap/sub" />
+    <!-- 任务 -->
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_task"
+        android:layout_width="100dp"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/toolbar"
+        android:padding="10dp"
+        />
 
-        </RelativeLayout>
-    </com.gps.sweeprobot.ui.gps_map.GpsImageView>-->
+    <ImageView
+        android:id="@+id/iv"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:scaleType="fitCenter"
+        />
 
 </RelativeLayout>

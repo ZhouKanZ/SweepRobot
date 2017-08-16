@@ -15,13 +15,23 @@ import java.util.List;
 public class VirtualObstacleBean extends IAction{
 
     private int id;
+    private int mapId;
     private String name;
     private String createDate;
     private String description;
+    /* 多边形顶点 */
     private List<MyPointF> myPointFs = new ArrayList<MyPointF>();
 
     public int getId() {
         return id;
+    }
+
+    public int getMapId() {
+        return mapId;
+    }
+
+    public void setMapId(int mapId) {
+        this.mapId = mapId;
     }
 
     public String getName() {

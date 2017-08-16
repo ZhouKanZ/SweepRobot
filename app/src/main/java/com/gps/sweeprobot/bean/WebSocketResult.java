@@ -2,13 +2,14 @@ package com.gps.sweeprobot.bean;
 
 /**
  * Create by WangJun on 2017/7/28
+ * 发送给ROS的数据类
  */
 
 public class WebSocketResult<T> {
 
     private String op;
-    private String topic;
-    private T msg;
+    private String service;
+    private T args;
 
     public String getOp() {
         return op;
@@ -18,19 +19,19 @@ public class WebSocketResult<T> {
         this.op = op;
     }
 
-    public String getTopic() {
-        return topic;
+    public String getService() {
+        return service;
     }
 
-    public void setTopic(String topic) {
-        this.topic = topic;
+    public void setService(String service) {
+        this.service = service;
     }
 
-    public T getMsg() {
-        return msg;
+    public T getArgs() {
+        return args;
     }
 
-    public void setMsg(T msg) {
-        this.msg = msg;
+    public void setArgs(T args) {
+        this.args = args;
     }
 }

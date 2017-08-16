@@ -2,7 +2,6 @@ package com.gps.sweeprobot.model.createmap.model;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -13,7 +12,6 @@ import com.gps.ros.response.PicturePose;
 import com.gps.ros.response.SubscribeResponse;
 import com.gps.ros.rosbridge.operation.Advertise;
 import com.gps.ros.rosbridge.operation.Subscribe;
-import com.gps.sweeprobot.bean.GpsMap;
 import com.gps.sweeprobot.database.GpsMapBean;
 import com.gps.sweeprobot.http.Http;
 import com.gps.sweeprobot.http.WebSocketHelper;
@@ -137,12 +135,12 @@ public class MapModel implements CreateMapContract.Model {
     @Override
     public void sendMapInfoToRos(GpsMapBean gpsMapBean) {
 
-        WebSocketHelper.send(
-                JsonCreator
-                .postMapInfo(gpsMapBean.getId(),
-                        gpsMapBean.getName())
-                .toJSONString());
-
+//        WebSocketHelper.send(
+//                JsonCreator
+//                .postMapInfo(gpsMapBean.getId(),
+//                        gpsMapBean.getName())
+//                .toJSONString());
+//
         gpsMapBean.save();
     }
 

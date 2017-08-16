@@ -23,6 +23,9 @@ public class PointBean extends IAction{
     //标记点所在地图的名字
     private String mapName;
 
+    /* 外键id */
+    private int mapId;
+
     public PointBean() {
     }
 
@@ -67,5 +70,13 @@ public class PointBean extends IAction{
 
     public void setMapName(String mapName) {
         this.mapName = mapName;
+    }
+
+    public int getMapId() {
+        return mapId;
+    }
+
+    public void setMapId(int mapId) {
+        this.mapId = mapId;
     }
 }

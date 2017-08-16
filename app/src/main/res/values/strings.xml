@@ -44,5 +44,11 @@
     <string name="namerobot">请为地图命名</string>
     <string name="cancel">取消</string>
     <string name="ensure">确定</string>
+    <string name="set_title">设置</string>
+    <string name="set_speed">速度</string>
+    <string name="set_info">关于我们</string>
+    <string name="set_version">版本信息</string>
+    <string name="activity_set_info">杭州吉佩斯机器人有限公司\nwww.gps-bot.com</string>
+    <string name="version_description">暂无版本更新</string>
 
 </resources>

@@ -15,6 +15,7 @@ import android.view.View;
 
 import com.gps.ros.response.LaserPose;
 import com.gps.sweeprobot.R;
+import com.gps.sweeprobot.database.PointBean;
 import com.gps.sweeprobot.utils.DegreeManager;
 
 import java.util.ArrayList;
@@ -34,7 +35,10 @@ public class GpsImage extends View {
 
     private static final String TAG = "GpsImage";
 
+    /* 雷射点数据 */
     private List<LaserPose.DataBean> laserPoints;
+    /* 标记点 */
+    private List<PointBean> pointBeanList;
     private Bitmap robot;
     private Bitmap map;
     private
@@ -47,8 +51,12 @@ public class GpsImage extends View {
     private int height;
     private int width;
 
+    /* 是否显示机器人 */
     private boolean isRobotShow = false;
+    /* 是否显示雷射点 */
     private boolean isLaserShow = false;
+    /* 是否显示导航点 */
+    private boolean isShowPointBean = false;
 
     private float robotX;
     private float robotY;
@@ -77,12 +85,13 @@ public class GpsImage extends View {
          */
         BitmapFactory.Options op = new BitmapFactory.Options();
         op.inScaled = false;
-        map = BitmapFactory.decodeResource(getResources(), R.mipmap.testmap, op).copy(Bitmap.Config.ARGB_8888, true);
+        map = BitmapFactory.decodeResource(getResources(), R.mipmap.testmap, op);
 
         canvasBitmap = new Canvas();
 
         robot = BitmapFactory.decodeResource(getResources(), R.mipmap.sweeprobot);
         laserPoints = new ArrayList<>();
+        pointBeanList = new ArrayList<>();
 
         mPaint = new Paint();
         mPaint.setAntiAlias(true); // 关闭抗锯齿 节省性能
@@ -97,13 +106,11 @@ public class GpsImage extends View {
     protected void onDraw(final Canvas canvas) {
         super.onDraw(canvas);
 
-
         canvas.save();
         if (null != map) {
             matrix = caculateMatrix(map);
             canvas.drawBitmap(map, matrix, mPaint);
         }
-
 
         if (isRobotShow) {
             PointF pointF = DegreeManager.changeAbsolutePoint(robotX, robotY, matrix);
@@ -122,8 +129,22 @@ public class GpsImage extends View {
                     });
         }
 
+        mPaint.setStrokeWidth(3);
+        mPaint.setColor(getResources().getColor(R.color.colorPrimary));
+        /* 点没有被绘制上去 */
+        if (isShowPointBean){
+            Flowable
+                    .fromIterable(pointBeanList)
+                    .subscribe(new Consumer<PointBean>() {
+                        @Override
+                        public void accept(@NonNull PointBean pointBean) throws Exception {
+                            PointF pointF = DegreeManager.changeAbsolutePoint(pointBean.getX(), pointBean.getY(), matrix);
+                            canvas.drawPoint(pointF.x, pointF.y, mPaint);
+                        }
+                    });
+        }
+
         canvas.restore();
-//        map.recycle();
     }
 
     @Override
@@ -136,10 +157,12 @@ public class GpsImage extends View {
 
     public void setRobot(Bitmap robot) {
         this.robot = robot;
+        invalidate();
     }
 
     public void setMap(Bitmap map) {
         this.map = map;
+        invalidate();
     }
 
     public void setLaserPointColor(int laserPointColor) {
@@ -207,6 +230,18 @@ public class GpsImage extends View {
         isRobotShow = true;
         this.robotX = robotX;
         this.robotY = robotY;
+        invalidate();
+    }
+
+    /**
+     *  设置标记点
+     * @param pointBeanList
+     */
+    public void setPointBeanList(List<PointBean> pointBeanList) {
+
+        isShowPointBean = true;
+        this.pointBeanList.clear();
+        this.pointBeanList.addAll(pointBeanList);
         invalidate();
     }
 }

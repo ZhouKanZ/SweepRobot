@@ -71,7 +71,6 @@ public class TaskTypeActivity extends BaseActivity {
     protected void initData() {
 
         mapId = getIntent().getBundleExtra(TaskTypeActivity.class.getSimpleName()).getInt(ID);
-        Log.d(TAG, "initData: " + mapId);
 
         tabs = new ArrayList<>();
         tabs.add(new TaskTab("导航任务"));
