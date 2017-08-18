@@ -50,5 +50,8 @@
     <string name="set_version">版本信息</string>
     <string name="activity_set_info">杭州吉佩斯机器人有限公司\nwww.gps-bot.com</string>
     <string name="version_description">暂无版本更新</string>
+    <string name="createTask">新建任务</string>
+    <string name="preview">预览</string>
+    <string name="editNavePose">编辑任务</string>
 
 </resources>

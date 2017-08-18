@@ -80,9 +80,13 @@ gps project
 
 #### OOM
 
-Throwing OutOfMemoryError "Failed to allocate a 15745036 byte
-allocation with 186368 free bytes and 182KB until OOM" 在加载
-bitmap的时候没有做处理，导致直接OOM,解决办法:
+    Throwing OutOfMemoryError "Failed to allocate a 15745036 byte
+    allocation with 186368 free bytes and 182KB until OOM" 在加载
+    bitmap的时候没有做处理，导致直接OOM,解决办法:
+    
+
+     
+     
 
  
 

@@ -37,14 +37,16 @@ public class JsonCreator {
         JSONObject angular = new JSONObject();
         angular.put("x", 0);
         angular.put("y", 0);
-        angular.put("z", -length * (Math.cos(convertAngleToRadians(angle))));
+        angular.put("z", -length * (Math.cos(convertAngleToRadians(angle)))*0.2);
 
         if ((0 < angle && angle <= 30) || (150 < angle && angle <= 210) || (330 < angle && angle <= 360)) {
             linear.put("x", 0);
+            angular.put("z", -length * (Math.cos(convertAngleToRadians(angle))));
         }
 
         if ((60 < angle && angle <= 120) || (240 < angle && angle <= 300)) {
             angular.put("z", 0);
+            angular.put("z", -length * (Math.cos(convertAngleToRadians(angle))));
         }
 
         msg.put("linear", linear);
