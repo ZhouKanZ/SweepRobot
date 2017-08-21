@@ -22,10 +22,12 @@ import com.gps.ros.response.LaserPose;
 import com.gps.sweeprobot.R;
 import com.gps.sweeprobot.base.BaseActivity;
 import com.gps.sweeprobot.database.GpsMapBean;
+import com.gps.sweeprobot.http.WebSocketHelper;
 import com.gps.sweeprobot.model.createmap.bean.ControlTab;
 import com.gps.sweeprobot.model.createmap.contract.CreateMapContract;
 import com.gps.sweeprobot.model.createmap.presenter.CreateMapPresenter;
 import com.gps.sweeprobot.url.UrlHelper;
+import com.gps.sweeprobot.utils.JsonCreator;
 import com.gps.sweeprobot.utils.ToastManager;
 import com.gps.sweeprobot.widget.GpsImage;
 import com.gps.sweeprobot.widget.RockerView;
@@ -42,6 +44,7 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Consumer;
+import retrofit2.http.HEAD;
 
 /**
  * @Author : zhoukan
@@ -142,6 +145,8 @@ public class CreateActivity extends BaseActivity<CreateMapPresenter, CreateMapCo
                                     gpsMapBean.setCompletedMapUrl(UrlHelper.COMPLETE_URL);
                                     gpsMapBean.setDate( Calendar.getInstance().getTime());
                                     mPresenter.saveMap(gpsMapBean);
+                                    WebSocketHelper.send(JsonCreator.mappingStatus(2,gpsMapBean.getId(),gpsMapBean.getName(),"/var/www/maps").toJSONString());
+                                    Log.d(TAG, "onClick: " + "" + "\n id" + gpsMapBean.getId() + "\n + name" + gpsMapBean.getName());
                                 }
                                 dialog.dismiss();
                                 break;
@@ -318,7 +323,6 @@ public class CreateActivity extends BaseActivity<CreateMapPresenter, CreateMapCo
 
     @Override
     public void accept(@NonNull Bitmap bitmap) throws Exception {
-        Log.d("test", "accept: " + bitmap);
         gpsImage.setMap(bitmap);
     }
 

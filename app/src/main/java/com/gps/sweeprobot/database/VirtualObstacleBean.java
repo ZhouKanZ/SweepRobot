@@ -19,6 +19,7 @@ public class VirtualObstacleBean extends IAction{
     private String name;
     private String createDate;
     private String description;
+    /* 多边形顶点 */
     private List<MyPointF> myPointFs = new ArrayList<MyPointF>();
 
     public int getId() {

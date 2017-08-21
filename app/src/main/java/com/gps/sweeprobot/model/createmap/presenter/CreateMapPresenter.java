@@ -12,6 +12,7 @@ import com.gps.sweeprobot.model.createmap.contract.CreateMapContract;
 import com.gps.sweeprobot.model.createmap.model.MapModel;
 import com.gps.sweeprobot.model.createmap.model.RosResponseLisenter;
 import com.gps.sweeprobot.mvp.IModel;
+import com.gps.sweeprobot.utils.JsonCreator;
 import com.gps.sweeprobot.utils.RosProtrocol;
 
 import java.util.HashMap;
@@ -51,6 +52,7 @@ public class CreateMapPresenter extends BasePresenter<CreateMapContract.View> im
     @Override
     public void stopScanMap() {
         model.stopScan(disposable);
+
     }
 
     @Override

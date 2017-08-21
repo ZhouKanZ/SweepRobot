@@ -29,6 +29,7 @@ import butterknife.OnClick;
 
 public class TaskTypeActivity extends BaseActivity {
 
+    private static final String TAG = "TaskTypeActivity";
     public static final String ID = "tasktypeactivity_id";
     @BindView(R.id.iv_back)
     ImageView ivBack;
@@ -42,6 +43,8 @@ public class TaskTypeActivity extends BaseActivity {
     RecyclerView rvTaskList;
 
     List<TaskTab>  tabs ;
+
+    int mapId;
 
     @Override
     protected TextView getTitleTextView() {
@@ -65,6 +68,8 @@ public class TaskTypeActivity extends BaseActivity {
 
     @Override
     protected void initData() {
+
+        mapId = getIntent().getBundleExtra(TaskTypeActivity.class.getSimpleName()).getInt(ID);
 
         tabs = new ArrayList<>();
         tabs.add(new TaskTab("导航任务"));

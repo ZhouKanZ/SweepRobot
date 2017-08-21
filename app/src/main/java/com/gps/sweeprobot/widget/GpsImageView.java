@@ -217,7 +217,6 @@ public class GpsImageView extends FrameLayout {
     }
 
     /**
-    /*
      * 更新标记点的名称
      * @param newName 名称
      * @param index   对应标记点view的index

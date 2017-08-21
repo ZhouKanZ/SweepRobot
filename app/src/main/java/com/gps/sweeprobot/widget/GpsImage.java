@@ -10,10 +10,12 @@ import android.graphics.PointF;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 
 import com.gps.ros.response.LaserPose;
 import com.gps.sweeprobot.R;
+import com.gps.sweeprobot.database.PointBean;
 import com.gps.sweeprobot.utils.DegreeManager;
 
 import java.util.ArrayList;
@@ -33,7 +35,10 @@ public class GpsImage extends View {
 
     private static final String TAG = "GpsImage";
 
+    /* 雷射点数据 */
     private List<LaserPose.DataBean> laserPoints;
+    /* 标记点 */
+    private List<PointBean> pointBeanList;
     private Bitmap robot;
     private Bitmap map;
     private
@@ -46,8 +51,12 @@ public class GpsImage extends View {
     private int height;
     private int width;
 
+    /* 是否显示机器人 */
     private boolean isRobotShow = false;
+    /* 是否显示雷射点 */
     private boolean isLaserShow = false;
+    /* 是否显示导航点 */
+    private boolean isShowPointBean = false;
 
     private float robotX;
     private float robotY;
@@ -76,12 +85,13 @@ public class GpsImage extends View {
          */
         BitmapFactory.Options op = new BitmapFactory.Options();
         op.inScaled = false;
-        map = BitmapFactory.decodeResource(getResources(), R.mipmap.testmap, op).copy(Bitmap.Config.ARGB_8888, true);
+        map = BitmapFactory.decodeResource(getResources(), R.mipmap.testmap, op);
 
         canvasBitmap = new Canvas();
 
         robot = BitmapFactory.decodeResource(getResources(), R.mipmap.sweeprobot);
         laserPoints = new ArrayList<>();
+        pointBeanList = new ArrayList<>();
 
         mPaint = new Paint();
         mPaint.setAntiAlias(true); // 关闭抗锯齿 节省性能
@@ -96,13 +106,11 @@ public class GpsImage extends View {
     protected void onDraw(final Canvas canvas) {
         super.onDraw(canvas);
 
-
         canvas.save();
         if (null != map) {
             matrix = caculateMatrix(map);
             canvas.drawBitmap(map, matrix, mPaint);
         }
-
 
         if (isRobotShow) {
             PointF pointF = DegreeManager.changeAbsolutePoint(robotX, robotY, matrix);
@@ -121,8 +129,22 @@ public class GpsImage extends View {
                     });
         }
 
+        mPaint.setStrokeWidth(3);
+        mPaint.setColor(getResources().getColor(R.color.colorPrimary));
+        /* 点没有被绘制上去 */
+        if (isShowPointBean){
+            Flowable
+                    .fromIterable(pointBeanList)
+                    .subscribe(new Consumer<PointBean>() {
+                        @Override
+                        public void accept(@NonNull PointBean pointBean) throws Exception {
+                            PointF pointF = DegreeManager.changeAbsolutePoint(pointBean.getX(), pointBean.getY(), matrix);
+                            canvas.drawPoint(pointF.x, pointF.y, mPaint);
+                        }
+                    });
+        }
+
         canvas.restore();
-//        map.recycle();
     }
 
     @Override
@@ -135,10 +157,12 @@ public class GpsImage extends View {
 
     public void setRobot(Bitmap robot) {
         this.robot = robot;
+        invalidate();
     }
 
     public void setMap(Bitmap map) {
         this.map = map;
+        invalidate();
     }
 
     public void setLaserPointColor(int laserPointColor) {
@@ -165,18 +189,28 @@ public class GpsImage extends View {
         int w = bitmap.getWidth();
         int h = bitmap.getHeight();
 
+        Log.d(TAG, "caculateMatrix: w:" + w + "\nh:"+h);
+
         width = getWidth();
         height = getHeight();
+
+        Log.d(TAG, "caculateMatrix: width:" + width + "\nheight:"+height);
 
         float widthRatio = width / (float) w;
         float heightRatio = height / (float) h;
 
-        if (h * widthRatio <= heightRatio) {
+        /**
+         *  宽度刚好铺满的情况
+         */
+        if (h * widthRatio <= height) {
             matrix.postScale(widthRatio, widthRatio);
-            matrix.postTranslate((getWidth() - w * widthRatio) / 2, 0);
+            matrix.postTranslate(0,(getHeight() - h * widthRatio) / 2);
             return matrix;
         }
 
+        /**
+         *  高度刚好铺满的情况
+         */
         if (w * heightRatio <= width) {
             matrix.postScale(heightRatio, heightRatio);
             matrix.postTranslate((getWidth() - w * heightRatio) / 2, 0);
@@ -196,6 +230,18 @@ public class GpsImage extends View {
         isRobotShow = true;
         this.robotX = robotX;
         this.robotY = robotY;
+        invalidate();
+    }
+
+    /**
+     *  设置标记点
+     * @param pointBeanList
+     */
+    public void setPointBeanList(List<PointBean> pointBeanList) {
+
+        isShowPointBean = true;
+        this.pointBeanList.clear();
+        this.pointBeanList.addAll(pointBeanList);
         invalidate();
     }
 }

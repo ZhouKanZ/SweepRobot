@@ -37,11 +37,11 @@ public class GpsMapBean extends DataSupport {
     /* 地图构建成功后Image对应的地址 */
     private String completedMapUrl;
 
-    /* 障碍物 */
-    private List<VirtualObstacleBean> virtualObstacleBeanList = new ArrayList<>();
-
-    /* 标记点 */
-    private List<PointBean> pointBeanList = new ArrayList<>();
+//    /* 障碍物 */
+//    private List<VirtualObstacleBean> virtualObstacleBeanList = new ArrayList<>();
+//
+//    /* 标记点 */
+//    private List<PointBean> pointBeanList = new ArrayList<>();
 
 
 
@@ -93,21 +93,21 @@ public class GpsMapBean extends DataSupport {
         this.completedMapUrl = completedMapUrl;
     }
 
-    public List<VirtualObstacleBean> getVirtualObstacleBeanList() {
-        return virtualObstacleBeanList;
-    }
-
-    public void setVirtualObstacleBeanList(List<VirtualObstacleBean> virtualObstacleBeanList) {
-        this.virtualObstacleBeanList = virtualObstacleBeanList;
-    }
-
-    public List<PointBean> getPointBeanList() {
-        return pointBeanList;
-    }
-
-    public void setPointBeanList(List<PointBean> pointBeanList) {
-        this.pointBeanList = pointBeanList;
-    }
+//    public List<VirtualObstacleBean> getVirtualObstacleBeanList() {
+//        return virtualObstacleBeanList;
+//    }
+//
+//    public void setVirtualObstacleBeanList(List<VirtualObstacleBean> virtualObstacleBeanList) {
+//        this.virtualObstacleBeanList = virtualObstacleBeanList;
+//    }
+//
+//    public List<PointBean> getPointBeanList() {
+//        return pointBeanList;
+//    }
+//
+//    public void setPointBeanList(List<PointBean> pointBeanList) {
+//        this.pointBeanList = pointBeanList;
+//    }
 
 
 }

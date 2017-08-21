@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.annotation.RequiresApi;
 import android.support.annotation.StringRes;
 import android.support.v4.app.FragmentActivity;
@@ -16,6 +17,7 @@ import android.widget.Toast;
 import android.widget.Toolbar;
 
 import com.gps.sweeprobot.model.main.bean.ToolbarOptions;
+import com.gps.sweeprobot.model.taskqueue.view.activity.TaskDetailActivity;
 import com.gps.sweeprobot.mvp.IView;
 import com.gps.sweeprobot.utils.LogUtils;
 

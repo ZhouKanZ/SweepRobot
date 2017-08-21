@@ -23,6 +23,7 @@ public class PointBean extends IAction{
     //标记点所在地图的名字
     private String mapName;
 
+    /* 外键id */
     private int mapId;
 
     public PointBean() {

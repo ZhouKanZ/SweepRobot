@@ -14,6 +14,7 @@ import com.gps.sweeprobot.base.BaseActivity;
 import com.gps.sweeprobot.http.Constant;
 import com.gps.sweeprobot.model.main.contract.IpContract;
 import com.gps.sweeprobot.model.main.presenter.IpPresenter;
+import com.gps.sweeprobot.url.UrlHelper;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -117,6 +118,10 @@ public class IpActivity extends BaseActivity<IpPresenter, IpContract.View> imple
 
     @Override
     public void startAct() {
+//        UrlHelper.BASE_URL = "http://" + getIpText()+":82";
+        String url = getIpText();
+        String[] netInfo = url.split(":");
+        UrlHelper.BASE_URL = "http://" + netInfo[0] +":" + UrlHelper.DEFAULT_PORT+"/";
         MainActivity.startSelf(this, MainActivity.class, null);
         this.finish();
     }
