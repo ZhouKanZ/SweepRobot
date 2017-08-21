@@ -248,6 +248,7 @@ public class GpsImageView extends FrameLayout {
             DataSupport.deleteAll(PointBean.class);
         }
         pointsList.clear();
+
         postInvalidate();
     }
 

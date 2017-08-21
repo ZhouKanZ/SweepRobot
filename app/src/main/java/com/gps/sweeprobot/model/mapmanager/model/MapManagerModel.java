@@ -4,6 +4,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 import com.gps.sweeprobot.database.GpsMapBean;
+import com.gps.sweeprobot.database.PointBean;
+import com.gps.sweeprobot.database.VirtualObstacleBean;
 import com.gps.sweeprobot.http.Http;
 import com.gps.sweeprobot.model.mapmanager.adaper.item.MapListItem;
 import com.gps.sweeprobot.mvp.IModel;
@@ -14,6 +16,7 @@ import org.litepal.crud.DataSupport;
 
 import java.util.List;
 
+import io.reactivex.Flowable;
 import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -100,6 +103,32 @@ public class MapManagerModel implements IModel,MapListItem.RequestMapListener{
                         infoHint.successInfo(gpsMapBeen);
                     }
                 });
+    }
+
+    /**
+     * 列表项被删除时，更新数据库
+     */
+    public void deleteMapData(final int mapId){
+
+        Flowable.just(mapId)
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .observeOn(Schedulers.io())
+                .subscribe(new Consumer<Integer>() {
+                    @Override
+                    public void accept(@NonNull Integer integer) throws Exception {
+
+                        //删除地图
+                        DataSupport.delete(GpsMapBean.class,mapId);
+                        //删除标记点
+                        int i = DataSupport.deleteAll(PointBean.class, "mapId = ?", String.valueOf(mapId));
+                        LogManager.i("delete point i=========="+i);
+
+                        //删除虚拟墙
+                        int o = DataSupport.deleteAll(VirtualObstacleBean.class, "mapId = ?", String.valueOf(mapId));
+                        LogManager.i("delete obstacle o==========="+o);
+                    }
+                });
+//        DataSupport.where("mapId = ?",String.valueOf(mapId)).find(PointBean.class).
     }
 
     @Override

@@ -8,7 +8,6 @@ import com.gps.sweeprobot.utils.LogManager;
 
 import org.litepal.crud.DataSupport;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Observable;
@@ -31,9 +30,8 @@ public class ActionModel implements IModel {
      */
     public void getActionData(final int mapid, final InfoMessager messager) {
 
-        //DataSupport.where("GpsMapBean_id = ?",String.valueOf(mapid)).find(PointBean.class)
         //从数据库获取数据
-        Observable.fromArray(DataSupport.findAll(PointBean.class))
+        Observable.fromArray(DataSupport.where("mapId = ?", String.valueOf(mapid)).find(PointBean.class))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<List<PointBean>>() {
@@ -45,23 +43,7 @@ public class ActionModel implements IModel {
                     @Override
                     public void onNext(@NonNull List<PointBean> pointBeen) {
 
-                        List<PointBean> conformBeans = new ArrayList<>();
-
-                        for (PointBean bean : pointBeen) {
-
-                            if (bean.getMapId() == mapid){
-                                conformBeans.add(bean);
-                            }
-                        }
-                        if (conformBeans.size() > 0) {
-                            LogManager.i("action on next" + conformBeans.size());
-                            messager.successInfo(conformBeans);
-
-                        } else {
-                            getDataFromServer();
-                        }
-
-//                        messager.successInfo(pointBeen);
+                        messager.successInfo(pointBeen);
                     }
 
                     @Override
@@ -80,8 +62,7 @@ public class ActionModel implements IModel {
 
     public void getObstacleData(final int mapid, final ObstacleInfo info) {
 
-        //DataSupport.where("GpsMapBean_id = ?",String.valueOf(mapid)).find(VirtualObstacleBean.class)
-        Observable.fromArray(DataSupport.findAll(VirtualObstacleBean.class))
+        Observable.fromArray(DataSupport.where("mapId = ?", String.valueOf(mapid)).find(VirtualObstacleBean.class))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<List<VirtualObstacleBean>>() {
@@ -93,19 +74,7 @@ public class ActionModel implements IModel {
                     @Override
                     public void onNext(@NonNull List<VirtualObstacleBean> obstacleBeans) {
 
-                        List<VirtualObstacleBean> conformBeans = new ArrayList<>();
-
-                        for (VirtualObstacleBean bean : obstacleBeans) {
-
-                            if (bean.getMapId() == mapid) {
-                                conformBeans.add(bean);
-                            }
-                        }
-                        if (conformBeans.size() > 0) {
-                            info.successInfo(conformBeans);
-                        }
-
-//                        info.successInfo(obstacleBeans);
+                        info.successInfo(obstacleBeans);
                     }
 
                     @Override
@@ -128,7 +97,7 @@ public class ActionModel implements IModel {
 
     }
 
-    public void setObstacle2Ros(VirtualObstacleBean bean) {
+    public void sendObstacle2Ros(VirtualObstacleBean bean) {
 
         CommunicationUtil.sendObstacle2Ros(bean);
     }

@@ -62,6 +62,14 @@ public class MapListItem implements AdapterItem<GpsMapBean> {
                 MapListItem.this.listener.onItemClickListener(view, holder.getLayoutPosition());
             }
         });
+
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                MapListItem.this.listener.onItemLongClickListener(v,holder.getLayoutPosition());
+                return true;
+            }
+        });
     }
 
     @Override
@@ -88,6 +96,8 @@ public class MapListItem implements AdapterItem<GpsMapBean> {
     public interface MOnItemClickListener {
 
         void onItemClickListener(View view, int position);
+
+        void onItemLongClickListener(View view,int position);
     }
 
     /**

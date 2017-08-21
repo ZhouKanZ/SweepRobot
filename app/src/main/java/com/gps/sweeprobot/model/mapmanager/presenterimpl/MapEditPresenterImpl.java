@@ -158,7 +158,6 @@ public class MapEditPresenterImpl extends MapEditPresenter {
     @Override
     public void setData() {
 
-
         //获取地图img
         setMapData(mapid);
         //从数据库获取标记点,虚拟墙数据
@@ -237,6 +236,9 @@ public class MapEditPresenterImpl extends MapEditPresenter {
     }
 
 
+    /**
+     * 添加按钮监听
+     */
     @Override
     public void addViewOnClick() {
 
@@ -244,6 +246,9 @@ public class MapEditPresenterImpl extends MapEditPresenter {
         mapEditView.inflateActionView();
     }
 
+    /**
+     * 删除监听
+     */
     @Override
     public void subViewOnClick() {
 
@@ -251,6 +256,9 @@ public class MapEditPresenterImpl extends MapEditPresenter {
         mapEditView.inflateActionView();
     }
 
+    /**
+     * 标记点选项点击监听
+     */
     @Override
     public void pointActionOnClick() {
 
@@ -264,6 +272,9 @@ public class MapEditPresenterImpl extends MapEditPresenter {
 
     }
 
+    /**
+     * 虚拟墙选项点击监听
+     */
     @Override
     public void obstacleActionOnClick() {
 
@@ -276,6 +287,9 @@ public class MapEditPresenterImpl extends MapEditPresenter {
         mapEditView.setActionRecyclerView();
     }
 
+    /**
+     * 设置虚拟墙多边形顶点
+     */
     @Override
     public void positionViewOnClick() {
         //在添加虚拟墙的状态下
@@ -285,6 +299,9 @@ public class MapEditPresenterImpl extends MapEditPresenter {
         }
     }
 
+    /**
+     * 确认监听
+     */
     @Override
     public void commitViewOnClick() {
 
@@ -382,6 +399,10 @@ public class MapEditPresenterImpl extends MapEditPresenter {
         mapEditView.createInputNameDialog(getIView().getString(R.string.dialog_Obstacle));
     }
 
+    /**
+     * 获取mapid
+     * @param bundle
+     */
     @Override
     public void setBundle(Bundle bundle) {
         this.mapid = bundle.getInt(MapManagerActivity.BUNDLE_KEY);
@@ -451,8 +472,8 @@ public class MapEditPresenterImpl extends MapEditPresenter {
     /**
      * 重命名
      *
-     * @param name
-     * @param position
+     * @param name 新名字
+     * @param position item列表的index
      */
     public void rename(String name, int position) {
 

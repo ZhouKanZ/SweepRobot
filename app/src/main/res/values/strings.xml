@@ -50,5 +50,6 @@
     <string name="set_version">版本信息</string>
     <string name="activity_set_info">杭州吉佩斯机器人有限公司\nwww.gps-bot.com</string>
     <string name="version_description">暂无版本更新</string>
+    <string name="dialog_map_manager_delete">删除此地图</string>
 
 </resources>

@@ -25,6 +25,7 @@ import com.gps.sweeprobot.database.GpsMapBean;
 import com.gps.sweeprobot.model.createmap.bean.ControlTab;
 import com.gps.sweeprobot.model.createmap.contract.CreateMapContract;
 import com.gps.sweeprobot.model.createmap.presenter.CreateMapPresenter;
+import com.gps.sweeprobot.url.UrlHelper;
 import com.gps.sweeprobot.utils.ToastManager;
 import com.gps.sweeprobot.widget.GpsImage;
 import com.gps.sweeprobot.widget.RockerView;
@@ -138,7 +139,7 @@ public class CreateActivity extends BaseActivity<CreateMapPresenter, CreateMapCo
                                     ToastManager.show(mCtz,"您忘了为机器人命名噢", Toast.LENGTH_SHORT);
                                 }else {
                                     gpsMapBean.setName(robotName);
-                                    gpsMapBean.setCompletedMapUrl("maps/map_pose_0809.jpg");
+                                    gpsMapBean.setCompletedMapUrl(UrlHelper.COMPLETE_URL);
                                     gpsMapBean.setDate( Calendar.getInstance().getTime());
                                     mPresenter.saveMap(gpsMapBean);
                                 }

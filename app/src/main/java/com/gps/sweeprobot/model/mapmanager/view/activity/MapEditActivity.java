@@ -66,13 +66,16 @@ public class MapEditActivity extends BaseActivity<MapEditPresenter, IView> imple
             R.id.activity_map_flag,R.id.activity_map_position, R.id.activity_map_commit})
     List<ImageView> nameViews;
 
+    //动作列表的dialog
     AlertDialog actionDialog;
 
     private TextInputEditText inputName;
 
+    //命名的dialog
     private DialogPlus dialogPlus;
+
+    //存放mapid的bundle，上个activity传过来的
     private Bundle bundle;
-//    private Bundle bundle = new Bundle();
 
     @Override
     protected TextView getTitleTextView() {
@@ -218,7 +221,6 @@ public class MapEditActivity extends BaseActivity<MapEditPresenter, IView> imple
 
     /**
      * 添加新的标记点，通知adapter刷新
-     *
      * @param data
      */
     @Override
@@ -227,6 +229,9 @@ public class MapEditActivity extends BaseActivity<MapEditPresenter, IView> imple
         ((CommonRcvAdapter) actionRecyclerView.getAdapter()).setData(data);
     }
 
+    /**
+     * 加载dialog的contentView
+     */
     @Override
     public void inflateActionView() {
         if (actionDialog == null) {
@@ -255,6 +260,12 @@ public class MapEditActivity extends BaseActivity<MapEditPresenter, IView> imple
 
     }
 
+    /**
+     * 设置dialog view 的点击监听
+     * @param contentView
+     * @param viewId
+     * @param listener
+     */
     public void initDialogView(View contentView, int viewId, final View.OnClickListener listener) {
 
         Observable.just(findView(contentView, viewId))
@@ -270,13 +281,25 @@ public class MapEditActivity extends BaseActivity<MapEditPresenter, IView> imple
                 });
     }
 
-
+    /**
+     * 添加标记点
+     * @param x 相对于图片的像素点位置x
+     * @param y 相对于图片的像素点位置y
+     * @param pointName
+     */
     @Override
     public void addPoint(float x, float y, String pointName) {
 
         gpsImageView.addPoint(x, y, pointName);
     }
 
+    /**
+     * 添加标记点外层方法
+     * @param screenX 相对于屏幕的坐标点
+     * @param screenY 相对于屏幕的坐标点
+     * @param name
+     * @return
+     */
     @Override
     public PointBean addPointWrapper(float screenX, float screenY, String name) {
 
@@ -301,6 +324,10 @@ public class MapEditActivity extends BaseActivity<MapEditPresenter, IView> imple
         ToastManager.showShort(getString(R.string.input_name_must_not_null));
     }
 
+    /**
+     * 创建输入名字的dialog
+     * @param titleText title
+     */
     @Override
     public void createInputNameDialog(String titleText) {
 
@@ -333,18 +360,27 @@ public class MapEditActivity extends BaseActivity<MapEditPresenter, IView> imple
     }
 
     /**
-     * 虚拟墙
+     * 设置虚拟墙多边形顶点
      */
     @Override
     public void setObstacleRect(PointF pointF) {
         gpsImageView.setObstacleRect(pointF);
     }
 
+    /**
+     * 设置虚拟墙名字
+     * @param name
+     */
     @Override
     public void setObstacleName(String name) {
         gpsImageView.setObstacleName(name,this);
     }
 
+    /**
+     * 添加虚拟墙
+     * @param data
+     * @param name
+     */
     @Override
     public void addObstacle(List<MyPointF> data,String name) {
         gpsImageView.addObstacleView(data,name);
@@ -414,6 +450,9 @@ public class MapEditActivity extends BaseActivity<MapEditPresenter, IView> imple
     @Override
     protected void onDestroy() {
 
+        nameViews = null;
+        actionDialog = null;
+        dialogPlus = null;
         mPresenter.onDestroy();
         super.onDestroy();
     }
