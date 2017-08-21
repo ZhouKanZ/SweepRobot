@@ -41,7 +41,7 @@ public class MapManagerModel implements IModel,MapListItem.RequestMapListener{
         LogManager.i(UrlHelper.BASE_URL + gpsMapBean.getCompletedMapUrl());
 
         Http.getHttpService()
-                .getMapList(UrlHelper.BASE_URL+"/" + gpsMapBean.getCompletedMapUrl())
+                .getMapList(UrlHelper.BASE_URL + gpsMapBean.getCompletedMapUrl())
                 .subscribeOn(Schedulers.io())
                 .map(new Function<ResponseBody, Bitmap>() {
                     @Override

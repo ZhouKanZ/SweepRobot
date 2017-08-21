@@ -121,7 +121,7 @@ public class IpActivity extends BaseActivity<IpPresenter, IpContract.View> imple
 //        UrlHelper.BASE_URL = "http://" + getIpText()+":82";
         String url = getIpText();
         String[] netInfo = url.split(":");
-        UrlHelper.BASE_URL = "http://" + netInfo[0] +":" + UrlHelper.DEFAULT_PORT;
+        UrlHelper.BASE_URL = "http://" + netInfo[0] +":" + UrlHelper.DEFAULT_PORT + "/";
         MainActivity.startSelf(this, MainActivity.class, null);
         this.finish();
     }
