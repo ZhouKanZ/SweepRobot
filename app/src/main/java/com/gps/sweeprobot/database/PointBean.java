@@ -27,7 +27,7 @@ public class PointBean extends IAction{
     private int mapId;
 
     /* type  0表示未被选中 1表示被选中*/
-    private int type;
+    private int type = 0;
 
     public PointBean() {
     }

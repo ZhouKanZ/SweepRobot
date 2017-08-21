@@ -85,8 +85,11 @@ public abstract class CommonRcvAdapter<T> extends RecyclerView.Adapter<CommonRcv
 
     @Override
     public void setData(@NonNull List<T> data) {
-        mDataList.clear();
-        mDataList.addAll(data);
+
+        LogManager.i("commonadapter set data size ========"+data.size());
+//        mDataList.clear();
+        mDataList = data;
+        LogManager.i("adapter data size ============"+mDataList.size());
         notifyDataSetChanged();
     }
 

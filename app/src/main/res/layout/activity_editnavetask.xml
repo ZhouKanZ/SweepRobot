@@ -29,20 +29,41 @@
         android:layout_height="match_parent"
         android:layout_below="@+id/toolbar"
         >
+
+        <!-- 待选 -->
+        <TextView
+            android:id="@+id/tv_candidate"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:text="@string/candidate"
+            android:background="@color/colorPrimary"
+            />
         <!-- 待选pose -->
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rv_candidate_pose"
             android:layout_width="100dp"
             android:layout_height="match_parent"
             android:background="@color/white"
+            android:layout_below="@+id/tv_candidate"
             />
 
+
+        <!-- 待选 -->
+        <TextView
+            android:id="@+id/tv_seleted"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:text="@string/seleted"
+            android:background="@color/colorPrimary"
+            android:layout_toRightOf="@+id/rv_candidate_pose"
+            />
         <!-- 被选的pose -->
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rv_seleted_pose"
             android:layout_width="100dp"
             android:layout_height="match_parent"
             android:layout_toRightOf="@+id/rv_candidate_pose"
+            android:layout_below="@+id/tv_seleted"
             android:background="@color/white"
             />
 

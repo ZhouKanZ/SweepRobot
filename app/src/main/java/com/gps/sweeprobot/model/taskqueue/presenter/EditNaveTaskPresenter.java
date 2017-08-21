@@ -10,6 +10,7 @@ import com.gps.sweeprobot.model.taskqueue.contract.EditNaveTaskContract;
 import com.gps.sweeprobot.mvp.IModel;
 
 import org.litepal.crud.DataSupport;
+import org.litepal.crud.callback.FindMultiCallback;
 
 import java.util.HashMap;
 import java.util.List;
@@ -43,10 +44,14 @@ public class EditNaveTaskPresenter extends BasePresenter<EditNaveTaskContract.Vi
 
     @Override
     public void initData(int mapId) {
-        List<PointBean> points = DataSupport.where("mapId",mapId+"").find(PointBean.class);
-        if (points != null ){
-            iView.notifyCandidateAdapter(points);
-        }
+
+        DataSupport.where("mapId = ?",String.valueOf(mapId)).findAsync(PointBean.class).listen(new FindMultiCallback() {
+            @Override
+            public <T> void onFinish(List<T> t) {
+                iView.notifyCandidateAdapter((List<PointBean>) t);
+            }
+        });
+
     }
 
     @Override

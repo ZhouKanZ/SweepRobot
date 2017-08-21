@@ -46,8 +46,8 @@ public class AddTaskActivity extends BaseActivity {
     Spinner spType;
     @BindView(R.id.sp_map)
     Spinner spMap;
-    @BindView(R.id.btn_preview)
-    Button btnPreview;
+    @BindView(R.id.btn_edit)
+    Button btnEdit;
 
     ArrayAdapter<CharSequence> taskAdapter;
     List<GpsMapBean> gpsMapBeanList;
@@ -122,15 +122,19 @@ public class AddTaskActivity extends BaseActivity {
 
     }
 
-    @OnClick({R.id.iv_back, R.id.btn_preview})
+    @OnClick({R.id.iv_back, R.id.btn_edit})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.iv_back:
                 this.finish();
                 break;
-            case R.id.btn_preview:
-                Bundle bundle = new Bundle();
+            case R.id.btn_edit:
 
+                /* todo typeId mapId != -1 */
+
+                Bundle bundle = new Bundle();
+                bundle.putInt(EditNaveTaskActivity.MAP_ID_KEY,mapId);
+                bundle.putInt(EditNaveTaskActivity.TYPE_ID,taskType);
                 EditNaveTaskActivity.startSelf(this,EditNaveTaskActivity.class,bundle);
                 break;
         }

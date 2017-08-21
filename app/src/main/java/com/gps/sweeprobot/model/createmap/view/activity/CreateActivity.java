@@ -26,6 +26,7 @@ import com.gps.sweeprobot.http.WebSocketHelper;
 import com.gps.sweeprobot.model.createmap.bean.ControlTab;
 import com.gps.sweeprobot.model.createmap.contract.CreateMapContract;
 import com.gps.sweeprobot.model.createmap.presenter.CreateMapPresenter;
+import com.gps.sweeprobot.url.UrlHelper;
 import com.gps.sweeprobot.utils.JsonCreator;
 import com.gps.sweeprobot.utils.ToastManager;
 import com.gps.sweeprobot.widget.GpsImage;
@@ -43,6 +44,7 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Consumer;
+import retrofit2.http.HEAD;
 
 /**
  * @Author : zhoukan
@@ -141,6 +143,7 @@ public class CreateActivity extends BaseActivity<CreateMapPresenter, CreateMapCo
                                 }else {
                                     gpsMapBean.setName(robotName);
                                     gpsMapBean.setCompletedMapUrl("/maps/now/map.jpg");
+//                                    gpsMapBean.setCompletedMapUrl(UrlHelper.COMPLETE_URL);
                                     gpsMapBean.setDate( Calendar.getInstance().getTime());
                                     mPresenter.saveMap(gpsMapBean);
                                     WebSocketHelper.send(JsonCreator.mappingStatus(2,gpsMapBean.getId(),gpsMapBean.getName(),"/var/www/maps").toJSONString());

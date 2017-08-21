@@ -3,6 +3,7 @@ package com.gps.sweeprobot.model.taskqueue.view.activity;
 import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -15,12 +16,14 @@ import com.gps.sweeprobot.R;
 import com.gps.sweeprobot.base.BaseActivity;
 import com.gps.sweeprobot.database.GpsMapBean;
 import com.gps.sweeprobot.database.PointBean;
+import com.gps.sweeprobot.model.taskqueue.adapter.PointAdapter;
 import com.gps.sweeprobot.model.taskqueue.contract.EditNaveTaskContract;
 import com.gps.sweeprobot.model.taskqueue.presenter.EditNaveTaskPresenter;
 import com.gps.sweeprobot.widget.GpsImage;
 
 import org.litepal.crud.DataSupport;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -33,7 +36,9 @@ import butterknife.OnClick;
  */
 
 public class EditNaveTaskActivity extends BaseActivity<EditNaveTaskPresenter,EditNaveTaskContract.View>
-        implements EditNaveTaskContract.View {
+        implements EditNaveTaskContract.View
+        ,PointAdapter.OnItemClickListener
+{
 
     public static final String MAP_ID_KEY = "map_id_key";
     public static final String TYPE_ID = "type_id";
@@ -63,7 +68,8 @@ public class EditNaveTaskActivity extends BaseActivity<EditNaveTaskPresenter,Edi
 
     private boolean isEditLayoutShow = false;
     private GpsMapBean gpsMapBean;
-    private RecyclerView.Adapter candidateAdapter,selectedAdapter;
+    private PointAdapter candidateAdapter,selectedAdapter;
+    private List<PointBean> candidatePoints,selectedPoints;
 
     @Override
     protected TextView getTitleTextView() {
@@ -83,6 +89,29 @@ public class EditNaveTaskActivity extends BaseActivity<EditNaveTaskPresenter,Edi
     @Override
     protected void initData() {
 
+        gestureLayout
+                .getController()
+                .getSettings()
+                .setMaxZoom(10f)
+                .setRotationEnabled(true);
+
+        candidatePoints = new ArrayList<>();
+        selectedPoints = new ArrayList<>();
+
+        candidateAdapter = new PointAdapter(candidatePoints,this);
+        selectedAdapter = new PointAdapter(selectedPoints,this);
+
+        candidateAdapter.setOnItemClickListener(this);
+        selectedAdapter.setOnItemClickListener(this);
+
+        rvCandidatePose.setLayoutManager(new LinearLayoutManager(this));
+        rvSeletedPose.setLayoutManager(new LinearLayoutManager(this));
+
+        rvCandidatePose.setAdapter(candidateAdapter);
+        rvSeletedPose.setAdapter(selectedAdapter);
+
+        /* xxxxxxxxxxx */
+
         Intent intent = getIntent();
         if (intent != null) {
             Bundle bundle = intent.getBundleExtra(EditNaveTaskActivity.class.getSimpleName());
@@ -94,6 +123,8 @@ public class EditNaveTaskActivity extends BaseActivity<EditNaveTaskPresenter,Edi
             gpsMapBean = DataSupport.find(GpsMapBean.class, mapId);
             mPresenter.initData(mapId);
         }
+
+
 
     }
 
@@ -131,18 +162,26 @@ public class EditNaveTaskActivity extends BaseActivity<EditNaveTaskPresenter,Edi
 
     @Override
     public void notifyCandidateAdapter(List<PointBean> pointBeens) {
+        candidatePoints.clear();
+        candidatePoints.addAll(pointBeens);
+        candidateAdapter.notifyDataSetChanged();
     }
 
     @Override
     public void notifySelectedAdapter(List<PointBean> pointBeens) {
+        selectedPoints.clear();
+        selectedPoints.addAll(pointBeens);
+        selectedAdapter.notifyDataSetChanged();
     }
 
     @Override
     public void addNavePose(PointBean point) {
+
     }
 
     @Override
     public void removeNavePose(PointBean point) {
+
     }
 
     @Override
@@ -157,5 +196,24 @@ public class EditNaveTaskActivity extends BaseActivity<EditNaveTaskPresenter,Edi
         ObjectAnimator.ofFloat(rlPoseEdit, "translationX", -rvCandidatePose.getWidth()*2, 0)
                 .setDuration(500)
                 .start();
+    }
+
+    @Override
+    public void onAddClick(View view, int position) {
+
+        selectedPoints.add(candidatePoints.get(position));
+        selectedAdapter.notifyDataSetChanged();
+
+        candidatePoints.remove(position);
+        candidateAdapter.notifyItemRemoved(position);
+
+    }
+
+    @Override
+    public void onSubClick(View view, int position) {
+
+        selectedPoints.remove(position);
+        selectedAdapter.notifyDataSetChanged();
+
     }
 }

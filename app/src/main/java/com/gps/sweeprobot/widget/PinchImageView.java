@@ -16,8 +16,6 @@ import android.view.MotionEvent;
 import android.widget.ImageView;
 
 import com.gps.sweeprobot.utils.DegreeManager;
-import com.gps.sweeprobot.utils.LogManager;
-import com.gps.sweeprobot.utils.RGBUtil;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -879,24 +877,7 @@ public class PinchImageView extends ImageView {
             if (mOnClickListener != null) {
                 mOnClickListener.onClick(PinchImageView.this);
             }
-            //获得相对于图片的坐标点
-            PointF relativePoint = DegreeManager.changeRelativePoint(e.getX(), e.getY(),
-                    PinchImageView.this.getCurrentImageMatrix());
 
-            /**
-             * 获取按下坐标点的颜色值
-             */
-            int redValue = RGBUtil.getRedValue(PinchImageView.this, relativePoint);
-            int blueValue = RGBUtil.getBlueValue(PinchImageView.this, relativePoint);
-            int greenValue = RGBUtil.getGreenValue(PinchImageView.this, relativePoint);
-
-            LogManager.i("red ========== "+redValue+"\nblue ================"+blueValue+"\ngreen=============="+greenValue);
-
-            if (addPointListener!=null && redValue!=200){
-                addPointListener.addPoint(PinchImageView.this,relativePoint.x,relativePoint.y);
-            }else {
-//                ToastManager.showShort(MainApplication.getContext(), R.string.un_effective);
-            }
             return true;
         }
     });

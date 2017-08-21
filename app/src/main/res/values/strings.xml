@@ -54,5 +54,8 @@
     <string name="preview">预览</string>
     <string name="editNavePose">编辑任务</string>
     <string name="pointNull">没有任务点</string>
+    <string name="dialog_map_manager_delete">删除此地图</string>
+    <string name="candidate">待选点</string>
+    <string name="seleted">已选点</string>
 
 </resources>

@@ -8,7 +8,7 @@ package com.gps.sweeprobot.http;
 
 public class Constant {
 
-    public static String Robot_Domain = "http://192.168.2.133:82";
+    public static String Robot_Domain = "http://192.168.2.133:82/";
 
     /* test */
     public static String test = "http://192.168.2.117:82";
