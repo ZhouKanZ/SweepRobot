@@ -119,7 +119,6 @@ public class EditNaveTaskActivity extends BaseActivity<EditNaveTaskPresenter,Edi
                 this.finish();
                 break;
             case R.id.iv:
-
                 if (!isEditLayoutShow){
                     showPoseEditLayout();
                 }else {
@@ -132,22 +131,18 @@ public class EditNaveTaskActivity extends BaseActivity<EditNaveTaskPresenter,Edi
 
     @Override
     public void notifyCandidateAdapter(List<PointBean> pointBeens) {
-
     }
 
     @Override
     public void notifySelectedAdapter(List<PointBean> pointBeens) {
-
     }
 
     @Override
     public void addNavePose(PointBean point) {
-
     }
 
     @Override
     public void removeNavePose(PointBean point) {
-
     }
 
     @Override

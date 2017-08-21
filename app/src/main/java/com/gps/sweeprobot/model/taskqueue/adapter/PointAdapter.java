@@ -1,22 +1,17 @@
 package com.gps.sweeprobot.model.taskqueue.adapter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
 import com.gps.sweeprobot.R;
-import com.gps.sweeprobot.database.GpsMapBean;
 import com.gps.sweeprobot.database.PointBean;
-import com.gps.sweeprobot.database.Task;
-
-import org.litepal.crud.DataSupport;
 
 import java.util.List;
 
@@ -34,7 +29,7 @@ public class PointAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private List<PointBean> pointBeanList;
     private Context ctz;
     private LayoutInflater inflater;
-    private View.OnClickListener onClickListener;
+    private OnItemClickListener onItemClickListener;
 
     /* 有item */
     private static final int ITEM_NORMAL = 0X00;
@@ -47,17 +42,17 @@ public class PointAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         inflater = LayoutInflater.from(ctz);
     }
 
-    public void setOnClickListener(View.OnClickListener onClickListener) {
-        this.onClickListener = onClickListener;
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+        this.onItemClickListener = onItemClickListener;
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         if (viewType == ITEM_NORMAL) {
-            return new PointAdapter.NormalViewHolder(inflater.inflate(R.layout.item_task, parent, false));
+            return new NormalViewHolder(inflater.inflate(R.layout.item_point, parent, false));
         } else {
-            return new PointAdapter.NullViewHolder(inflater.inflate(R.layout.item_task_null, parent, false));
+            return new NullViewHolder(inflater.inflate(R.layout.item_point_null, parent, false));
         }
     }
 
@@ -66,61 +61,63 @@ public class PointAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
         switch (getItemViewType(position)) {
             case ITEM_NORMAL:
-                onBindNormalViewHolder((TaskAdapter.NormalViewHolder) holder,position);
+                onBindNormalViewHolder((NormalViewHolder) holder, position);
                 break;
             case ITEM_NULL:
-                onBindNullViewHolder((TaskAdapter.NullViewHolder) holder,position);
+                onBindNullViewHolder((NullViewHolder) holder, position);
                 break;
         }
     }
 
     /**
-     *  为空的时候
+     * 为空的时候
+     *
      * @param holder
      * @param position
      */
-    private void onBindNullViewHolder(TaskAdapter.NullViewHolder holder, int position) {
-
-        /* 新建任务 */
-        if (onClickListener != null)
-            holder.btn.setOnClickListener(onClickListener);
+    private void onBindNullViewHolder(NullViewHolder holder, int position) {
 
     }
 
     /**
-     *  不为空时
+     * 不为空时
+     *
      * @param holder
      * @param position
      */
-    private void onBindNormalViewHolder(TaskAdapter.NormalViewHolder holder, int position) {
+    private void onBindNormalViewHolder(final NormalViewHolder holder, final int position) {
 
-        Task task = tasks.get(position);
-
-        /* 查看 */
-        if (onClickListener != null){
-            holder.btnCheck.setOnClickListener(onClickListener);
-            /* 执行 */
-            holder.btnExecute.setOnClickListener(onClickListener);
+        final PointBean point = pointBeanList.get(position);
+        if (point.getType() == 0){
+            Bitmap add =  BitmapFactory.decodeResource(ctz.getResources(),R.mipmap.add);
+            holder.ivItemControl.setImageBitmap(add);
+        }else if (point.getType() == 1){
+            Bitmap sub =  BitmapFactory.decodeResource(ctz.getResources(),R.mipmap.sub);
+            holder.ivItemControl.setImageBitmap(sub);
         }
 
-        holder.tvTaskTime.setText(task.getCreateTime());
-        holder.tvTaskType.setText(task.getType() == 0 ? "导航点任务" : "轨迹任务");
-        holder.tvTitle.setText(task.getName());
+        holder.tvPointName.setText(point.getPointName());
 
-        GpsMapBean gpsMapBean = DataSupport.find(GpsMapBean.class,task.getMapId());
-        Glide.with(ctz)
-                .setDefaultRequestOptions(RequestOptions.placeholderOf(R.mipmap.place_holder))
-                .load(gpsMapBean.getCompletedMapUrl())
-                .into(holder.ivMap);
-
+        if (onItemClickListener != null){
+            holder.ivItemControl.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (point.getType() == 0){
+                        onItemClickListener.onAddClick(holder.itemView,position);
+                    }else if (point.getType() == 1){
+                        onItemClickListener.onSubClick(holder.itemView,position);
+                    }
+                }
+            });
+        }
     }
 
 
     @Override
     public int getItemViewType(int position) {
-        if (tasks.size() == 0){
+        if (pointBeanList.size() == 0) {
             return ITEM_NULL;
-        }else {
+        } else {
             return ITEM_NORMAL;
         }
 
@@ -128,7 +125,7 @@ public class PointAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     @Override
     public int getItemCount() {
-        return tasks.size() == 0 ? 1 : tasks.size();
+        return pointBeanList.size() == 0 ? 1 : pointBeanList.size();
     }
 
     /**
@@ -136,18 +133,10 @@ public class PointAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
      */
     public class NormalViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.iv_map)
-        ImageView ivMap;
-        @BindView(R.id.tv_title)
-        TextView tvTitle;
-        @BindView(R.id.tv_task_type)
-        TextView tvTaskType;
-        @BindView(R.id.tv_task_time)
-        TextView tvTaskTime;
-        @BindView(R.id.btn_execute)
-        Button btnExecute;
-        @BindView(R.id.btn_check)
-        Button btnCheck;
+        @BindView(R.id.tv_point_name)
+        TextView tvPointName;
+        @BindView(R.id.iv_item_control)
+        ImageView ivItemControl;
 
         public NormalViewHolder(View itemView) {
             super(itemView);
@@ -157,13 +146,31 @@ public class PointAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     public class NullViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.btn_)
-        Button btn;
+        @BindView(R.id.tv_null)
+        TextView tvNull;
 
         public NullViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
+
+    }
+
+    public interface OnItemClickListener{
+
+        /**
+         * 当添加被点击
+         * @param view
+         * @param position
+         */
+        void onAddClick(View view,int position);
+
+        /**
+         * 当减少被点击
+         * @param view
+         * @param position
+         */
+        void onSubClick(View view,int position);
     }
 
 }

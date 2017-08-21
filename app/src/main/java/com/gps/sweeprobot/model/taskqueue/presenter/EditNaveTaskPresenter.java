@@ -3,11 +3,16 @@ package com.gps.sweeprobot.model.taskqueue.presenter;
 import android.support.v7.widget.RecyclerView;
 
 import com.gps.sweeprobot.base.BasePresenter;
+import com.gps.sweeprobot.database.GpsMapBean;
+import com.gps.sweeprobot.database.PointBean;
 import com.gps.sweeprobot.database.Task;
 import com.gps.sweeprobot.model.taskqueue.contract.EditNaveTaskContract;
 import com.gps.sweeprobot.mvp.IModel;
 
+import org.litepal.crud.DataSupport;
+
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * @Author : zhoukan
@@ -38,21 +43,21 @@ public class EditNaveTaskPresenter extends BasePresenter<EditNaveTaskContract.Vi
 
     @Override
     public void initData(int mapId) {
-
+        List<PointBean> points = DataSupport.where("mapId",mapId+"").find(PointBean.class);
+        if (points != null ){
+            iView.notifyCandidateAdapter(points);
+        }
     }
 
     @Override
     public void addPoint() {
-
     }
 
     @Override
     public void removePoint() {
-
     }
 
     @Override
     public void saveTask(Task task) {
-
     }
 }
