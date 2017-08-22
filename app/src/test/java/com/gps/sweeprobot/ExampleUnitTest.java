@@ -51,4 +51,8 @@ public class ExampleUnitTest {
 
     }
 
+    @Test
+    public void cloneTest() throws Exception{
+
+    }
 }

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,10 +27,13 @@ import butterknife.ButterKnife;
 
 public class PointAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
+    private static final String TAG = "PointAdapter";
+    
     private List<PointBean> pointBeanList;
     private Context ctz;
     private LayoutInflater inflater;
     private OnItemClickListener onItemClickListener;
+    private PointBean lastPoint = null;
 
     /* 有item */
     private static final int ITEM_NORMAL = 0X00;
@@ -88,6 +92,7 @@ public class PointAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private void onBindNormalViewHolder(final NormalViewHolder holder, final int position) {
 
         final PointBean point = pointBeanList.get(position);
+
         if (point.getType() == 0){
             Bitmap add =  BitmapFactory.decodeResource(ctz.getResources(),R.mipmap.add);
             holder.ivItemControl.setImageBitmap(add);
@@ -129,6 +134,28 @@ public class PointAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     /**
+     *  使用clone模式
+     * @param point
+     */
+    public void addItem(PointBean point){
+        PointBean pointBean = point.clone();
+        pointBean.setType(1);
+        pointBeanList.add(pointBean);
+        notifyDataSetChanged();
+    }
+
+    /*  */
+    public void removeItem(int position) {
+        PointBean temp = pointBeanList.get(position);
+        pointBeanList.remove(position);
+        if (lastPoint != null){
+            pointBeanList.add(lastPoint);
+        }
+        notifyDataSetChanged();
+        lastPoint = temp;
+    }
+
+    /**
      * 可能有多个ViewHolder --> 跟ViewType是一一对应的
      */
     public class NormalViewHolder extends RecyclerView.ViewHolder {
@@ -153,7 +180,6 @@ public class PointAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
-
     }
 
     public interface OnItemClickListener{

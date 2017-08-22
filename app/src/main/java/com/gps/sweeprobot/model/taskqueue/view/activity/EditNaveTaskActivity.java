@@ -35,10 +35,9 @@ import butterknife.OnClick;
  * @Descriptiong : xxx
  */
 
-public class EditNaveTaskActivity extends BaseActivity<EditNaveTaskPresenter,EditNaveTaskContract.View>
+public class EditNaveTaskActivity extends BaseActivity<EditNaveTaskPresenter, EditNaveTaskContract.View>
         implements EditNaveTaskContract.View
-        ,PointAdapter.OnItemClickListener
-{
+        , PointAdapter.OnItemClickListener {
 
     public static final String MAP_ID_KEY = "map_id_key";
     public static final String TYPE_ID = "type_id";
@@ -68,8 +67,10 @@ public class EditNaveTaskActivity extends BaseActivity<EditNaveTaskPresenter,Edi
 
     private boolean isEditLayoutShow = false;
     private GpsMapBean gpsMapBean;
-    private PointAdapter candidateAdapter,selectedAdapter;
-    private List<PointBean> candidatePoints,selectedPoints;
+    private PointAdapter candidateAdapter, selectedAdapter;
+    /* adapter 参数 */
+    private List<PointBean> candidatePoints, selectedPoints;
+    private PointBean lastPoint = null;
 
     @Override
     protected TextView getTitleTextView() {
@@ -98,8 +99,10 @@ public class EditNaveTaskActivity extends BaseActivity<EditNaveTaskPresenter,Edi
         candidatePoints = new ArrayList<>();
         selectedPoints = new ArrayList<>();
 
-        candidateAdapter = new PointAdapter(candidatePoints,this);
-        selectedAdapter = new PointAdapter(selectedPoints,this);
+        /* 待选 */
+        candidateAdapter = new PointAdapter(candidatePoints, this);
+        /* 已选 */
+        selectedAdapter = new PointAdapter(selectedPoints, this);
 
         candidateAdapter.setOnItemClickListener(this);
         selectedAdapter.setOnItemClickListener(this);
@@ -123,7 +126,6 @@ public class EditNaveTaskActivity extends BaseActivity<EditNaveTaskPresenter,Edi
             gpsMapBean = DataSupport.find(GpsMapBean.class, mapId);
             mPresenter.initData(mapId);
         }
-
 
 
     }
@@ -150,9 +152,9 @@ public class EditNaveTaskActivity extends BaseActivity<EditNaveTaskPresenter,Edi
                 this.finish();
                 break;
             case R.id.iv:
-                if (!isEditLayoutShow){
+                if (!isEditLayoutShow) {
                     showPoseEditLayout();
-                }else {
+                } else {
                     hidePoseEditLayout();
                 }
                 isEditLayoutShow = !isEditLayoutShow;
@@ -186,34 +188,29 @@ public class EditNaveTaskActivity extends BaseActivity<EditNaveTaskPresenter,Edi
 
     @Override
     public void showPoseEditLayout() {
-        ObjectAnimator.ofFloat(rlPoseEdit, "translationX", 0, -rvCandidatePose.getWidth()*2)
+        ObjectAnimator.ofFloat(rlPoseEdit, "translationX", 0, -rvCandidatePose.getWidth() * 2)
                 .setDuration(500)
                 .start();
     }
 
     @Override
     public void hidePoseEditLayout() {
-        ObjectAnimator.ofFloat(rlPoseEdit, "translationX", -rvCandidatePose.getWidth()*2, 0)
+        ObjectAnimator.ofFloat(rlPoseEdit, "translationX", -rvCandidatePose.getWidth() * 2, 0)
                 .setDuration(500)
                 .start();
     }
 
+    /* 加号事件 */
     @Override
     public void onAddClick(View view, int position) {
-
-        selectedPoints.add(candidatePoints.get(position));
-        selectedAdapter.notifyDataSetChanged();
-
-        candidatePoints.remove(position);
-        candidateAdapter.notifyItemRemoved(position);
-
+        PointBean tempPoint = candidatePoints.get(position);
+        candidateAdapter.removeItem(position);
+        selectedAdapter.addItem(tempPoint);
     }
 
     @Override
     public void onSubClick(View view, int position) {
-
         selectedPoints.remove(position);
         selectedAdapter.notifyDataSetChanged();
-
     }
 }

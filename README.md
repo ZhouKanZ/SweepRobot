@@ -94,6 +94,15 @@ gps project
         }
     } 
     
+#### 设计模式 —— clone模式 
+    
+    场景 ：两个list同时处理一个对象，造成的数据混乱
+    clone模式简介 ： 分为深克隆和浅克隆 
+   [详情参考](https://github.com/ZhouKanZ/designPattern/tree/master/clonePattern)
+    
+    
+    
+    
 
 
     
