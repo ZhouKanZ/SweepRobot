@@ -15,9 +15,11 @@ import com.bumptech.glide.request.RequestOptions;
 import com.gps.sweeprobot.R;
 import com.gps.sweeprobot.database.GpsMapBean;
 import com.gps.sweeprobot.database.Task;
+import com.gps.sweeprobot.url.UrlHelper;
 
 import org.litepal.crud.DataSupport;
 
+import java.io.File;
 import java.util.List;
 
 import butterknife.BindView;
@@ -110,8 +112,8 @@ public class TaskAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         GpsMapBean gpsMapBean = DataSupport.find(GpsMapBean.class,task.getMapId());
         Glide.with(ctz)
-                .setDefaultRequestOptions(RequestOptions.placeholderOf(R.mipmap.place_holder))
-                .load(gpsMapBean.getCompletedMapUrl())
+                .setDefaultRequestOptions(RequestOptions.placeholderOf(R.mipmap.map_test))
+                .load(UrlHelper.BASE_URL + gpsMapBean.getId()+ "/" +gpsMapBean.getId()+".jpg")
                 .into(holder.ivMap);
 
     }
@@ -146,9 +148,9 @@ public class TaskAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         @BindView(R.id.tv_task_time)
         TextView tvTaskTime;
         @BindView(R.id.btn_execute)
-        Button btnExecute;
+        TextView btnExecute;
         @BindView(R.id.btn_check)
-        Button btnCheck;
+        TextView btnCheck;
 
         public NormalViewHolder(View itemView) {
             super(itemView);

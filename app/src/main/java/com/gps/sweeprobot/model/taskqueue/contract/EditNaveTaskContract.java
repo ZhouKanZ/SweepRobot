@@ -1,5 +1,7 @@
 package com.gps.sweeprobot.model.taskqueue.contract;
 
+import android.graphics.Bitmap;
+
 import com.gps.sweeprobot.database.PointBean;
 import com.gps.sweeprobot.database.Task;
 import com.gps.sweeprobot.mvp.IModel;
@@ -73,6 +75,22 @@ public class EditNaveTaskContract {
          */
         void hidePoseEditLayout();
 
+        /**
+         * 设置点
+         * @param t
+         */
+        void setPoints(List<PointBean> t);
+
+        /**
+         *  设置gpsImage的图片
+         * @param bitmap
+         */
+        void setImage(Bitmap bitmap);
+
+        /**
+         *  结束当前的Activity
+         */
+        void finishActivity();
     }
 
 }

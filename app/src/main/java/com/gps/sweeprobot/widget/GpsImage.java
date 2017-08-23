@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.PointF;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
@@ -13,6 +14,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 
+import com.alibaba.fastjson.serializer.BeanContext;
 import com.gps.ros.response.LaserPose;
 import com.gps.sweeprobot.R;
 import com.gps.sweeprobot.database.PointBean;
@@ -39,6 +41,8 @@ public class GpsImage extends View {
     private List<LaserPose.DataBean> laserPoints;
     /* 标记点 */
     private List<PointBean> pointBeanList;
+    /* 选中的点 */
+    private List<PointBean> selectedPointList;
     private Bitmap robot;
     private Bitmap map;
     private
@@ -47,6 +51,9 @@ public class GpsImage extends View {
     private int laserRadius;
 
     private Paint mPaint;
+    private Paint pathPaint;
+    private Path p;
+
     /* 宽高 */
     private int height;
     private int width;
@@ -57,6 +64,8 @@ public class GpsImage extends View {
     private boolean isLaserShow = false;
     /* 是否显示导航点 */
     private boolean isShowPointBean = false;
+    /* 是否显示path */
+    private boolean isShowSelectedPath = false;
 
     private float robotX;
     private float robotY;
@@ -92,12 +101,20 @@ public class GpsImage extends View {
         robot = BitmapFactory.decodeResource(getResources(), R.mipmap.sweeprobot);
         laserPoints = new ArrayList<>();
         pointBeanList = new ArrayList<>();
+        selectedPointList = new ArrayList<>();
 
         mPaint = new Paint();
         mPaint.setAntiAlias(true); // 关闭抗锯齿 节省性能
         mPaint.setColor(getResources().getColor(R.color.colorAccent));
         mPaint.setStyle(Paint.Style.FILL);
         mPaint.setStrokeWidth(1);
+
+        p = new Path();
+        pathPaint = new Paint();
+        pathPaint.setAntiAlias(true); // 关闭抗锯齿 节省性能
+        pathPaint.setColor(getResources().getColor(R.color.colorAccent));
+        pathPaint.setStyle(Paint.Style.STROKE);
+        pathPaint.setStrokeWidth(1);
 
     }
 
@@ -117,6 +134,7 @@ public class GpsImage extends View {
             canvas.drawBitmap(robot, pointF.x, pointF.y, mPaint);
         }
 
+        /* 激光点 */
         if (isLaserShow) {
             Flowable
                     .fromIterable(laserPoints)
@@ -140,8 +158,29 @@ public class GpsImage extends View {
                         public void accept(@NonNull PointBean pointBean) throws Exception {
                             PointF pointF = DegreeManager.changeAbsolutePoint(pointBean.getX(), pointBean.getY(), matrix);
                             canvas.drawPoint(pointF.x, pointF.y, mPaint);
+                            String name = pointBean.getPointName();
+                            canvas.drawText(name,pointF.x,pointF.y,mPaint);
                         }
                     });
+        }
+
+        if (isShowSelectedPath){
+
+            if (null != selectedPointList && selectedPointList.size() >0){
+
+                for (int i = 0; i < selectedPointList.size(); i++) {
+                    PointBean pointBean  = selectedPointList.get(i);
+                    PointF pointF = DegreeManager.changeAbsolutePoint(pointBean.getX(), pointBean.getY(), matrix);
+                    if (i == 0){
+                        p.moveTo(pointF.x,pointF.y);
+                    }else {
+                        p.lineTo(pointF.x,pointF.y);
+                    }
+                }
+                canvas.drawPath(p,pathPaint);
+                p.reset();
+            }
+
         }
 
         canvas.restore();
@@ -238,10 +277,21 @@ public class GpsImage extends View {
      * @param pointBeanList
      */
     public void setPointBeanList(List<PointBean> pointBeanList) {
-
         isShowPointBean = true;
         this.pointBeanList.clear();
         this.pointBeanList.addAll(pointBeanList);
+        invalidate();
+    }
+
+    public void pathAddPoint(PointBean pointBean) {
+        isShowSelectedPath = true;
+        selectedPointList.add(pointBean);
+        invalidate();
+    }
+
+    public void pathRemovePoint(int position) {
+        isShowSelectedPath = true;
+        selectedPointList.remove(position);
         invalidate();
     }
 }

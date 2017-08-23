@@ -27,6 +27,8 @@ public class Task extends DataSupport{
 
     private boolean isExecuting = false;
 
+    private String mapUrl;
+
     /* 外键id
     *  标识机器人执行任务所处的环境
     */
@@ -97,5 +99,13 @@ public class Task extends DataSupport{
 
     public void setMapId(int mapId) {
         this.mapId = mapId;
+    }
+
+    public String getMapUrl() {
+        return mapUrl;
+    }
+
+    public void setMapUrl(String mapUrl) {
+        this.mapUrl = mapUrl;
     }
 }

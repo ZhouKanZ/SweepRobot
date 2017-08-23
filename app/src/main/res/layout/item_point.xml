@@ -20,8 +20,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@mipmap/add"
+        android:scaleType="centerInside"
         android:layout_toRightOf="@id/tv_point_name"
         android:padding="5dp"
+        />
+
+    <View
+        style="@style/line_horizontal"
+        android:layout_below="@+id/iv_item_control"
         />
 
 

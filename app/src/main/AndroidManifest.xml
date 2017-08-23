@@ -59,6 +59,7 @@
             android:screenOrientation="landscape"
             />
         <activity android:name=".model.taskqueue.view.activity.TaskQueueActivity"
+            android:launchMode="singleTask"
             />
         <activity android:name=".model.taskqueue.view.activity.TaskTypeActivity"
             />
@@ -69,10 +70,10 @@
             />
         <activity android:name=".model.taskqueue.view.activity.EditNaveTaskActivity"
             android:screenOrientation="landscape"
+            android:configChanges="orientation|keyboardHidden|screenSize"
             />
 
         <!-- ZHOUKAN - ENDING -->
-
         <activity android:name=".test.TestActivity2">
             <!--<intent-filter>
                <action android:name="android.intent.action.MAIN" />

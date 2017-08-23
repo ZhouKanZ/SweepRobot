@@ -2,10 +2,13 @@ package com.gps.sweeprobot.model.taskqueue.view.activity;
 
 import android.animation.ObjectAnimator;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -16,6 +19,7 @@ import com.gps.sweeprobot.R;
 import com.gps.sweeprobot.base.BaseActivity;
 import com.gps.sweeprobot.database.GpsMapBean;
 import com.gps.sweeprobot.database.PointBean;
+import com.gps.sweeprobot.database.Task;
 import com.gps.sweeprobot.model.taskqueue.adapter.PointAdapter;
 import com.gps.sweeprobot.model.taskqueue.contract.EditNaveTaskContract;
 import com.gps.sweeprobot.model.taskqueue.presenter.EditNaveTaskPresenter;
@@ -41,6 +45,7 @@ public class EditNaveTaskActivity extends BaseActivity<EditNaveTaskPresenter, Ed
 
     public static final String MAP_ID_KEY = "map_id_key";
     public static final String TYPE_ID = "type_id";
+    public static final String TASK_NAME = "task_name";
     @BindView(R.id.iv_back)
     ImageView ivBack;
     @BindView(R.id.title)
@@ -64,13 +69,13 @@ public class EditNaveTaskActivity extends BaseActivity<EditNaveTaskPresenter, Ed
 
     private int mapId = -1;
     private int typeId = -1;
+    private String taskName = "";
 
     private boolean isEditLayoutShow = false;
-    private GpsMapBean gpsMapBean;
+
     private PointAdapter candidateAdapter, selectedAdapter;
     /* adapter 参数 */
     private List<PointBean> candidatePoints, selectedPoints;
-    private PointBean lastPoint = null;
 
     @Override
     protected TextView getTitleTextView() {
@@ -83,12 +88,25 @@ public class EditNaveTaskActivity extends BaseActivity<EditNaveTaskPresenter, Ed
     }
 
     @Override
+    public ImageView getLeftImageView() {
+        return ivBack;
+    }
+
+    @Override
+    public ImageView getRightImageView() {
+        return ivRight;
+    }
+
+    @Override
     protected EditNaveTaskPresenter loadPresenter() {
-        return new EditNaveTaskPresenter();
+        return new EditNaveTaskPresenter(this);
     }
 
     @Override
     protected void initData() {
+
+        setLeftVisiable(true);
+        setRightVisiable(true);
 
         gestureLayout
                 .getController()
@@ -120,10 +138,10 @@ public class EditNaveTaskActivity extends BaseActivity<EditNaveTaskPresenter, Ed
             Bundle bundle = intent.getBundleExtra(EditNaveTaskActivity.class.getSimpleName());
             mapId = bundle.getInt(MAP_ID_KEY);
             typeId = bundle.getInt(TYPE_ID);
+            taskName = bundle.getString(TASK_NAME);
         }
 
         if (mapId != -1) {
-            gpsMapBean = DataSupport.find(GpsMapBean.class, mapId);
             mPresenter.initData(mapId);
         }
 
@@ -145,7 +163,7 @@ public class EditNaveTaskActivity extends BaseActivity<EditNaveTaskPresenter, Ed
 
     }
 
-    @OnClick({R.id.iv_back, R.id.iv})
+    @OnClick({R.id.iv_back, R.id.iv,R.id.iv_right})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.iv_back:
@@ -158,6 +176,16 @@ public class EditNaveTaskActivity extends BaseActivity<EditNaveTaskPresenter, Ed
                     hidePoseEditLayout();
                 }
                 isEditLayoutShow = !isEditLayoutShow;
+                break;
+            case R.id.iv_right:
+                // ivRight -- 完成
+                Task task = new Task();
+                task.setType(typeId);
+                task.setMapId(mapId);
+                task.setCreateTime();
+                task.setPointBeanList(selectedAdapter.getdata());
+                task.setName(taskName);
+                mPresenter.saveTask(task);
                 break;
         }
     }
@@ -200,17 +228,41 @@ public class EditNaveTaskActivity extends BaseActivity<EditNaveTaskPresenter, Ed
                 .start();
     }
 
+    @Override
+    public void setPoints(List<PointBean> t) {
+        gpsImage.setPointBeanList(t);
+    }
+
+    @Override
+    public void setImage(Bitmap bitmap) {
+        gpsImage.setMap(bitmap);
+    }
+
+    @Override
+    public void finishActivity() {
+        this.finish();
+        TaskQueueActivity.startSelf(this,TaskQueueActivity.class,null);
+    }
+
     /* 加号事件 */
     @Override
     public void onAddClick(View view, int position) {
         PointBean tempPoint = candidatePoints.get(position);
         candidateAdapter.removeItem(position);
         selectedAdapter.addItem(tempPoint);
+        // 添加item需要在gpsImageView中绘制 path
+        gpsImage.pathAddPoint(tempPoint);
     }
 
     @Override
     public void onSubClick(View view, int position) {
-        selectedPoints.remove(position);
-        selectedAdapter.notifyDataSetChanged();
+
+        if (position == 0 && selectedAdapter.getItemCount() == 1){
+            candidateAdapter.reLoad();
+        }
+
+        Log.d("test", "onSubClick: " + position);
+        selectedAdapter.remove(position);
+        gpsImage.pathRemovePoint(position);
     }
 }

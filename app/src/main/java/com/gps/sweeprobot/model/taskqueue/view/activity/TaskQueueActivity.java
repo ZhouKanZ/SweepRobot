@@ -92,11 +92,12 @@ public class TaskQueueActivity extends BaseActivity<TaskQuenePresenter, TaskQueu
         setLeftVisiable(true);
         setRightVisiable(true);
 
-        Bitmap addBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.add);
+        Bitmap addBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.add_right);
         ivRight.setVisibility(View.VISIBLE);
         ivRight.setImageBitmap(addBitmap);
 
         swipeLayout.setOnRefreshListener(this);
+
     }
 
     @Override
@@ -109,8 +110,7 @@ public class TaskQueueActivity extends BaseActivity<TaskQuenePresenter, TaskQueu
     }
 
     @Override
-    protected void otherViewClick(View view) {
-    }
+    protected void otherViewClick(View view) {}
 
     @Override
     public ImageView getLeftImageView() {
@@ -145,9 +145,7 @@ public class TaskQueueActivity extends BaseActivity<TaskQuenePresenter, TaskQueu
     }
 
     @Override
-    public void hidePopup() {
-
-    }
+    public void hidePopup() {}
 
     @Override
     public void notifyData(List<Task> tasks) {

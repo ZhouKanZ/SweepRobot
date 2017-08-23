@@ -57,5 +57,12 @@
     <string name="dialog_map_manager_delete">删除此地图</string>
     <string name="candidate">待选点</string>
     <string name="seleted">已选点</string>
+    <string name="execute">执行</string>
+    <string name="lookfor">任务详情</string>
+    <string name="next">下一步</string>
+    <string name="input_task_name">请输入任务名称</string>
+    <string name="seleteType">选择任务类型：</string>
+    <string name="seleteMap">请选择地图：</string>
+    <string name="pleaseInputName">请输入任务名称</string>
 
 </resources>

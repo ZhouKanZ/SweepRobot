@@ -96,9 +96,11 @@ public class PointAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         if (point.getType() == 0){
             Bitmap add =  BitmapFactory.decodeResource(ctz.getResources(),R.mipmap.add);
             holder.ivItemControl.setImageBitmap(add);
+            holder.tvPointName.setTextColor(R.color.colorPrimary);
         }else if (point.getType() == 1){
             Bitmap sub =  BitmapFactory.decodeResource(ctz.getResources(),R.mipmap.sub);
             holder.ivItemControl.setImageBitmap(sub);
+            holder.tvPointName.setTextColor(R.color.selected_color);
         }
 
         holder.tvPointName.setText(point.getPointName());
@@ -117,15 +119,13 @@ public class PointAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
     }
 
-
     @Override
     public int getItemViewType(int position) {
-        if (pointBeanList.size() == 0) {
+        if (pointBeanList.size() == 0 && getItemCount() == 1) {
             return ITEM_NULL;
         } else {
             return ITEM_NORMAL;
         }
-
     }
 
     @Override
@@ -140,12 +140,14 @@ public class PointAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public void addItem(PointBean point){
         PointBean pointBean = point.clone();
         pointBean.setType(1);
+
         pointBeanList.add(pointBean);
         notifyDataSetChanged();
     }
 
     /*  */
     public void removeItem(int position) {
+
         PointBean temp = pointBeanList.get(position);
         pointBeanList.remove(position);
         if (lastPoint != null){
@@ -153,6 +155,24 @@ public class PointAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
         notifyDataSetChanged();
         lastPoint = temp;
+    }
+
+    /**
+     *  当右边的list 没有了之后 将左边的填充满
+     */
+    public void reLoad() {
+        pointBeanList.add(lastPoint);
+        notifyDataSetChanged();
+        lastPoint = null;
+    }
+
+    public void remove(int position){
+        pointBeanList.remove(position);
+        notifyDataSetChanged();
+    }
+
+    public List<PointBean> getdata() {
+        return pointBeanList;
     }
 
     /**

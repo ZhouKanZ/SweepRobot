@@ -2,6 +2,9 @@ package com.gps.sweeprobot.model.taskqueue.view.activity;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,7 +52,7 @@ public class AddTaskActivity extends BaseActivity {
     @BindView(R.id.btn_edit)
     Button btnEdit;
 
-    ArrayAdapter<CharSequence> taskAdapter;
+    TypeSpinnerAdapter taskAdapter;
     List<GpsMapBean> gpsMapBeanList;
     private int taskType = -1;
     private int mapId = -1;
@@ -71,13 +74,17 @@ public class AddTaskActivity extends BaseActivity {
     }
 
     @Override
+    public ImageView getLeftImageView() {
+        return ivBack;
+    }
+
+    @Override
     protected void initData() {
 
         setLeftVisiable(true);
 
-        taskAdapter = ArrayAdapter.createFromResource(this,
-                R.array.taskType, android.R.layout.simple_spinner_item);
-        taskAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        String[] strs = getResources().getStringArray(R.array.taskType);
+        taskAdapter = new TypeSpinnerAdapter(strs,this);
         spType.setAdapter(taskAdapter);
         spType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -105,6 +112,32 @@ public class AddTaskActivity extends BaseActivity {
             }
         });
 
+        /* 监听edittext 输入 */
+        etTaskName.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+                if (!TextUtils.isEmpty(s.toString())){
+                    btnEdit.setEnabled(true);
+                    btnEdit.setText(R.string.next);
+                }else{
+                    btnEdit.setEnabled(false);
+                    btnEdit.setText(R.string.pleaseInputName);
+                }
+
+            }
+        });
+
     }
 
     @Override
@@ -118,9 +151,7 @@ public class AddTaskActivity extends BaseActivity {
     }
 
     @Override
-    protected void otherViewClick(View view) {
-
-    }
+    protected void otherViewClick(View view) {}
 
     @OnClick({R.id.iv_back, R.id.btn_edit})
     public void onViewClicked(View view) {
@@ -132,10 +163,15 @@ public class AddTaskActivity extends BaseActivity {
 
                 /* todo typeId mapId != -1 */
 
-                Bundle bundle = new Bundle();
-                bundle.putInt(EditNaveTaskActivity.MAP_ID_KEY,mapId);
-                bundle.putInt(EditNaveTaskActivity.TYPE_ID,taskType);
-                EditNaveTaskActivity.startSelf(this,EditNaveTaskActivity.class,bundle);
+                String taskname = etTaskName.getEditableText().toString();
+
+                if (!TextUtils.isEmpty(taskname)){
+                    Bundle bundle = new Bundle();
+                    bundle.putInt(EditNaveTaskActivity.MAP_ID_KEY,mapId);
+                    bundle.putInt(EditNaveTaskActivity.TYPE_ID,taskType);
+                    bundle.putString(EditNaveTaskActivity.TASK_NAME,taskname);
+                    EditNaveTaskActivity.startSelf(this,EditNaveTaskActivity.class,bundle);
+                }
                 break;
         }
     }
@@ -178,6 +214,47 @@ public class AddTaskActivity extends BaseActivity {
             if (null != convertView) {
                 TextView tvGps = (TextView) convertView.findViewById(R.id.tv_gps);
                 tvGps.setText(gpsMapBean.getName());
+            }
+
+            return convertView;
+        }
+
+    }
+
+    public class TypeSpinnerAdapter extends BaseAdapter {
+
+
+        private String[] gpsMapBeanList;
+        private Context ctx;
+        private LayoutInflater inflater;
+
+        public TypeSpinnerAdapter(String[] gpsMapBeanList, Context ctx) {
+            this.gpsMapBeanList = gpsMapBeanList;
+            this.ctx = ctx;
+            inflater = LayoutInflater.from(ctx);
+        }
+
+        @Override
+        public int getCount() {
+            return gpsMapBeanList.length;
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return gpsMapBeanList[position];
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            convertView = inflater.inflate(R.layout.spinner_item_gpsmap, parent, false);
+            if (null != convertView) {
+                TextView tvGps = (TextView) convertView.findViewById(R.id.tv_gps);
+                tvGps.setText(gpsMapBeanList[position]);
             }
 
             return convertView;

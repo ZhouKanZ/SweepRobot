@@ -34,9 +34,11 @@
         <TextView
             android:id="@+id/tv_candidate"
             android:layout_width="100dp"
-            android:layout_height="wrap_content"
+            android:layout_height="30dp"
             android:text="@string/candidate"
-            android:background="@color/colorPrimary"
+            android:gravity="center"
+            android:background="@drawable/shape_tv_candinate"
+            android:textColor="@color/white"
             />
         <!-- 待选pose -->
         <android.support.v7.widget.RecyclerView
@@ -52,10 +54,12 @@
         <TextView
             android:id="@+id/tv_seleted"
             android:layout_width="100dp"
-            android:layout_height="wrap_content"
+            android:layout_height="30dp"
             android:text="@string/seleted"
-            android:background="@color/colorPrimary"
+            android:background="@drawable/shape_tv_selected"
             android:layout_toRightOf="@+id/rv_candidate_pose"
+            android:gravity="center"
+            android:textColor="@color/white"
             />
         <!-- 被选的pose -->
         <android.support.v7.widget.RecyclerView
@@ -73,7 +77,6 @@
             android:layout_height="100dp"
             android:src="@mipmap/show"
             android:layout_centerVertical="true"
-            android:background="@drawable/btn_dialog_ensure"
             android:layout_toRightOf="@+id/rv_seleted_pose"
             />
 

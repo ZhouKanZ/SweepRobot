@@ -94,15 +94,12 @@ public class PointBean extends IAction implements Cloneable{
 
     @Override
     public PointBean clone() {
-
         PointBean clone  = null;
         try {
             clone = (PointBean) super.clone();
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();
         }
-
         return clone;
-
     }
 }
