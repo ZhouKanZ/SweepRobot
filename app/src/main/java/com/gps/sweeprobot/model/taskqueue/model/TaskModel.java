@@ -40,7 +40,7 @@ public class TaskModel implements TaskQueueContract.Model {
     }
 
     @Override
-    public void executeTask() {
+    public void executeTask(Task task) {
         // 向服务器发送数据
     }
 

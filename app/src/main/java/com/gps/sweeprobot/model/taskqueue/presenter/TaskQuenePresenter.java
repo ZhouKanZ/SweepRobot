@@ -90,7 +90,7 @@ public class TaskQuenePresenter extends BasePresenter<TaskQueueContract.View> im
     }
 
     @Override
-    public void executeTask() {
-        taskModel.executeTask();
+    public void executeTask(Task task) {
+        taskModel.executeTask(task);
     }
 }

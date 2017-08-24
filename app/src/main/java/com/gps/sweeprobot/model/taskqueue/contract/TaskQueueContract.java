@@ -68,7 +68,7 @@ public class TaskQueueContract {
         /**
          *  执行任务
          */
-        void executeTask();
+        void executeTask(Task task);
 
     }
 
@@ -85,7 +85,7 @@ public class TaskQueueContract {
 
         void createNewTask();
 
-        void executeTask();
+        void executeTask(Task task);
 
     }
 

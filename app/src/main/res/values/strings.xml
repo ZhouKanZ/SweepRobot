@@ -64,5 +64,8 @@
     <string name="seleteType">选择任务类型：</string>
     <string name="seleteMap">请选择地图：</string>
     <string name="pleaseInputName">请输入任务名称</string>
+    <string name="mapname" >地图名称:</string>
+    <string name="createTime">创建时间：</string>
+    <string name="taskIsexecute">是否执行</string>
 
 </resources>

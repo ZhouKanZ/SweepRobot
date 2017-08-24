@@ -42,9 +42,7 @@
         <!-- ZHOUKAN - BEGINNING -->
         <activity android:name=".model.main.view.activity.MainActivity"
             android:launchMode="singleTask"
-            >
-
-        </activity>
+            />
 
         <activity android:name=".model.main.view.activity.IpActivity">
             <intent-filter>
@@ -61,19 +59,16 @@
         <activity android:name=".model.taskqueue.view.activity.TaskQueueActivity"
             android:launchMode="singleTask"
             />
-        <activity android:name=".model.taskqueue.view.activity.TaskTypeActivity"
-            />
         <activity android:name=".model.taskqueue.view.activity.AddTaskActivity"
-            />
-        <activity android:name=".model.taskqueue.view.activity.TaskDetailActivity"
-            android:screenOrientation="landscape"
             />
         <activity android:name=".model.taskqueue.view.activity.EditNaveTaskActivity"
             android:screenOrientation="landscape"
             android:configChanges="orientation|keyboardHidden|screenSize"
             />
-
+        <activity android:name=".model.taskqueue.view.activity.TaskDetailActivity"/>
         <!-- ZHOUKAN - ENDING -->
+
+
         <activity android:name=".test.TestActivity2">
             <!--<intent-filter>
                <action android:name="android.intent.action.MAIN" />

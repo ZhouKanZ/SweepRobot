@@ -2,28 +2,15 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    >
 
     <include
         android:id="@+id/toolbar"
         layout="@layout/layout_toolbar" />
 
-    <!-- 执行页面 -->
-    <com.alexvasilkov.gestures.views.GestureFrameLayout
-        android:id="@+id/layout_gesture"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/toolbar"
-        >
+    <!--&lt;!&ndash; 执行页面 &ndash;&gt;
 
-        <com.gps.sweeprobot.widget.GpsImage
-            android:id="@+id/gps_image"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-    </com.alexvasilkov.gestures.views.GestureFrameLayout>
-
-    <!-- 任务 -->
+    &lt;!&ndash; 任务 &ndash;&gt;
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_task"
         android:layout_width="100dp"
@@ -37,6 +24,121 @@
         android:layout_width="200dp"
         android:layout_height="200dp"
         android:scaleType="fitCenter"
-        />
+        />-->
+
+    <com.alexvasilkov.gestures.views.GestureFrameLayout
+        android:id="@+id/layout_gesture"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_below="@+id/toolbar"
+        android:layout_marginTop="5dp"
+        >
+
+        <com.gps.sweeprobot.widget.GpsImage
+            android:id="@+id/gps_image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </com.alexvasilkov.gestures.views.GestureFrameLayout>
+
+    <!-- 任务所属地图名称  地图id -->
+
+    <!--<TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/layout_gesture"
+        android:text="@string/name"
+        />-->
+    
+    <RelativeLayout
+        android:id="@+id/layout_name"
+        android:layout_width="match_parent"
+        android:layout_height="42dp"
+        android:layout_below="@+id/layout_gesture"
+        android:gravity="center_vertical"
+        android:paddingLeft="20dp"
+        android:layout_marginTop="10dp"
+        android:background="@color/white"
+        >
+
+        <TextView
+            android:id="@+id/tv_name_notice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/mapname"
+            android:textColor="@color/secondlytextColor"
+            />
+
+        <TextView
+            android:id="@+id/tv_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/tv_name_notice"
+            android:layout_marginLeft="10dp"
+            android:textColor="@color/textColor"
+            />
+
+
+    </RelativeLayout>
+
+    <!-- 任务创建时间 -->
+    <RelativeLayout
+        android:id="@+id/createtimelayout"
+        android:layout_width="match_parent"
+        android:layout_height="42dp"
+        android:layout_below="@+id/layout_name"
+        android:gravity="center_vertical"
+        android:paddingLeft="20dp"
+        android:background="@color/white"
+        android:layout_marginTop="5dp"
+        >
+
+        <TextView
+            android:id="@+id/tv_create_time_notice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/createTime"
+            android:textColor="@color/secondlytextColor"
+            />
+
+        <TextView
+            android:id="@+id/tv_create_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/tv_create_time_notice"
+            android:layout_marginLeft="10dp"
+            android:textColor="@color/textColor"
+            />
+    </RelativeLayout>
+
+    <!-- 任务是否被执行 -->
+    <RelativeLayout
+        android:id="@+id/taskexcutelayout"
+        android:layout_width="match_parent"
+        android:layout_height="42dp"
+        android:layout_below="@+id/createtimelayout"
+        android:gravity="center_vertical"
+        android:paddingLeft="20dp"
+        android:background="@color/white"
+        android:layout_marginTop="5dp"
+        >
+
+        <TextView
+            android:id="@+id/tv_task_notice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/taskIsexecute"
+            android:textColor="@color/secondlytextColor"
+            />
+
+        <TextView
+            android:id="@+id/tv_task_execute"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/tv_task_notice"
+            android:layout_marginLeft="10dp"
+            android:textColor="@color/textColor"
+            />
+    </RelativeLayout>
 
 </RelativeLayout>

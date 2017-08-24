@@ -1,8 +1,11 @@
 package com.gps.sweeprobot.model.taskqueue.view.activity;
 
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -12,6 +15,7 @@ import android.widget.TextView;
 
 import com.gps.sweeprobot.R;
 import com.gps.sweeprobot.base.BaseActivity;
+import com.gps.sweeprobot.bean.NavPose;
 import com.gps.sweeprobot.database.Task;
 import com.gps.sweeprobot.model.taskqueue.adapter.TaskAdapter;
 import com.gps.sweeprobot.model.taskqueue.contract.TaskQueueContract;
@@ -30,7 +34,8 @@ import butterknife.OnClick;
  */
 public class TaskQueueActivity extends BaseActivity<TaskQuenePresenter, TaskQueueContract.View>
         implements TaskQueueContract.View,
-        SwipeRefreshLayout.OnRefreshListener {
+        SwipeRefreshLayout.OnRefreshListener
+        , TaskAdapter.OnTaskClickListener {
 
     @BindView(R.id.iv_back)
     ImageView ivBack;
@@ -46,7 +51,10 @@ public class TaskQueueActivity extends BaseActivity<TaskQuenePresenter, TaskQueu
     SwipeRefreshLayout swipeLayout;
 
     private List<Task> tasks;
-    private RecyclerView.Adapter adapter;
+    private TaskAdapter adapter;
+    private AlertDialog.Builder builder;
+    // dialog 产生的位置 默认为 -1 表示未选择
+    private int position = -1;
 
     @Override
     protected TextView getTitleTextView() {
@@ -79,6 +87,8 @@ public class TaskQueueActivity extends BaseActivity<TaskQuenePresenter, TaskQueu
 
         tasks = new ArrayList<>();
         adapter = new TaskAdapter(tasks, this);
+        adapter.setOnClickListener(this);
+
         rvTasks.setLayoutManager(new LinearLayoutManager(this));
         rvTasks.setAdapter(adapter);
         mPresenter.findAllTask();
@@ -98,6 +108,24 @@ public class TaskQueueActivity extends BaseActivity<TaskQuenePresenter, TaskQueu
 
         swipeLayout.setOnRefreshListener(this);
 
+        builder = new AlertDialog.Builder(this);
+        builder.setTitle("注意:")
+                .setMessage("删除后任务将无法回复，请谨慎删除")
+                .setPositiveButton("删除", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (position != -1){
+                            adapter.removeItem(position);
+                        }
+                    }
+                })
+                .setNegativeButton("否", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                })
+                .create();
     }
 
     @Override
@@ -110,7 +138,8 @@ public class TaskQueueActivity extends BaseActivity<TaskQuenePresenter, TaskQueu
     }
 
     @Override
-    protected void otherViewClick(View view) {}
+    protected void otherViewClick(View view) {
+    }
 
     @Override
     public ImageView getLeftImageView() {
@@ -141,11 +170,12 @@ public class TaskQueueActivity extends BaseActivity<TaskQuenePresenter, TaskQueu
 
     @Override
     public void showCreateNewTaskPopup() {
-        AddTaskActivity.startSelf(this,AddTaskActivity.class,null);
+        AddTaskActivity.startSelf(this, AddTaskActivity.class, null);
     }
 
     @Override
-    public void hidePopup() {}
+    public void hidePopup() {
+    }
 
     @Override
     public void notifyData(List<Task> tasks) {
@@ -157,5 +187,41 @@ public class TaskQueueActivity extends BaseActivity<TaskQuenePresenter, TaskQueu
     @Override
     public void onRefresh() {
         mPresenter.findAllTask();
+    }
+
+    @Override
+    public void onTaskClick(int position, View view) {
+
+        int id = view.getId();
+
+        switch (id) {
+            case R.id.btn_:
+                // add页面
+                AddTaskActivity.startSelf(this, AddTaskActivity.class, null);
+                break;
+            case R.id.layout_task:
+                // 任务详情
+                // 进入任务详情页面 -- TaskDetailActivity taskId
+
+                Bundle bundle = new Bundle();
+                bundle.putInt(TaskDetailActivity.TASK_ID_KEY,tasks.get(position).getId());
+
+                TaskDetailActivity.startSelf(this, TaskDetailActivity.class, bundle);
+                break;
+            case R.id.tv_deleted:
+                // 删除
+                this.position = position;
+                builder.show();
+                break;
+            case R.id.btn_check:
+                // 查看当前状况
+                break;
+            case R.id.btn_execute:
+                // 执行
+                Task task = tasks.get(position);
+                mPresenter.executeTask(task);
+                break;
+        }
+
     }
 }

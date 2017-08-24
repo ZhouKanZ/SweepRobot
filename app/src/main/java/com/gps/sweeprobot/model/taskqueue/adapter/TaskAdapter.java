@@ -2,6 +2,7 @@ package com.gps.sweeprobot.model.taskqueue.adapter;
 
 import android.content.Context;
 import android.databinding.repacked.org.antlr.runtime.tree.RewriteRuleElementStream;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,7 +38,7 @@ public class TaskAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<Task> tasks;
     private Context ctz;
     private LayoutInflater inflater;
-    private View.OnClickListener onClickListener;
+    private OnTaskClickListener onClickListener;
 
     /* 有item */
     private static final int ITEM_NORMAL = 0X00;
@@ -50,7 +51,7 @@ public class TaskAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         inflater = LayoutInflater.from(ctz);
     }
 
-    public void setOnClickListener(View.OnClickListener onClickListener) {
+    public void setOnClickListener(OnTaskClickListener onClickListener) {
         this.onClickListener = onClickListener;
     }
 
@@ -82,11 +83,16 @@ public class TaskAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
      * @param holder
      * @param position
      */
-    private void onBindNullViewHolder(NullViewHolder holder, int position) {
+    private void onBindNullViewHolder(NullViewHolder holder, final int position) {
 
         /* 新建任务 */
         if (onClickListener != null)
-            holder.btn.setOnClickListener(onClickListener);
+            holder.btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onClickListener.onTaskClick(position,v);
+                }
+            });
 
     }
 
@@ -95,15 +101,41 @@ public class TaskAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
      * @param holder
      * @param position
      */
-    private void onBindNormalViewHolder(NormalViewHolder holder, int position) {
+    private void onBindNormalViewHolder(NormalViewHolder holder, final int position) {
 
         Task task = tasks.get(position);
 
-        /* 查看 */
+
         if (onClickListener != null){
-            holder.btnCheck.setOnClickListener(onClickListener);
+            /* 查看 */
+            holder.btnCheck.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onClickListener.onTaskClick(position,v);
+                }
+            });
             /* 执行 */
-            holder.btnExecute.setOnClickListener(onClickListener);
+            holder.btnExecute.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onClickListener.onTaskClick(position,v);
+                }
+            });
+            /* 删除 */
+            holder.tvDeleted.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onClickListener.onTaskClick(position,v);
+                }
+            });
+            /* 删除 */
+            holder.layoutTask.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onClickListener.onTaskClick(position,v);
+                }
+            });
+
         }
 
         holder.tvTaskTime.setText(task.getCreateTime());
@@ -117,7 +149,6 @@ public class TaskAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 .into(holder.ivMap);
 
     }
-
 
     @Override
     public int getItemViewType(int position) {
@@ -133,6 +164,21 @@ public class TaskAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public int getItemCount() {
         return tasks.size() == 0 ? 1 : tasks.size();
     }
+
+    /**
+     *  删除了某一项
+     * @param position
+     */
+    public void removeItem(int position){
+
+        Task task = tasks.get(position);
+        tasks.remove(position);
+        notifyDataSetChanged();
+
+        /* 从数据库删除 */
+        task.delete();
+    }
+
 
     /**
      * 可能有多个ViewHolder --> 跟ViewType是一一对应的
@@ -151,12 +197,17 @@ public class TaskAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         TextView btnExecute;
         @BindView(R.id.btn_check)
         TextView btnCheck;
+        @BindView(R.id.tv_deleted)
+        TextView tvDeleted;
+        @BindView(R.id.layout_task)
+        CardView layoutTask;
 
         public NormalViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
     }
+
 
     public class NullViewHolder extends RecyclerView.ViewHolder {
 
@@ -169,5 +220,9 @@ public class TaskAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
     }
 
+    public interface OnTaskClickListener{
 
+        void onTaskClick(int position,View view);
+
+    }
 }
