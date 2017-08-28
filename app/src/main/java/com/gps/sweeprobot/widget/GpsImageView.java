@@ -30,8 +30,6 @@ import io.reactivex.Flowable;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Consumer;
 
-import static com.gps.sweeprobot.R.mipmap.point;
-
 /**
  * Created by admin on 2017/6/16.
  */
@@ -42,9 +40,9 @@ public class GpsImageView extends FrameLayout {
     private PinchImageView mapView;
 
     //存放标记点集合
-    private List<CoordinateView> pointsList;
+    private List<CoordinateView> coordList;
     //存放虚拟墙view集合
-    private List<VirtualObstacleView> obstacleViews;
+    private List<VirtualObstacleView> obstacleList;
 
     VirtualObstacleView obstacleView;
     private int locationViewSize = 15;
@@ -53,12 +51,7 @@ public class GpsImageView extends FrameLayout {
 
     //保存标记点的监听对象
     private SavePointDataListener onSaveListener;
-    //保存虚拟墙的监听对象
-    private VirtualObstacleView.SaveObstacleListener onSaveObstacleListener;
 
-    public PinchImageView getMapView() {
-        return mapView;
-    }
 
     public GpsImageView(Context context) {
         super(context);
@@ -82,15 +75,11 @@ public class GpsImageView extends FrameLayout {
         this.onSaveListener = onSaveListener;
     }
 
-    public void setOnSaveObstacleListener(VirtualObstacleView.SaveObstacleListener onSaveObstacleListener) {
-        this.onSaveObstacleListener = onSaveObstacleListener;
-    }
-
     private void initView(Context context) {
 
         mapView = new PinchImageView(context);
-        pointsList = new ArrayList<>();
-        obstacleViews = new ArrayList<>();
+        coordList = new ArrayList<>();
+        obstacleList = new ArrayList<>();
 
         FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
@@ -101,7 +90,6 @@ public class GpsImageView extends FrameLayout {
         );
 
         mapView.setLayoutParams(layoutParams);
-//        mapView.setImageResource(R.mipmap.fb_map);
         mapView.setLayoutParams(layoutParams);
         addView(mapView);
 
@@ -114,8 +102,8 @@ public class GpsImageView extends FrameLayout {
 
         obstacleView = new VirtualObstacleView(getContext());
         obstacleView.setLayoutParams(commonParams);
-//        obstacleView.setSaveObstacleListener(onSaveObstacleListener);
         addView(obstacleView);
+        obstacleView.setAdd(true);
 
     }
 
@@ -125,7 +113,7 @@ public class GpsImageView extends FrameLayout {
      */
     private void changePoint(final Matrix matrix) {
         LogManager.i("change point");
-        Flowable.fromIterable(pointsList)
+        Flowable.fromIterable(coordList)
                 .subscribe(new Consumer<CoordinateView>() {
                     @Override
                     public void accept(@NonNull CoordinateView coordinateView) throws Exception {
@@ -133,11 +121,12 @@ public class GpsImageView extends FrameLayout {
                         PointF pointF = DegreeManager.changeAbsolutePoint(coordinateView.imageViewX, coordinateView.imageViewY, matrix);
                         coordinateView.setPositionViewX(pointF.x);
                         coordinateView.setPositionViewY(pointF.y);
+                        
 //                        LogManager.i("change point pointx========="+pointF.x+"\npointy============"+pointF.y);
                     }
                 });
 
-        Flowable.fromIterable(obstacleViews)
+        Flowable.fromIterable(obstacleList)
                 .subscribe(new Consumer<VirtualObstacleView>() {
                     @Override
                     public void accept(@NonNull VirtualObstacleView virtualObstacleView) throws Exception {
@@ -156,7 +145,7 @@ public class GpsImageView extends FrameLayout {
      * @param screenY
      * @param pointName
      */
-    public PointBean addPointWrapper(float screenX, float screenY, String pointName) {
+    public void addPointWrapper(float screenX, float screenY, String pointName) {
 
         PointF pointF = DegreeManager.changeRelativePoint(screenX, screenY, mapView.getCurrentImageMatrix());
 
@@ -170,7 +159,6 @@ public class GpsImageView extends FrameLayout {
         } else {
             ToastManager.showShort(MainApplication.getContext(), R.string.un_effective);
         }
-        return null;
     }
 
     /**
@@ -182,19 +170,22 @@ public class GpsImageView extends FrameLayout {
      */
     public void addPoint(float locationX, float locationY, String positionName) {
 
-        CoordinateView coordinateView = new CoordinateView(MainApplication.getContext(), point);
-        coordinateView.setLayoutParams(commonParams);
-        coordinateView.setPositionName(positionName);
-        coordinateView.setShowPointName(true);
+        CoordinateView coordView = new CoordinateView(MainApplication.getContext(), R.mipmap.coordinate);
+        coordView.setLayoutParams(commonParams);
+        coordView.setPositionName(positionName);
+        coordView.setShowPointName(true);
+//        coordView.setShowArrow(true);
+//        coordView.setAngle(30);
 
         //求出标记点相对于图片的坐标
         PointF pointF = DegreeManager.changeAbsolutePoint(locationX, locationY, this.mapView.getCurrentImageMatrix());
-        coordinateView.setLocationX(pointF.x);
-        coordinateView.setLocationY(pointF.y);
-        coordinateView.imageViewX = locationX;
-        coordinateView.imageViewY = locationY;
-        pointsList.add(coordinateView);
-        addView(coordinateView);
+        coordView.setLocationX(pointF.x);
+        coordView.setLocationY(pointF.y);
+        coordView.imageViewX = locationX;
+        coordView.imageViewY = locationY;
+        coordList.add(coordView);
+        addView(coordView);
+
 
         /*LogManager.i(mapView.getCurrentImageMatrix().toString());
         LogManager.i("add point x========="+pointF.x+"\ny============="+pointF.y);*/
@@ -225,14 +216,14 @@ public class GpsImageView extends FrameLayout {
 
         if (type == MapEditContract.TYPE_POINT){
 
-            pointsList.get(index).setPositionName(newName);
-            pointsList.get(index).postInvalidate();
+            coordList.get(index).setPositionName(newName);
+            coordList.get(index).postInvalidate();
         }
 
         if (type == MapEditContract.TYPE_OBSTACLE ){
 
-            obstacleViews.get(index).setName(newName);
-            obstacleViews.get(index).postInvalidate();
+            obstacleList.get(index).setName(newName);
+            obstacleList.get(index).postInvalidate();
         }
     }
 
@@ -241,12 +232,12 @@ public class GpsImageView extends FrameLayout {
      */
     public void removeAllView() {
 
-        Iterator<CoordinateView> iterator = pointsList.iterator();
+        Iterator<CoordinateView> iterator = coordList.iterator();
         while (iterator.hasNext()) {
             removeView(iterator.next());
             DataSupport.deleteAll(PointBean.class);
         }
-        pointsList.clear();
+        coordList.clear();
 
         postInvalidate();
     }
@@ -258,10 +249,10 @@ public class GpsImageView extends FrameLayout {
      */
     public void removePoint(String name, int index) {
 
-        if (pointsList.get(index).getPositionName().equals(name)) {
+        if (coordList.get(index).getPositionName().equals(name)) {
 
-            removeView(pointsList.get(index));
-            pointsList.remove(pointsList.get(index));
+            removeView(coordList.get(index));
+            coordList.remove(coordList.get(index));
             postInvalidate();
         }
     }
@@ -287,19 +278,31 @@ public class GpsImageView extends FrameLayout {
      */
     public void setObstacleRect(PointF pointF) {
 
+        if (obstacleView.isAdd() == false){
+
+            addView(obstacleView);
+        }
         obstacleView.addPoint(pointF);
+
     }
 
     /**
-     * 设置虚拟墙的名字
+     * 设置虚拟墙的名字,新建了一个虚拟墙
      *
      * @param name
      */
     public void setObstacleName(String name, VirtualObstacleView.SaveObstacleListener listener) {
 
-        obstacleView.setName(name);
-        obstacleView.saveObstacleBean(listener);
+        VirtualObstacleView wall = new VirtualObstacleView(getContext(), null);
+        wall.setLayoutParams(commonParams);
+        wall.setName(name);
+        wall.setFinishedList(obstacleView.getDrawingList());
+        wall.saveObstacleBean(listener);
+        addView(wall);
+        obstacleList.add(wall);
 
+        removeView(obstacleView);
+        obstacleView.setAdd(false);
     }
 
     /**
@@ -311,16 +314,21 @@ public class GpsImageView extends FrameLayout {
 
         VirtualObstacleView obstacleView = new VirtualObstacleView(getContext());
         obstacleView.setLayoutParams(commonParams);
-        obstacleView.setmyPointFs(pointFs);
+        obstacleView.setFinishedList(pointFs);
         obstacleView.setName(name);
         addView(obstacleView);
-        obstacleViews.add(obstacleView);
+        obstacleList.add(obstacleView);
     }
 
     public void removeObstacleView(String name, int position) {
-        removeView(obstacleViews.get(position));
-        obstacleViews.remove(position);
+        removeView(obstacleList.get(position));
+        obstacleList.remove(position);
         postInvalidate();
+    }
+
+    public interface OnSetVertice{
+
+        void setVertice(PointF pointF);
     }
 
 }

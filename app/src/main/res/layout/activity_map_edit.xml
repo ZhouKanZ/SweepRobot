@@ -16,6 +16,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/activity_map_edit_bar"
+
      />
 
     <android.support.v7.widget.RecyclerView
@@ -61,12 +62,13 @@
         android:id="@+id/activity_map_info"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:src="@drawable/info_sel"
         android:scaleType="centerCrop"
         android:layout_below="@id/activity_map_sub"
         android:layout_alignParentRight="true"
         android:layout_marginTop="@dimen/edit_map_space"
-        android:layout_marginRight="17dp"/>
+        android:layout_marginRight="17dp"
+        android:background="@drawable/heart"
+        android:visibility="gone"/>
 
     <ImageView
         android:id="@+id/activity_map_position"

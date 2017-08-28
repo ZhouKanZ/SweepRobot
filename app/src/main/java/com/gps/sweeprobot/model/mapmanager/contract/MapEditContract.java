@@ -5,7 +5,6 @@ import android.graphics.PointF;
 import android.graphics.drawable.Drawable;
 
 import com.gps.sweeprobot.database.MyPointF;
-import com.gps.sweeprobot.database.PointBean;
 import com.gps.sweeprobot.model.mapmanager.bean.MapListBean;
 import com.gps.sweeprobot.mvp.IView;
 
@@ -49,7 +48,7 @@ public class MapEditContract {
         /**
          * 未经过矩阵变化的相对于屏幕的坐标值x,y
          */
-        PointBean addPointWrapper(float screenX, float screenY, String name);
+        void addPointWrapper(float screenX, float screenY, String name);
 
         //刷新adapter
         void updateAdapter(List actionList);

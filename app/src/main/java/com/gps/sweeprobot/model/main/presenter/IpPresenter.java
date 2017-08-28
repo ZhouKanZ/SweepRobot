@@ -4,7 +4,6 @@ package com.gps.sweeprobot.model.main.presenter;
 import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.gps.ros.rosbridge.ROSBridgeClient;
 import com.gps.ros.rosbridge.ROSClient;
@@ -13,6 +12,7 @@ import com.gps.sweeprobot.base.BasePresenter;
 import com.gps.sweeprobot.model.main.contract.IpContract;
 import com.gps.sweeprobot.model.main.model.IpModel;
 import com.gps.sweeprobot.mvp.IModel;
+import com.gps.sweeprobot.utils.LogManager;
 
 import java.util.HashMap;
 
@@ -99,6 +99,8 @@ public class IpPresenter extends BasePresenter<IpContract.View> implements IpCon
                         iView.showDialog();
                     }
                 });
+
+                LogManager.i(ex.getMessage()+"connect fail");
 
             }
         });

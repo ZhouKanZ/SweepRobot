@@ -25,4 +25,13 @@ public class Constant {
     /* 获取预览地图 */
     public static final String GET_MAP = "/maps/map_test.jpg";
 
+    /** 标记点或虚拟墙的删除操作 */
+    public static final int DELETE = 1;
+
+    /** 标记点或虚拟墙添加操作 */
+    public static final int ADD = 2;
+
+    /** 标记点或虚拟墙更新操作 */
+    public static final int UPDATE = 3;
+
 }

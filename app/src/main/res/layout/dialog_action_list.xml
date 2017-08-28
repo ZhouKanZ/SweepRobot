@@ -24,6 +24,7 @@
         android:textColor="@color/color_black_b3000000"
         android:gravity="center"
         android:background="@drawable/dialog_action_sel"
+        android:visibility="gone"
         />
 
     <TextView

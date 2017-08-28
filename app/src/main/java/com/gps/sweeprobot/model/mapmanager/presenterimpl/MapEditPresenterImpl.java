@@ -13,15 +13,17 @@ import com.gps.sweeprobot.database.GpsMapBean;
 import com.gps.sweeprobot.database.MyPointF;
 import com.gps.sweeprobot.database.PointBean;
 import com.gps.sweeprobot.database.VirtualObstacleBean;
+import com.gps.sweeprobot.http.Constant;
 import com.gps.sweeprobot.model.mapmanager.adaper.item.ActionItem;
 import com.gps.sweeprobot.model.mapmanager.contract.MapEditContract;
+import com.gps.sweeprobot.model.mapmanager.contract.MapManagerContract;
 import com.gps.sweeprobot.model.mapmanager.model.ActionModel;
 import com.gps.sweeprobot.model.mapmanager.model.MapInfoModel;
 import com.gps.sweeprobot.model.mapmanager.presenter.MapEditPresenter;
-import com.gps.sweeprobot.model.mapmanager.view.activity.MapManagerActivity;
 import com.gps.sweeprobot.model.view.adapter.CommonRcvAdapter;
 import com.gps.sweeprobot.model.view.adapter.item.AdapterItem;
 import com.gps.sweeprobot.mvp.IModel;
+import com.gps.sweeprobot.utils.CommunicationUtil;
 import com.gps.sweeprobot.utils.LogManager;
 import com.gps.sweeprobot.utils.ScreenUtils;
 import com.gps.sweeprobot.utils.ToastManager;
@@ -31,11 +33,10 @@ import org.litepal.crud.DataSupport;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import io.reactivex.Observable;
 import io.reactivex.functions.Consumer;
-
-import static com.gps.sweeprobot.R.mipmap.point;
 
 /**
  * Create by WangJun on 2017/7/19
@@ -82,6 +83,9 @@ public class MapEditPresenterImpl extends MapEditPresenter {
     private MapInfoModel mapInfoModel;
 
     private int mapid;
+
+    private Map<String,ActionItem> itemMap = new HashMap<>();
+    private String mapName;
 
     public MapEditPresenterImpl(ActionItem.ActionOnItemListener listener, MapEditContract.view mapEditView) {
 
@@ -146,6 +150,7 @@ public class MapEditPresenterImpl extends MapEditPresenter {
             @Override
             public AdapterItem createItem(Object type) {
                 ActionItem actionItem = new ActionItem(listener);
+                itemMap.put("123",actionItem);
 //                actionItem.setIcon(itemIconResid);
                 return actionItem;
             }
@@ -267,7 +272,7 @@ public class MapEditPresenterImpl extends MapEditPresenter {
         isPoint = true;
         actionList.clear();
         actionList.addAll(pointsList);
-        itemIconResid = point;
+//        itemIconResid = point;
         mapEditView.setActionRecyclerView();
 
     }
@@ -300,7 +305,7 @@ public class MapEditPresenterImpl extends MapEditPresenter {
     }
 
     /**
-     * 确认监听
+     * 确认弹出dialog
      */
     @Override
     public void commitViewOnClick() {
@@ -366,7 +371,7 @@ public class MapEditPresenterImpl extends MapEditPresenter {
     @Override
     public void itemOnClick(String name, int position) {
 
-        mapEditView.setRemoveAnimation();
+        itemMap.get("123").startAnim();
         remove(name, position);
 
     }
@@ -384,11 +389,13 @@ public class MapEditPresenterImpl extends MapEditPresenter {
         mapEditView.createInputNameDialog(getIView().getString(R.string.dialog_point_rename));
     }
 
+
     @Override
     public void onDestroy() {
         pointsList.clear();
         actionList.clear();
         mapList.clear();
+        CommunicationUtil.sendObstacleDatas2Ros(mapid);
     }
 
     /**
@@ -405,20 +412,40 @@ public class MapEditPresenterImpl extends MapEditPresenter {
      */
     @Override
     public void setBundle(Bundle bundle) {
-        this.mapid = bundle.getInt(MapManagerActivity.BUNDLE_KEY);
+        this.mapid = bundle.getInt(MapManagerContract.MAP_ID_KEY);
+        mapName = bundle.getString(MapManagerContract.MAP_NAME_KEY);
+
+        LogManager.i("set bundle mapid======="+mapid+"/////////mapname========"+mapName);
 
     }
 
     @Override
     public void savePoint(PointF pointF, String pointName) {
 
-        mapInfoModel.savePoint(pointF,pointName,mapid);
+        mapInfoModel.savePoint(pointF, pointName, mapid,mapName, new MapInfoModel.PointSaveListener() {
+            @Override
+            public void onPointSave(final PointBean pointBean) {
+
+                getIView().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        pointsList.add(pointBean);
+                        //刷新adapter
+                        mapEditView.updateAdapter(pointsList);
+                    }
+                });
+            }
+        });
+
+//        itemMap.get("123").startAnim();
+
     }
+
 
     @Override
     public void saveObstacle(List<MyPointF> myPointFs, String name) {
 
-        mapInfoModel.saveObstacle(myPointFs,name,mapid);
+        mapInfoModel.saveObstacle(myPointFs,name,mapid,mapName);
 
         VirtualObstacleBean virtualObstacleBean = new VirtualObstacleBean();
         virtualObstacleBean.setName(name);
@@ -427,6 +454,8 @@ public class MapEditPresenterImpl extends MapEditPresenter {
         //刷新adapter
         obstacleBeanList.add(virtualObstacleBean);
         mapEditView.updateAdapter(obstacleBeanList);
+//        itemMap.get("123").startAnim();
+
     }
 
     /**
@@ -437,16 +466,8 @@ public class MapEditPresenterImpl extends MapEditPresenter {
         if (pointName != null) {
 
             //添加新加入数据库的pointBean
-            PointBean pointBean = mapEditView.addPointWrapper(getFlagXY().x, getFlagXY().y,pointName);
+            mapEditView.addPointWrapper(getFlagXY().x, getFlagXY().y, pointName);
 
-            if (pointBean != null) {
-
-                pointsList.add(pointBean);
-            }
-            //刷新adapter
-            mapEditView.updateAdapter(pointsList);
-        } else {
-            mapEditView.showToast();
         }
     }
 
@@ -484,6 +505,7 @@ public class MapEditPresenterImpl extends MapEditPresenter {
         }
     }
 
+
     private void pointRename(String name,int position){
 
         //更新数据库
@@ -497,6 +519,7 @@ public class MapEditPresenterImpl extends MapEditPresenter {
         pointsList.set(position, pointBean);
         mapEditView.updateAdapter(pointsList);
         //通知服务器
+        CommunicationUtil.sendPoint2Ros(pointBean, Constant.UPDATE);
     }
 
     private void obstacleRename(String name,int position){
@@ -513,7 +536,7 @@ public class MapEditPresenterImpl extends MapEditPresenter {
         obstacleBeanList.set(position,ob);
         mapEditView.updateAdapter(obstacleBeanList);
         //notify server
-
+        CommunicationUtil.sendObstacle2Ros(ob,Constant.UPDATE);
     }
 
     private void remove(String name, int position) {
@@ -540,7 +563,7 @@ public class MapEditPresenterImpl extends MapEditPresenter {
         //数据库删除数据
         DataSupport.delete(PointBean.class, pointsList.get(position).getId());
         //通知服务器
-//        CommunicationUtil.sendPointData2Server(pointsList.get(position));
+        CommunicationUtil.sendPoint2Ros(pointsList.get(position),Constant.DELETE);
         //list删除数据
         pointsList.remove(position);
         //通知adapter刷新
@@ -557,8 +580,10 @@ public class MapEditPresenterImpl extends MapEditPresenter {
 
         mapEditView.removeObstacle(name, position);
         DataSupport.delete(VirtualObstacleBean.class, obstacleBeanList.get(position).getId());
+        //通知服务器
+        CommunicationUtil.sendObstacle2Ros(obstacleBeanList.get(position),Constant.DELETE);
         obstacleBeanList.remove(position);
         mapEditView.updateAdapter(obstacleBeanList);
-        //通知服务器
+
     }
 }

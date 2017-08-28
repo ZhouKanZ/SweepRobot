@@ -39,6 +39,12 @@ public class RosProtrocol {
         public static final String OPERATE = "call_service";
         public static final String SERVICE = "wall_pose_set";
     }
+
+    public class Wall{
+
+        public static final String OPERATE = "call_service";
+        public static final String SERVICE = "edit_wall_set";
+    }
     
 
     public class NaviPosition{

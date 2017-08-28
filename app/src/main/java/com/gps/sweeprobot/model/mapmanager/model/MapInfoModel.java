@@ -9,6 +9,7 @@ import com.gps.sweeprobot.database.GpsMapBean;
 import com.gps.sweeprobot.database.MyPointF;
 import com.gps.sweeprobot.database.PointBean;
 import com.gps.sweeprobot.database.VirtualObstacleBean;
+import com.gps.sweeprobot.http.Constant;
 import com.gps.sweeprobot.http.Http;
 import com.gps.sweeprobot.model.mapmanager.service.CommonService;
 import com.gps.sweeprobot.mvp.IModel;
@@ -20,7 +21,6 @@ import com.gps.sweeprobot.utils.ToastManager;
 
 import org.litepal.crud.DataSupport;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Flowable;
@@ -42,11 +42,6 @@ import retrofit2.Response;
  */
 
 public class MapInfoModel implements IModel {
-
-    /*虚拟墙集合*/
-    private List<VirtualObstacleBean> obstacleBeanList = new ArrayList<>();
-    /*标记点集合*/
-    private List<PointBean> pointBeanList = new ArrayList<>();
 
     /***
      * 获取地图图片
@@ -101,7 +96,7 @@ public class MapInfoModel implements IModel {
      * @param pointName
      * @param mapid
      */
-    public void savePoint(PointF pointF, final String pointName, final int mapid) {
+    public void savePoint(PointF pointF, final String pointName, final int mapid, final String mapName, final PointSaveListener listener) {
 
         Flowable.just(pointF)
                 .subscribeOn(AndroidSchedulers.mainThread())
@@ -114,11 +109,13 @@ public class MapInfoModel implements IModel {
                         //将标记点数据存进数据库
                         PointBean pointBean = new PointBean();
                         pointBean.setMapId(mapid);
+                        pointBean.setMapName(mapName);
                         pointBean.setX(pointF.x);
                         pointBean.setY(pointF.y);
                         pointBean.setPointName(pointName);
                         pointBean.save();
 
+                        listener.onPointSave(pointBean);
                         //将标记点存进地图数据中
                      /*   pointBeanList.add(pointBean);
                         GpsMapBean mapBean = DataSupport.find(GpsMapBean.class,mapid);
@@ -126,7 +123,7 @@ public class MapInfoModel implements IModel {
                         mapBean.save();*/
 
                         //通知服务器
-                        CommunicationUtil.sendPoint2Ros(pointBean);
+                        CommunicationUtil.sendPoint2Ros(pointBean, Constant.ADD);
                     }
                 });
 
@@ -139,7 +136,7 @@ public class MapInfoModel implements IModel {
      * @param name
      * @param mapid
      */
-    public void saveObstacle(List<MyPointF> myPointFs, final String name, final int mapid) {
+    public void saveObstacle(List<MyPointF> myPointFs, final String name, final int mapid, final String mapName) {
 
         //将虚拟墙数据存进数据库
         Flowable.just(myPointFs)
@@ -154,6 +151,7 @@ public class MapInfoModel implements IModel {
                         VirtualObstacleBean virtualObstacleBean = new VirtualObstacleBean();
                         virtualObstacleBean.setMapId(mapid);
                         virtualObstacleBean.setName(name);
+                        virtualObstacleBean.setMapName(mapName);
                         virtualObstacleBean.setMyPointFs(myPointFs);
                         virtualObstacleBean.save();
 
@@ -164,11 +162,12 @@ public class MapInfoModel implements IModel {
                         mapBean.save();*/
 
                         //通知服务器
-                        CommunicationUtil.sendObstacle2Ros(virtualObstacleBean);
+                        CommunicationUtil.sendObstacle2Ros(virtualObstacleBean,Constant.ADD);
                     }
                 });
 
     }
+
 
     public void test(final InfoHint infoHint) {
 
@@ -200,5 +199,13 @@ public class MapInfoModel implements IModel {
         void successInfo(Bitmap map);
 
         void failInfo(Throwable e);
+    }
+
+    /**
+     * notify adapter data changed
+     */
+    public interface PointSaveListener{
+
+        void onPointSave(PointBean pointBean);
     }
 }

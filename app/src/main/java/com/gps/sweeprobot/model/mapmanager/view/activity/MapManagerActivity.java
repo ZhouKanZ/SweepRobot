@@ -31,6 +31,9 @@ import io.reactivex.Flowable;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Consumer;
 
+import static com.gps.sweeprobot.model.mapmanager.contract.MapManagerContract.MAP_ID_KEY;
+import static com.gps.sweeprobot.model.mapmanager.contract.MapManagerContract.MAP_NAME_KEY;
+
 /**
  * Create by WangJun on 2017/7/17
  */
@@ -38,7 +41,7 @@ import io.reactivex.functions.Consumer;
 public class MapManagerActivity extends BaseActivity<MapManagerPresenter,IView> implements
         MapListItem.MOnItemClickListener ,MapManagerContract.view{
 
-    public static final String BUNDLE_KEY = "bundle_key";
+
     @BindView(R.id.activity_map_manager_rv)
     RecyclerView recyclerView;
 
@@ -102,7 +105,8 @@ public class MapManagerActivity extends BaseActivity<MapManagerPresenter,IView> 
     public void onItemClickListener(View view, int position) {
 
         Bundle bundle = new Bundle();
-        bundle.putInt(BUNDLE_KEY,mPresenter.getMapId(position));
+        bundle.putInt(MAP_ID_KEY,mPresenter.getMapId(position));
+        bundle.putString(MAP_NAME_KEY,mPresenter.getMapName(position));
 
         MapEditActivity.startSelf(this,MapEditActivity.class,bundle);
 

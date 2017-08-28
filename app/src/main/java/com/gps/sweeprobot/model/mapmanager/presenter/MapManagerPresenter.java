@@ -15,4 +15,6 @@ public abstract class MapManagerPresenter extends BasePresenter<MapManagerActivi
     public abstract void deleteViewOnClick(int position);
 
     public abstract void setView(MapManagerContract.view view);
+
+    public abstract String getMapName(int position);
 }

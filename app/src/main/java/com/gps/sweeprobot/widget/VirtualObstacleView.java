@@ -25,14 +25,24 @@ import java.util.List;
 
 public class VirtualObstacleView extends View {
 
-    private List<MyPointF> myPointFs;
+    //保存一个完整的虚拟墙顶点数
+    private List<MyPointF> FinishedList;
+    //保存还在绘制的虚拟墙顶点数
+    private List<MyPointF> drawingList;
+    //pinchImageView 的变换矩阵
     private Matrix mMatrix;
     private Paint linePaint;
     private Paint polygonPaint;
     private Paint circlePaint;
     private TextPaint textPaint;
+    //虚拟墙名字
     private String name;
-    private SaveObstacleListener saveObstacleListener;
+    //顶点是否设置完成
+    private boolean isFinish;
+    //该view是否已被添加
+    private boolean isAdd;
+
+    private Path path;
 
     public VirtualObstacleView(Context context) {
         super(context);
@@ -49,13 +59,10 @@ public class VirtualObstacleView extends View {
         init();
     }
 
-    public void setSaveObstacleListener(SaveObstacleListener saveObstacleListener) {
-        this.saveObstacleListener = saveObstacleListener;
-    }
-
     private void init() {
 
-        myPointFs = new ArrayList<>();
+        FinishedList = new ArrayList<>();
+        drawingList = new ArrayList<>();
         mMatrix = new Matrix();
 
         linePaint = new Paint();
@@ -81,61 +88,90 @@ public class VirtualObstacleView extends View {
 //        setBackgroundColor(getResources().getColor(R.color.color_activity_blue_bg));
     }
 
+    public boolean isAdd() {
+        return isAdd;
+    }
+
+    public void setAdd(boolean add) {
+        isAdd = add;
+    }
+
 
     public void setmMatrix(Matrix mMatrix) {
         this.mMatrix = mMatrix;
-        LogManager.i("virtual ============="+mMatrix.toString());
+        LogManager.i("virtual =============" + mMatrix.toString());
         invalidate();
     }
 
-    public void setmyPointFs(List<MyPointF> myPointFs) {
-        this.myPointFs.clear();
-        this.myPointFs.addAll(myPointFs);
+    public void setFinishedList(List<MyPointF> pointFList) {
+        isFinish = true;
+        FinishedList = pointFList;
         invalidate();
     }
 
-    public void addPoint(PointF point){
+    public void addPoint(PointF point) {
 
+        isFinish = false;
         PointF pointF = DegreeManager.changeRelativePoint(point.x, point.y, mMatrix);
         MyPointF f = new MyPointF();
         f.setX(pointF.x);
         f.setY(pointF.y);
-        myPointFs.add(f);
+        drawingList.add(f);
         invalidate();
+    }
+
+    public List<MyPointF> getDrawingList() {
+        return drawingList;
     }
 
     public void drawPolygons(Canvas canvas) {
 
-        LogManager.i("drawPolygons size==========" + myPointFs.size());
+        if (isFinish){
+            drawPath(FinishedList,canvas);
+        }else {
+            drawPath(drawingList,canvas);
+        }
+    }
+
+    public void drawPath(List<MyPointF> pointFList, Canvas canvas) {
 
         Path path = new Path();
-        float nameX = 0,nameY = 0;
 
-        for (int i = 0; i < myPointFs.size(); i++) {
+        float nameX = 0, nameY = 0;
+
+        for (int i = 0; i < pointFList.size(); i++) {
 
             if (i == 0) {
-                PointF start = DegreeManager.changeAbsolutePoint(myPointFs.get(i).getX(), myPointFs.get(i).getY(), mMatrix);
+                PointF start = DegreeManager.
+                        changeAbsolutePoint(pointFList.get(i).getX(), pointFList.get(i).getY(), mMatrix);
                 LogManager.i("start =========[" + start.x + "," + start.y + "]");
                 path.moveTo(start.x, start.y);
                 nameX = start.x;
                 nameY = start.y;
-            } else {
-
-                PointF intermediate = DegreeManager.changeAbsolutePoint(myPointFs.get(i).getX(), myPointFs.get(i).getY(), mMatrix);
-                LogManager.i("intermediate =========[" + intermediate.x + "," + intermediate.y + "]");
-                path.lineTo(intermediate.x, intermediate.y);
-                nameX += intermediate.x;
-                nameY += intermediate.y;
+                continue;
             }
 
+
+            PointF intermediate = DegreeManager.
+                    changeAbsolutePoint(pointFList.get(i).getX(), pointFList.get(i).getY(), mMatrix);
+            LogManager.i("intermediate =========[" + intermediate.x + "," + intermediate.y + "]");
+            path.lineTo(intermediate.x, intermediate.y);
+            nameX += intermediate.x;
+            nameY += intermediate.y;
+
+        }
+        path.close();
+
+        canvas.drawPath(path, circlePaint);
+
+        if (getName() != null) {
+
+            canvas.drawText(getName(), nameX / pointFList.size(),
+                    nameY / pointFList.size() - DensityUtil.dip2px(getContext(), 15.0f), textPaint);
         }
 
-        canvas.drawPath(path, linePaint);
-        if ( getName() != null){
-
-            canvas.drawText(getName(),nameX/myPointFs.size(),nameY/myPointFs.size() - DensityUtil.dip2px(getContext(),15.0f),textPaint);
-        }
     }
+
 
     @Override
     protected void onDraw(Canvas canvas) {
@@ -143,23 +179,29 @@ public class VirtualObstacleView extends View {
         drawPolygons(canvas);
     }
 
-    public void setName(String name){
+    public void setName(String name) {
 
         this.name = name;
+
     }
 
     public String getName() {
         return name;
     }
 
-    public void saveObstacleBean(SaveObstacleListener listener){
+    public void saveObstacleBean(SaveObstacleListener listener) {
 
-        listener.onSaveObstacle(myPointFs,name);
-
+        LogManager.i("drawing list size =====" + drawingList.size());
+        // 虚拟墙绘制完成
+        isFinish = true;
+        drawingList.clear();
+        listener.onSaveObstacle(FinishedList, name);
+        LogManager.i("finished list size =======" + FinishedList.size());
+        postInvalidate();
     }
 
-    public interface SaveObstacleListener{
+    public interface SaveObstacleListener {
 
-        void onSaveObstacle(List<MyPointF> myPointFs,String name);
+        void onSaveObstacle(List<MyPointF> FinishedList, String name);
     }
 }

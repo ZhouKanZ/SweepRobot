@@ -19,6 +19,7 @@ public class VirtualObstacleBean extends IAction{
     private String name;
     private String createDate;
     private String description;
+    private String mapName;
     /* 多边形顶点 */
     private List<MyPointF> myPointFs = new ArrayList<MyPointF>();
 
@@ -56,6 +57,14 @@ public class VirtualObstacleBean extends IAction{
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getMapName() {
+        return mapName;
+    }
+
+    public void setMapName(String mapName) {
+        this.mapName = mapName;
     }
 
     public List<MyPointF> getMyPointFs() {

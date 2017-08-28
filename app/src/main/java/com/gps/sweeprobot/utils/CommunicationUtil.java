@@ -1,27 +1,25 @@
 package com.gps.sweeprobot.utils;
 
 import com.alibaba.fastjson.JSON;
-import com.gps.sweeprobot.MainApplication;
 import com.gps.sweeprobot.bean.NavPose;
 import com.gps.sweeprobot.bean.NavPoseWrap;
 import com.gps.sweeprobot.bean.ObstaclePose;
 import com.gps.sweeprobot.bean.ObstaclePoseWrap;
-import com.gps.sweeprobot.bean.Test;
+import com.gps.sweeprobot.bean.WallPoseWrap;
 import com.gps.sweeprobot.bean.WebSocketResult;
 import com.gps.sweeprobot.database.MyPointF;
 import com.gps.sweeprobot.database.PointBean;
 import com.gps.sweeprobot.database.VirtualObstacleBean;
 import com.gps.sweeprobot.http.WebSocketHelper;
 
+import org.litepal.crud.DataSupport;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Flowable;
-import io.reactivex.Observable;
-import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
-import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
@@ -32,99 +30,19 @@ import io.reactivex.schedulers.Schedulers;
 
 public class CommunicationUtil {
 
-    public static void sendPointData2Server(PointBean bean) {
-
-        Test test = new Test();
-
-        Test.HeaderBean header = new Test.HeaderBean();
-
-        header.setFrame_id(RosProtrocol.Point.FRAME_ID);
-        test.setHeader(header);
-        //
-        Test.GoalBean goal = new Test.GoalBean();
-
-        Test.GoalBean.
-                TargetPoseBean target_pose = new Test.GoalBean.TargetPoseBean();
-
-        Test.GoalBean.
-                TargetPoseBean.
-                HeaderBeanX header1 = new Test.GoalBean.TargetPoseBean.HeaderBeanX();
-
-        header1.setFrame_id(RosProtrocol.Point.FRAME_ID);
-
-        target_pose.setHeader(header1);
-
-        Test.
-                GoalBean.
-                TargetPoseBean.
-                PoseBean pose = new Test.GoalBean.TargetPoseBean.PoseBean();
-        Test.
-                GoalBean.
-                TargetPoseBean.
-                PoseBean.
-                PositionBean positionBean = new Test.GoalBean.TargetPoseBean.PoseBean.PositionBean();
-
-        positionBean.setX(0);
-        positionBean.setY(0);
-        positionBean.setZ(0);
-
-        Test.
-                GoalBean.
-                TargetPoseBean.
-                PoseBean.
-                OrientationBean orientation = new Test.GoalBean.TargetPoseBean.PoseBean.OrientationBean();
-
-        orientation.setX(0);
-        orientation.setY(0);
-        orientation.setY(0);
-        orientation.setZ(1);
-
-        pose.setOrientation(orientation);
-        pose.setPosition(positionBean);
-        target_pose.setPose(pose);
-        goal.setTarget_pose(target_pose);
-        test.setGoal(goal);
-
-        WebSocketResult<Test> webSocketResult = new WebSocketResult<>();
-        webSocketResult.setArgs(test);
-//        webSocketResult.op = RosProtrocol.Point.OPERATE;
-//        webSocketResult.setTopic(RosProtrocol.Point.TOPIC);
-
-        Observable.just(webSocketResult)
-                .subscribeOn(AndroidSchedulers.mainThread())
-                .observeOn(Schedulers.io())
-                .subscribe(new Observer<WebSocketResult<Test>>() {
-                    @Override
-                    public void onSubscribe(@NonNull Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(@NonNull WebSocketResult<Test> testWebSocketResult) {
-
-                        LogManager.i(MainApplication.getContext().getThreadName());
-//                        MainApplication.getContext().getRosBridgeClient().send(testWebSocketResult);
-                    }
-
-                    @Override
-                    public void onError(@NonNull Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
-    }
-
-    public static void sendPoint2Ros(PointBean pointBean){
+    /**
+     * 发送标记点信息给ros
+     * @param pointBean
+     * @param type
+     */
+    public static void sendPoint2Ros(PointBean pointBean,int type){
 
         NavPose navPose = new NavPose();
-        navPose.setName(pointBean.getPointName());
+        navPose.setMapid(pointBean.getMapId());
         navPose.setMapname(pointBean.getMapName());
         navPose.setId(pointBean.getId());
-        navPose.setMapid(pointBean.getMapId());
+        navPose.setName(pointBean.getPointName());
+        navPose.setType(type);
 
         NavPose.Pose pose = new NavPose.Pose();
         NavPose.Pose.Point point = new NavPose.Pose.Point();
@@ -142,16 +60,9 @@ public class CommunicationUtil {
         WebSocketResult<NavPoseWrap> webSocketResult = new WebSocketResult<>();
         webSocketResult.setOp(RosProtrocol.Point.OPERATE);
         webSocketResult.setService(RosProtrocol.Point.SERVICE);
-//        webSocketResult.setTopic(RosProtrocol.Point.TOPIC);
-//        webSocketResult.setType(RosProtrocol.Point.TYPE);
         webSocketResult.setArgs(navPose_Wrap_);
 
-        // 向服务器发送数据
-//        ROSBridgeWebSocketClient.create(Constant.JiaoJian).send(JSON.toJSONString(webSocketResult));
-        WebSocketHelper.send(JSON.toJSONString(webSocketResult));
-        LogManager.i(JSON.toJSONString(webSocketResult));
-
- /*       Flowable.just(JSON.toJSONString(webSocketResult))
+        Flowable.just(JSON.toJSONString(webSocketResult))
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .observeOn(Schedulers.io())
                 .subscribe(new Consumer<String>() {
@@ -159,17 +70,25 @@ public class CommunicationUtil {
                     public void accept(@NonNull String s) throws Exception {
 
                         // 向服务器发送数据
-                        ROSBridgeWebSocketClient.create(Constant.JiaoJian).send(JSON.toJSONString(webSocketResult));
-                        LogManager.i(MainApplication.getContext().getThreadName()+"send point to ros");
+                        WebSocketHelper.send(s);
+                        LogManager.i(s);
                     }
-                });*/
+                });
     }
 
-    public static void sendObstacle2Ros(VirtualObstacleBean bean){
+    /**
+     * 发送虚拟墙数据给ros
+     * @param bean
+     * @param type
+     */
+    public static void sendObstacle2Ros(VirtualObstacleBean bean,int type){
 
         ObstaclePose mObstacle = new ObstaclePose();
-        mObstacle.setName(bean.getName());
+        mObstacle.setMapid(bean.getMapId());
+        mObstacle.setMapname(bean.getMapName());
         mObstacle.setId(bean.getId());
+        mObstacle.setName(bean.getName());
+        mObstacle.setType(type);
 
         final List<NavPose.Pose> poses = new ArrayList<>();
 
@@ -205,6 +124,46 @@ public class CommunicationUtil {
 
         WebSocketHelper.send(JSON.toJSONString(webSocketResult));
         LogManager.i(JSON.toJSONString(webSocketResult));
+    }
+
+    /**
+     * 发送虚拟墙集合的id信息以及对应的mapid、mapname
+     * @param mapid
+     */
+    public static void sendObstacleDatas2Ros(int mapid){
+
+        Flowable.fromArray(DataSupport.where("mapId = ?", String.valueOf(mapid)).find(VirtualObstacleBean.class))
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .subscribe(new Consumer<List<VirtualObstacleBean>>() {
+                    @Override
+                    public void accept(@io.reactivex.annotations.NonNull List<VirtualObstacleBean> obstacleList) throws Exception {
+
+                        List<Integer> mapIdList = new ArrayList<>();
+                        for (VirtualObstacleBean obstacleBean : obstacleList) {
+
+                            mapIdList.add(obstacleBean.getId());
+                        }
+
+                        WallPoseWrap wallPoseWrap = new WallPoseWrap();
+                        WallPoseWrap.WallPose edit_wall = new WallPoseWrap.WallPose();
+
+                        edit_wall.setMapid(obstacleList.get(0).getMapId());
+                        edit_wall.setMapname(obstacleList.get(0).getMapName());
+                        edit_wall.setWall_id(mapIdList);
+
+                        wallPoseWrap.setEdit_wall(edit_wall);
+
+                        WebSocketResult<WallPoseWrap> result = new WebSocketResult<>();
+                        result.setOp(RosProtrocol.Wall.OPERATE);
+                        result.setService(RosProtrocol.Wall.SERVICE);
+                        result.setArgs(wallPoseWrap);
+
+                        WebSocketHelper.send(JSON.toJSONString(result));
+                        LogManager.i(JSON.toJSONString(result));
+
+                    }
+                });
     }
 
 }

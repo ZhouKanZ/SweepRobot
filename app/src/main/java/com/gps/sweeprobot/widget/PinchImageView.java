@@ -16,6 +16,7 @@ import android.view.MotionEvent;
 import android.widget.ImageView;
 
 import com.gps.sweeprobot.utils.DegreeManager;
+import com.gps.sweeprobot.utils.LogManager;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -53,7 +54,7 @@ public class PinchImageView extends ImageView {
     /**
      * 图片最大放大比例
      */
-    private static final float MAX_SCALE = 4f;
+    private static final float MAX_SCALE = 6f;
 
     private ViewLoadListener loadListener;
 
@@ -81,21 +82,13 @@ public class PinchImageView extends ImageView {
      */
     private OnLongClickListener mOnLongClickListener;
 
-    /**
-     * 添加标记点事件
-     */
-    private AddPointListener addPointListener;
-
-
-    public interface AddPointListener{
-        void addPoint(PinchImageView view, float relativeX, float relativeY);
-    }
 
     /**
      * 旋转
      */
     private float oldRotation;
     private float curRotation;
+    private float deltaRotation;
 
 
     @Override
@@ -108,10 +101,6 @@ public class PinchImageView extends ImageView {
     public void setOnLongClickListener(OnLongClickListener l) {
         //默认的long click会在任何长按情况下都会触发，所以搞成自己的
         mOnLongClickListener = l;
-    }
-
-    public void setAddPointListener(AddPointListener l){
-        addPointListener=l;
     }
 
 
@@ -791,7 +780,7 @@ public class PinchImageView extends ImageView {
      * 这个绑定可以保证mScaleCenter无论如何都会跟随这个中点.
      *
      * @see #mScaleCenter
-     * @see #scaleAndRotate(PointF, float, float, PointF, float)
+     * @see #scaleHandler(PointF, float, float, PointF, float)
      * @see #scaleEnd()
      */
     private PointF mLastMovePoint = new PointF();
@@ -805,7 +794,7 @@ public class PinchImageView extends ImageView {
      *
      * @see #saveScaleContext(float, float, float, float)
      * @see #mLastMovePoint
-     * @see #scaleAndRotate(PointF, float, float, PointF, float)
+     * @see #scaleHandler(PointF, float, float, PointF, float)
      */
     private PointF mScaleCenter = new PointF();
 
@@ -816,7 +805,7 @@ public class PinchImageView extends ImageView {
      * 其值乘上最新的两指之间距离为最新的图片缩放比例.
      *
      * @see #saveScaleContext(float, float, float, float)
-     * @see #scaleAndRotate(PointF, float, float, PointF, float)
+     * @see #scaleHandler(PointF, float, float, PointF, float)
      */
     private float mScaleBase = 0;
 
@@ -932,9 +921,22 @@ public class PinchImageView extends ImageView {
             mPinchMode = PINCH_MODE_SCALE;
             //保存缩放的两个手指
             saveScaleContext(event.getX(0), event.getY(0), event.getX(1), event.getY(1));
+
         } else if (action == MotionEvent.ACTION_MOVE) {
 
+            if (event.getPointerCount() >= 2){
+                // Moving 2 or more fingers on the screen
+                curRotation = DegreeManager.getRotation(event);
+                deltaRotation = curRotation - oldRotation;
+                LogManager.i("rotation deltaRotation========="+deltaRotation);
+
+                float focusX = 0.5f * (event.getX(1) + event.getX(0));
+                float focusY = 0.5f * (event.getY(1) + event.getY(0));
+                onRotation( deltaRotation,focusX,focusY );
+            }
+
             if (!(mScaleAnimator != null && mScaleAnimator.isRunning())) {
+
                 //在滚动模式下移动
                 if (mPinchMode == PINCH_MODE_SCROLL) {
                     //每次移动产生一个差值累积到图片位置上
@@ -944,14 +946,13 @@ public class PinchImageView extends ImageView {
                     //在缩放模式下移动
                 } else if (mPinchMode == PINCH_MODE_SCALE && event.getPointerCount() > 1) {
 
-                    float degree=DegreeManager.getRotation(event) - oldRotation;
                     //两个缩放点间的距离
                     float distance = MathUtils.getDistance(event.getX(0), event.getY(0), event.getX(1), event.getY(1));
                     //保存缩放点中点
                     float[] lineCenter = MathUtils.getCenterPoint(event.getX(0), event.getY(0), event.getX(1), event.getY(1));
                     mLastMovePoint.set(lineCenter[0], lineCenter[1]);
                     //处理缩放
-                    scaleAndRotate(mScaleCenter, mScaleBase, distance, mLastMovePoint,degree);
+                    scaleHandler(mScaleCenter, mScaleBase, distance, mLastMovePoint,deltaRotation);
                 }
             }
         }
@@ -959,6 +960,26 @@ public class PinchImageView extends ImageView {
         mGestureDetector.onTouchEvent(event);
         return true;
     }
+
+    /**
+     * 让图片旋转
+     * @param angle
+     * @param x
+     * @param y
+     */
+    private void onRotation(float angle,float x,float y){
+
+        LogManager.i("onRotation angle========="+angle+"---------x="+x+"---------y="+y);
+        Matrix matrix = MathUtils.matrixTake();
+        matrix.postRotate(angle,x,y);
+        //应用变换
+        mOuterMatrix.set(matrix);
+        MathUtils.matrixGiven(matrix);
+        dispatchOuterMatrixChanged();
+        //重绘
+        invalidate();
+    }
+
 
     /**
      * 让图片移动一段距离
@@ -979,7 +1000,7 @@ public class PinchImageView extends ImageView {
         //控件大小
         float displayWidth = getWidth();
         float displayHeight = getHeight();
-        //如果当前图片宽度小于控件宽度，则不能移动
+ /*       //如果当前图片宽度小于控件宽度，则不能移动
         if (bound.right - bound.left < displayWidth) {
             xDiff = 0;
             //如果图片左边在移动后超出控件左边
@@ -1016,7 +1037,7 @@ public class PinchImageView extends ImageView {
             } else {
                 yDiff = 0;
             }
-        }
+        }*/
         MathUtils.rectFGiven(bound);
         //应用移动变换
         mOuterMatrix.postTranslate(xDiff, yDiff);
@@ -1067,7 +1088,9 @@ public class PinchImageView extends ImageView {
      * @see #mScaleCenter
      * @see #mScaleBase
      */
-    private void scaleAndRotate(PointF scaleCenter, float scaleBase, float distance, PointF lineCenter, float degree) {
+    private void scaleHandler(PointF scaleCenter, float scaleBase, float distance, PointF lineCenter, float degree) {
+
+        LogManager.i("scale handler scaleCenterx======"+scaleCenter.x+",scaleCentery==========="+scaleCenter.y);
         if (!isReady()) {
             return;
         }
@@ -1076,10 +1099,10 @@ public class PinchImageView extends ImageView {
         Matrix matrix = MathUtils.matrixTake();
         //按照图片缩放中心缩放，并且让缩放中心在缩放点中点上
         matrix.postScale(scale, scale, scaleCenter.x, scaleCenter.y);
-        //按照图片缩放中心旋转，并且让缩放中心在缩放点中点上
-        matrix.postRotate(degree,scaleCenter.x,scaleCenter.y);
         //让图片的缩放中点跟随手指缩放中点
         matrix.postTranslate(lineCenter.x - scaleCenter.x, lineCenter.y - scaleCenter.y);
+
+//        matrix.postRotate(degree,scaleCenter.x,scaleCenter.y);
         //应用变换
         mOuterMatrix.set(matrix);
         MathUtils.matrixGiven(matrix);

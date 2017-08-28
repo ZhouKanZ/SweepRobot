@@ -11,6 +11,9 @@ import java.util.List;
 
 public class MapManagerContract {
 
+    public static final String MAP_ID_KEY = "map_id_key";
+    public static final String MAP_NAME_KEY = "map_name_key";
+
     public interface presenter{}
 
     public interface view extends IView{

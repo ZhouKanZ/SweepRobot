@@ -1,5 +1,7 @@
 package com.gps.sweeprobot.model.mapmanager.view.activity;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.app.AlertDialog;
 import android.graphics.Bitmap;
 import android.graphics.PointF;
@@ -13,6 +15,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -22,7 +25,6 @@ import android.widget.TextView;
 import com.gps.sweeprobot.R;
 import com.gps.sweeprobot.base.BaseActivity;
 import com.gps.sweeprobot.database.MyPointF;
-import com.gps.sweeprobot.database.PointBean;
 import com.gps.sweeprobot.model.main.bean.ToolbarOptions;
 import com.gps.sweeprobot.model.mapmanager.adaper.item.ActionItem;
 import com.gps.sweeprobot.model.mapmanager.bean.MapListBean;
@@ -53,7 +55,7 @@ import io.reactivex.functions.Consumer;
  */
 
 public class MapEditActivity extends BaseActivity<MapEditPresenter, IView> implements ActionItem.ActionOnItemListener
-        , MapEditContract.view ,GpsImageView.SavePointDataListener, VirtualObstacleView.SaveObstacleListener {
+        , MapEditContract.view, GpsImageView.SavePointDataListener, VirtualObstacleView.SaveObstacleListener {
 
 
     @BindView(R.id.activity_map_edit_giv)
@@ -63,7 +65,7 @@ public class MapEditActivity extends BaseActivity<MapEditPresenter, IView> imple
     RecyclerView actionRecyclerView;
 
     @BindViews({R.id.activity_map_add, R.id.activity_map_sub, R.id.activity_map_info,
-            R.id.activity_map_flag,R.id.activity_map_position, R.id.activity_map_commit})
+            R.id.activity_map_flag, R.id.activity_map_position, R.id.activity_map_commit})
     List<ImageView> nameViews;
 
     //动作列表的dialog
@@ -89,7 +91,7 @@ public class MapEditActivity extends BaseActivity<MapEditPresenter, IView> imple
 
     @Override
     protected MapEditPresenter loadPresenter() {
-        return new MapEditPresenterImpl(this,this);
+        return new MapEditPresenterImpl(this, this);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -115,7 +117,6 @@ public class MapEditActivity extends BaseActivity<MapEditPresenter, IView> imple
         }
 
         gpsImageView.setOnSaveListener(this);
-        gpsImageView.setOnSaveObstacleListener(this);
     }
 
     @Override
@@ -128,7 +129,7 @@ public class MapEditActivity extends BaseActivity<MapEditPresenter, IView> imple
     }
 
     @Override
-    protected void otherViewClick(View view) {
+    protected void otherViewClick(final View view) {
 
         switch (view.getId()) {
             /**
@@ -145,6 +146,33 @@ public class MapEditActivity extends BaseActivity<MapEditPresenter, IView> imple
                 break;
 
             case R.id.activity_map_info:
+                view.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        // get the center for the clipping circle
+                        int cx = (view.getLeft() + view.getRight()) / 2;
+                        int cy = (view.getTop() + view.getBottom()) / 2;
+
+// get the initial radius for the clipping circle
+                        int initialRadius = view.getWidth();
+
+// create the animation (the final radius is zero)
+                        Animator anim =
+                                ViewAnimationUtils.createCircularReveal(view, cx, cy, initialRadius, 0);
+
+// make the view invisible when the animation is done
+                        anim.addListener(new AnimatorListenerAdapter() {
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+                                super.onAnimationEnd(animation);
+                                view.setVisibility(View.INVISIBLE);
+                            }
+                        });
+
+                        anim.start();
+                    }
+                });
+//                view.setVisibility(View.INVISIBLE);
                 break;
 
             case R.id.activity_map_position:
@@ -221,6 +249,7 @@ public class MapEditActivity extends BaseActivity<MapEditPresenter, IView> imple
 
     /**
      * 添加新的标记点，通知adapter刷新
+     *
      * @param data
      */
     @Override
@@ -243,7 +272,8 @@ public class MapEditActivity extends BaseActivity<MapEditPresenter, IView> imple
     }
 
     /**
-     *创建标记点，路径，虚拟墙的选项dialog
+     * 创建标记点，路径，虚拟墙的选项dialog
+     *
      * @param contentView
      */
     public void addAction(View contentView) {
@@ -262,6 +292,7 @@ public class MapEditActivity extends BaseActivity<MapEditPresenter, IView> imple
 
     /**
      * 设置dialog view 的点击监听
+     *
      * @param contentView
      * @param viewId
      * @param listener
@@ -283,8 +314,9 @@ public class MapEditActivity extends BaseActivity<MapEditPresenter, IView> imple
 
     /**
      * 添加标记点
-     * @param x 相对于图片的像素点位置x
-     * @param y 相对于图片的像素点位置y
+     *
+     * @param x         相对于图片的像素点位置x
+     * @param y         相对于图片的像素点位置y
      * @param pointName
      */
     @Override
@@ -295,21 +327,22 @@ public class MapEditActivity extends BaseActivity<MapEditPresenter, IView> imple
 
     /**
      * 添加标记点外层方法
+     *
      * @param screenX 相对于屏幕的坐标点
      * @param screenY 相对于屏幕的坐标点
      * @param name
      * @return
      */
     @Override
-    public PointBean addPointWrapper(float screenX, float screenY, String name) {
+    public void addPointWrapper(float screenX, float screenY, String name) {
 
-        return gpsImageView.addPointWrapper(screenX, screenY, name);
+        gpsImageView.addPointWrapper(screenX, screenY, name);
     }
 
     @Override
-    public void updateName(String newName, int position,int type) {
+    public void updateName(String newName, int position, int type) {
 
-        gpsImageView.updateName(newName, position,type);
+        gpsImageView.updateName(newName, position, type);
     }
 
     @Override
@@ -326,6 +359,7 @@ public class MapEditActivity extends BaseActivity<MapEditPresenter, IView> imple
 
     /**
      * 创建输入名字的dialog
+     *
      * @param titleText title
      */
     @Override
@@ -343,7 +377,7 @@ public class MapEditActivity extends BaseActivity<MapEditPresenter, IView> imple
                 .create();
 
         showInputNameDialog();
-        TextView title = findView(dialogPlus.getHeaderView(),R.id.dialog_add_point_title);
+        TextView title = findView(dialogPlus.getHeaderView(), R.id.dialog_add_point_title);
         title.setText(titleText);
         initDialogView(dialogPlus.getHolderView(), R.id.dialog_add_point_name, this);
         initDialogView(dialogPlus.getFooterView(), R.id.dialog_add_point_cancel, this);
@@ -369,26 +403,28 @@ public class MapEditActivity extends BaseActivity<MapEditPresenter, IView> imple
 
     /**
      * 设置虚拟墙名字
+     *
      * @param name
      */
     @Override
     public void setObstacleName(String name) {
-        gpsImageView.setObstacleName(name,this);
+        gpsImageView.setObstacleName(name, this);
     }
 
     /**
      * 添加虚拟墙
+     *
      * @param data
      * @param name
      */
     @Override
-    public void addObstacle(List<MyPointF> data,String name) {
-        gpsImageView.addObstacleView(data,name);
+    public void addObstacle(List<MyPointF> data, String name) {
+        gpsImageView.addObstacleView(data, name);
     }
 
     @Override
     public void removeObstacle(String name, int position) {
-        gpsImageView.removeObstacleView(name,position);
+        gpsImageView.removeObstacleView(name, position);
     }
 
     /**
@@ -398,6 +434,7 @@ public class MapEditActivity extends BaseActivity<MapEditPresenter, IView> imple
     public void setActionRecyclerView() {
 
         Animation inAnim = AnimationUtils.loadAnimation(this, R.anim.slide_in_top);
+        actionRecyclerView.setHasFixedSize(true);
         actionRecyclerView.setVisibility(View.VISIBLE);
         actionRecyclerView.setAnimation(inAnim);
         actionRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -407,6 +444,7 @@ public class MapEditActivity extends BaseActivity<MapEditPresenter, IView> imple
 
     /**
      * 左边recycler item 的点击事件
+     *
      * @param view
      * @param name
      */
@@ -419,17 +457,11 @@ public class MapEditActivity extends BaseActivity<MapEditPresenter, IView> imple
     @Override
     public void setRemoveAnimation() {
 
-        Observable.just(AnimationUtils.loadAnimation(this, R.anim.slide_out_top))
-                .subscribe(new Consumer<Animation>() {
-                    @Override
-                    public void accept(@NonNull Animation animation) throws Exception {
-                        actionRecyclerView.setAnimation(animation);
-                    }
-                });
     }
 
     /**
      * 长按重命名
+     *
      * @param item
      * @param position
      */
@@ -459,21 +491,23 @@ public class MapEditActivity extends BaseActivity<MapEditPresenter, IView> imple
 
     /**
      * 保存标记点的监听
+     *
      * @param pointF
      * @param name
      */
     @Override
     public void onSavePoint(PointF pointF, String name) {
-        mPresenter.savePoint(pointF,name);
+        mPresenter.savePoint(pointF, name);
     }
 
     /**
      * 保存虚拟墙的监听
+     *
      * @param myPointFs
      * @param name
      */
     @Override
     public void onSaveObstacle(List<MyPointF> myPointFs, String name) {
-        mPresenter.saveObstacle(myPointFs,name);
+        mPresenter.saveObstacle(myPointFs, name);
     }
 }

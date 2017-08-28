@@ -41,7 +41,7 @@ public class MapManagerModel implements IModel,MapListItem.RequestMapListener{
      */
     public void requestMapBitmap(GpsMapBean gpsMapBean, final MapInfo mapInfo){
 
-        LogManager.i(UrlHelper.BASE_URL + gpsMapBean.getCompletedMapUrl());
+        LogManager.i(UrlHelper.BASE_URL + "maps/2/2.jpg");
 
         Http.getHttpService()
                 .getMapList(UrlHelper.BASE_URL + gpsMapBean.getCompletedMapUrl())

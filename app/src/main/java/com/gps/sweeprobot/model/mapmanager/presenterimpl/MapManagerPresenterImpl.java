@@ -101,6 +101,9 @@ public class MapManagerPresenterImpl extends MapManagerPresenter {
         return maps.get(position).getId();
     }
 
+    public String getMapName(int position){
+        return maps.get(position).getName();
+    }
     /**
      * dialog的删除键点击事件
      * @param position

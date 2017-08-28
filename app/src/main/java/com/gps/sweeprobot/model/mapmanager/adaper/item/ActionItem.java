@@ -1,7 +1,11 @@
 package com.gps.sweeprobot.model.mapmanager.adaper.item;
 
+import android.animation.Animator;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.view.ViewTreeObserver;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -29,6 +33,9 @@ public class ActionItem implements AdapterItem<IAction>{
 
     private ActionOnItemListener listener;
 
+    private Animator anim;
+    private View root;
+
     public ActionItem(ActionOnItemListener listener) {
         this.listener = listener;
     }
@@ -42,6 +49,7 @@ public class ActionItem implements AdapterItem<IAction>{
     public void bindViews(View root) {
 
         ButterKnife.bind(this,root);
+        this.root = root;
     }
 
     @Override
@@ -69,6 +77,24 @@ public class ActionItem implements AdapterItem<IAction>{
             }
         });
     }
+
+    public void startAnim(){
+
+        root.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+
+        /*        int cx = (root.getLeft() + root.getRight())/2;
+                int cy = (root.getTop() + root.getBottom())/2;
+                int initialRadius = root.getWidth();
+                anim = ViewAnimationUtils.createCircularReveal(root, cx, cy, initialRadius, 0);
+                anim.start();*/
+                Animation animation = AnimationUtils.loadAnimation(root.getContext(), R.anim.fade_out_center);
+                root.setAnimation(animation);
+            }
+        });
+    }
+
 
     @Override
     public void handleData(IAction iAction, int position) {
