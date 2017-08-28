@@ -78,11 +78,36 @@ gps project
 ### 相关bug处理
 
 
-#### OOM
+#### Android Studio 2.3 中出现的问题
+    java.lang.NoClassDefFoundError: Failed resolution of: Landroid/support/v4/animation/AnimatorCompatHelper
+    
+ > 解决办法：
+    
+    configurations.all {
+        resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+            def requested = details.requested
+            if (requested.group == 'com.android.support') {
+                if (!requested.name.startsWith("multidex")) {
+                    details.useVersion '25.3.0'
+                }
+            }
+        }
+    } 
+    
+#### 设计模式 —— clone模式 
+    
+   场景 ：两个list同时处理一个对象，造成的数据混乱
+   clone模式简介 ： 分为深克隆和浅克隆[详情参考](https://github.com/ZhouKanZ/designPattern/tree/master/clonePattern)
+   
+    
+    
+    
 
-Throwing OutOfMemoryError "Failed to allocate a 15745036 byte
-allocation with 186368 free bytes and 182KB until OOM" 在加载
-bitmap的时候没有做处理，导致直接OOM,解决办法:
+
+    
+
+     
+     
 
  
 

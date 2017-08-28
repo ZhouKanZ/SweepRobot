@@ -142,7 +142,8 @@ public class CreateActivity extends BaseActivity<CreateMapPresenter, CreateMapCo
                                     ToastManager.show(mCtz,"您忘了为机器人命名噢", Toast.LENGTH_SHORT);
                                 }else {
                                     gpsMapBean.setName(robotName);
-                                    gpsMapBean.setCompletedMapUrl(UrlHelper.COMPLETE_URL);
+                                    gpsMapBean.setCompletedMapUrl("/maps/now/map.jpg");
+//                                    gpsMapBean.setCompletedMapUrl(UrlHelper.COMPLETE_URL);
                                     gpsMapBean.setDate( Calendar.getInstance().getTime());
                                     mPresenter.saveMap(gpsMapBean);
                                     WebSocketHelper.send(JsonCreator.mappingStatus(2,gpsMapBean.getId(),gpsMapBean.getName(),"/var/www/maps").toJSONString());
@@ -165,8 +166,6 @@ public class CreateActivity extends BaseActivity<CreateMapPresenter, CreateMapCo
         controlTabs = new ArrayList<>();
         controlTabs.add(new ControlTab(R.mipmap.play,"暂停"));
         controlTabs.add(new ControlTab(R.mipmap.right,"完成"));
-
-
         adapter =  new CommonAdapter<ControlTab>(this, R.layout.control_item, controlTabs) {
 
             @Override

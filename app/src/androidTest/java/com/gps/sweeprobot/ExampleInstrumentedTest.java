@@ -24,5 +24,4 @@ public class ExampleInstrumentedTest {
         assertEquals("com.gps.sweeprobot", appContext.getPackageName());
 
     }
-
 }

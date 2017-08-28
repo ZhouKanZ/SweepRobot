@@ -1,8 +1,8 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
 
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
@@ -50,5 +50,7 @@
     <style name="ActionMenuTheme" parent="Theme.AppCompat.Light">
         <item name="android:textColor">@color/color_black_333333</item>
     </style>
+
+    <style name="style_text_title"></style>
 
 </resources>

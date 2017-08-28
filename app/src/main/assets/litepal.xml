@@ -2,6 +2,7 @@
 <litepal>
     <dbname value="gps"/>
     <version value="14" />
+
     <list>
         <mapping class="com.gps.sweeprobot.database.GpsMapBean"/>
         <mapping class="com.gps.sweeprobot.database.Task"/>

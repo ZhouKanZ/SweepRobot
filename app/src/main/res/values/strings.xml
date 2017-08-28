@@ -50,6 +50,22 @@
     <string name="set_version">版本信息</string>
     <string name="activity_set_info">杭州吉佩斯机器人有限公司\nwww.gps-bot.com</string>
     <string name="version_description">暂无版本更新</string>
+    <string name="createTask">新建任务</string>
+    <string name="preview">预览</string>
+    <string name="editNavePose">编辑任务</string>
+    <string name="pointNull">没有任务点</string>
     <string name="dialog_map_manager_delete">删除此地图</string>
+    <string name="candidate">待选点</string>
+    <string name="seleted">已选点</string>
+    <string name="execute">执行</string>
+    <string name="lookfor">任务详情</string>
+    <string name="next">下一步</string>
+    <string name="input_task_name">请输入任务名称</string>
+    <string name="seleteType">选择任务类型：</string>
+    <string name="seleteMap">请选择地图：</string>
+    <string name="pleaseInputName">请输入任务名称</string>
+    <string name="mapname" >地图名称:</string>
+    <string name="createTime">创建时间：</string>
+    <string name="taskIsexecute">是否执行</string>
 
 </resources>

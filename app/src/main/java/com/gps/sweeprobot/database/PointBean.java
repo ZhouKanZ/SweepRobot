@@ -6,7 +6,7 @@ import com.gps.sweeprobot.bean.IAction;
  * Create by WangJun on 2017/7/24
  */
 
-public class PointBean extends IAction{
+public class PointBean extends IAction implements Cloneable{
 
     /* 地图的id也是table的主键 */
     private int id;
@@ -26,14 +26,18 @@ public class PointBean extends IAction{
     /* 外键id */
     private int mapId;
 
+    /* type  0表示未被选中 1表示被选中*/
+    private int type = 0;
+
     public PointBean() {
     }
 
-    public PointBean(float x, float y, String pointName, String mapName) {
+    public PointBean(float x, float y, String pointName, String mapName,int type) {
         this.x = x;
         this.y = y;
         this.pointName = pointName;
         this.mapName = mapName;
+        this.type = type;
     }
 
     public int getId() {
@@ -78,5 +82,24 @@ public class PointBean extends IAction{
 
     public void setMapId(int mapId) {
         this.mapId = mapId;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+
+    @Override
+    public PointBean clone() {
+        PointBean clone  = null;
+        try {
+            clone = (PointBean) super.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        return clone;
     }
 }
