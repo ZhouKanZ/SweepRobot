@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.alexvasilkov.gestures.views.GestureFrameLayout
-        android:id="@+id/gps_layout"
+    <!-- 底层图 -->
+    <com.gps.sweeprobot.widget.GpsImage
+        android:id="@+id/gps_backgroud"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent" />
 
-        <com.gps.sweeprobot.widget.GpsImage
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+    <!-- 镭射层 -->
+    <com.alexvasilkov.gestures.views.GestureImageView
+        android:id="@+id/gps_laser_layer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        />
 
-    </com.alexvasilkov.gestures.views.GestureFrameLayout>
 
-</LinearLayout>
+</RelativeLayout>

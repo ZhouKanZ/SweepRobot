@@ -139,9 +139,12 @@ public class CommunicationUtil {
                     @Override
                     public void accept(@io.reactivex.annotations.NonNull List<VirtualObstacleBean> obstacleList) throws Exception {
 
+                        if(obstacleList == null || obstacleList.size() == 0){
+                            return;
+                        }
+
                         List<Integer> mapIdList = new ArrayList<>();
                         for (VirtualObstacleBean obstacleBean : obstacleList) {
-
                             mapIdList.add(obstacleBean.getId());
                         }
 
@@ -161,7 +164,6 @@ public class CommunicationUtil {
 
                         WebSocketHelper.send(JSON.toJSONString(result));
                         LogManager.i(JSON.toJSONString(result));
-
                     }
                 });
     }

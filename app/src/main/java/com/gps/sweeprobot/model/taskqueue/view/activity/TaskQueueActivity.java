@@ -215,6 +215,7 @@ public class TaskQueueActivity extends BaseActivity<TaskQuenePresenter, TaskQueu
                 break;
             case R.id.btn_check:
                 // 查看当前状况
+                TaskExecuteActivity.startSelf(this, TaskExecuteActivity.class, null);
                 break;
             case R.id.btn_execute:
                 // 执行

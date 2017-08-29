@@ -112,6 +112,7 @@ public class CreateMapPresenter extends BasePresenter<CreateMapContract.View> im
 
     @Override
     public void setData() {
+
     }
 
 

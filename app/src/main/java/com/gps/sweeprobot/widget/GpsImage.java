@@ -88,7 +88,6 @@ public class GpsImage extends View {
     }
 
     private void init() {
-
         /**
          *  设置inscaled =  false, 时bitmap的pix不会产生改变
          */
