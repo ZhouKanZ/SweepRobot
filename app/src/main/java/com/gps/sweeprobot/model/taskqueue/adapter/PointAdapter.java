@@ -138,8 +138,15 @@ public class PointAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
      * @param point
      */
     public void addItem(PointBean point){
-        PointBean pointBean = point.clone();
+//        PointBean pointBean = point.clone();
+//        pointBean.setType(1);
+        PointBean pointBean = new PointBean();
         pointBean.setType(1);
+        pointBean.setMapId(point.getMapId());
+        pointBean.setMapName(point.getMapName());
+        pointBean.setPointName(point.getPointName());
+        pointBean.setX(point.getX());
+        pointBean.setY(point.getY());
 
         pointBeanList.add(pointBean);
         notifyDataSetChanged();

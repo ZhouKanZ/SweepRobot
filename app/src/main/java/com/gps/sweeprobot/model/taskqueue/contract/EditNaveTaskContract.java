@@ -91,6 +91,9 @@ public class EditNaveTaskContract {
          *  结束当前的Activity
          */
         void finishActivity();
+
+        /* 显示progress */
+        void showProgress();
     }
 
 }

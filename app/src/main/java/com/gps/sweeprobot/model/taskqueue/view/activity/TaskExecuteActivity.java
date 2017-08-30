@@ -27,8 +27,8 @@ import io.reactivex.schedulers.Schedulers;
 import okhttp3.ResponseBody;
 
 /**
- * @Author : zhoukan
- * @CreateDate : 2017/8/29 0029
+ * @Author       : zhoukan
+ * @CreateDate   : 2017/8/29 0029
  * @Descriptiong : xxx
  */
 
@@ -96,8 +96,9 @@ public class TaskExecuteActivity extends BaseActivity<CreateMapPresenter,CreateM
                 .getController()
                 .getSettings()
                 .setMaxZoom(10)
-                .setRotationEnabled(true);
-
+                .setRotationEnabled(true)
+                .setOverscrollDistance(1000,1000)
+                .disableBounds();
     }
 
     @Override
@@ -174,17 +175,15 @@ public class TaskExecuteActivity extends BaseActivity<CreateMapPresenter,CreateM
 
     @Override
     public void showIutInfoDialog() {
-
     }
 
     @Override
     public void hideIutInfoDialog() {
-
     }
 
     @Override
     public void accept(@NonNull Bitmap bitmap) throws Exception {
-        gpsview.setBackgroud(bitmap);
+        gpsview.setImageBitmap(bitmap);
     }
 
     @Override
