@@ -39,9 +39,9 @@ public class MapManagerModel implements IModel,MapListItem.RequestMapListener{
      * 网络请求图片
      * @param gpsMapBean
      */
-    public void requestMapBitmap(GpsMapBean gpsMapBean, final MapInfo mapInfo){
+    private void requestMapBitmap(GpsMapBean gpsMapBean, final MapInfo mapInfo){
 
-        LogManager.i(UrlHelper.BASE_URL + "maps/2/2.jpg");
+        LogManager.i(UrlHelper.BASE_URL + gpsMapBean.getCompletedMapUrl()+"map manager");
 
         Http.getHttpService()
                 .getMapList(UrlHelper.BASE_URL + gpsMapBean.getCompletedMapUrl())
@@ -49,8 +49,7 @@ public class MapManagerModel implements IModel,MapListItem.RequestMapListener{
                 .map(new Function<ResponseBody, Bitmap>() {
                     @Override
                     public Bitmap apply(@NonNull ResponseBody responseBody) throws Exception {
-                        Bitmap map = BitmapFactory.decodeStream(responseBody.byteStream());
-                        return map;
+                        return BitmapFactory.decodeStream(responseBody.byteStream());
                     }
                 })
                 .observeOn(AndroidSchedulers.mainThread())
@@ -78,14 +77,7 @@ public class MapManagerModel implements IModel,MapListItem.RequestMapListener{
                     }
                 });
     }
-    /**
-     *
-     * @param infoHint
-     */
-    public void requestMapListData(final MapInfoModel.InfoHint infoHint) {
 
-
-    }
 
     /**
      *  从数据库获取地图数据

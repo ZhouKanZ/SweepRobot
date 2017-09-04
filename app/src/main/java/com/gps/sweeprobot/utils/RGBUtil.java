@@ -44,14 +44,14 @@ public class RGBUtil {
     private static int getPixel(ImageView imageView, PointF pointF){
         Bitmap bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
 
+        //当位置选在了图片外面时返回0
         if (pointF.x<0 || pointF.y<0){
             return 0;
         }
         if (bitmap.getWidth() < pointF.x)
             return -1;
 
-        int pixel = bitmap.getPixel(((int) pointF.x), ((int) pointF.y));
-        return pixel;
+        return bitmap.getPixel(((int) pointF.x), ((int) pointF.y));
     }
 
 

@@ -38,7 +38,7 @@ public class CommunicationUtil {
     public static void sendPoint2Ros(PointBean pointBean,int type){
 
         NavPose navPose = new NavPose();
-        navPose.setMapid(pointBean.getMapId());
+        navPose.setMapid(3);
         navPose.setMapname(pointBean.getMapName());
         navPose.setId(pointBean.getId());
         navPose.setName(pointBean.getPointName());
@@ -139,6 +139,8 @@ public class CommunicationUtil {
                     @Override
                     public void accept(@io.reactivex.annotations.NonNull List<VirtualObstacleBean> obstacleList) throws Exception {
 
+                        if (obstacleList.size() == 0)
+                            return;
                         List<Integer> mapIdList = new ArrayList<>();
                         for (VirtualObstacleBean obstacleBean : obstacleList) {
 

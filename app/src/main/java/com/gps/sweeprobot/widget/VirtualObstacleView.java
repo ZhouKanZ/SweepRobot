@@ -26,9 +26,11 @@ import java.util.List;
 public class VirtualObstacleView extends View {
 
     //保存一个完整的虚拟墙顶点数
-    private List<MyPointF> FinishedList;
+    private List<MyPointF> finishedList;
+
     //保存还在绘制的虚拟墙顶点数
     private List<MyPointF> drawingList;
+
     //pinchImageView 的变换矩阵
     private Matrix mMatrix;
     private Paint linePaint;
@@ -61,28 +63,28 @@ public class VirtualObstacleView extends View {
 
     private void init() {
 
-        FinishedList = new ArrayList<>();
+        finishedList = new ArrayList<>();
         drawingList = new ArrayList<>();
         mMatrix = new Matrix();
 
         linePaint = new Paint();
         linePaint.setAntiAlias(true);
         linePaint.setStyle(Paint.Style.FILL_AND_STROKE);
-        linePaint.setColor(getResources().getColor(R.color.color_red_ccfa3c55));
+        linePaint.setColor(getResources().getColor(R.color.color_red_ccfa3c55,null));
         linePaint.setStrokeWidth(DensityUtil.dip2px(getContext(), 2.0f));
 
         polygonPaint = new Paint();
         polygonPaint.setStyle(Paint.Style.FILL_AND_STROKE);
-        polygonPaint.setColor(getResources().getColor(R.color.color_yellow_b39729));
+        polygonPaint.setColor(getResources().getColor(R.color.color_green_00ae8c,null));
         polygonPaint.setStrokeWidth(DensityUtil.dip2px(getContext(), 2.0f));
 
         circlePaint = new Paint();
         circlePaint.setAntiAlias(true);
         circlePaint.setStyle(Paint.Style.STROKE);
-        circlePaint.setStrokeWidth(DensityUtil.dip2px(getContext(), 5.0f));
+        circlePaint.setStrokeWidth(DensityUtil.dip2px(getContext(), 2.0f));
 
         textPaint = new TextPaint(1);
-        textPaint.setColor(getResources().getColor(R.color.color_red_f04c62));
+        textPaint.setColor(getResources().getColor(R.color.color_blue_0888ff,null));
         textPaint.setTextSize(DensityUtil.getDimen(R.dimen.text_size_12));
 
 //        setBackgroundColor(getResources().getColor(R.color.color_activity_blue_bg));
@@ -105,7 +107,7 @@ public class VirtualObstacleView extends View {
 
     public void setFinishedList(List<MyPointF> pointFList) {
         isFinish = true;
-        FinishedList = pointFList;
+        finishedList = pointFList;
         invalidate();
     }
 
@@ -124,16 +126,16 @@ public class VirtualObstacleView extends View {
         return drawingList;
     }
 
-    public void drawPolygons(Canvas canvas) {
+    private void drawPolygons(Canvas canvas) {
 
         if (isFinish){
-            drawPath(FinishedList,canvas);
+            drawPath(finishedList,canvas);
         }else {
             drawPath(drawingList,canvas);
         }
     }
 
-    public void drawPath(List<MyPointF> pointFList, Canvas canvas) {
+    private void drawPath(List<MyPointF> pointFList, Canvas canvas) {
 
         Path path = new Path();
 
@@ -148,21 +150,19 @@ public class VirtualObstacleView extends View {
                 path.moveTo(start.x, start.y);
                 nameX = start.x;
                 nameY = start.y;
-                continue;
+
+            }else {
+                PointF intermediate = DegreeManager.
+                        changeAbsolutePoint(pointFList.get(i).getX(), pointFList.get(i).getY(), mMatrix);
+                LogManager.i("intermediate =========[" + intermediate.x + "," + intermediate.y + "]");
+                path.lineTo(intermediate.x, intermediate.y);
+                nameX += intermediate.x;
+                nameY += intermediate.y;
             }
-
-
-            PointF intermediate = DegreeManager.
-                    changeAbsolutePoint(pointFList.get(i).getX(), pointFList.get(i).getY(), mMatrix);
-            LogManager.i("intermediate =========[" + intermediate.x + "," + intermediate.y + "]");
-            path.lineTo(intermediate.x, intermediate.y);
-            nameX += intermediate.x;
-            nameY += intermediate.y;
-
         }
         path.close();
 
-        canvas.drawPath(path, circlePaint);
+        canvas.drawPath(path, polygonPaint);
 
         if (getName() != null) {
 
@@ -181,22 +181,21 @@ public class VirtualObstacleView extends View {
 
     public void setName(String name) {
 
-        this.name = name;
+         this.name = name;
 
     }
 
-    public String getName() {
+    private String getName() {
         return name;
     }
 
     public void saveObstacleBean(SaveObstacleListener listener) {
 
-        LogManager.i("drawing list size =====" + drawingList.size());
         // 虚拟墙绘制完成
         isFinish = true;
-        drawingList.clear();
-        listener.onSaveObstacle(FinishedList, name);
-        LogManager.i("finished list size =======" + FinishedList.size());
+        finishedList = drawingList;
+        listener.onSaveObstacle(finishedList, name);
+        LogManager.i("finished list size =======" + finishedList.size());
         postInvalidate();
     }
 

@@ -23,8 +23,10 @@ import com.gps.sweeprobot.utils.ToastManager;
 import org.litepal.crud.DataSupport;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import io.reactivex.Flowable;
 import io.reactivex.annotations.NonNull;
@@ -44,7 +46,7 @@ public class GpsImageView extends FrameLayout {
     //存放虚拟墙view集合
     private List<VirtualObstacleView> obstacleList;
 
-    VirtualObstacleView obstacleView;
+    private VirtualObstacleView obstacleView;
     private int locationViewSize = 15;
 
     private FrameLayout.LayoutParams commonParams;
@@ -52,6 +54,7 @@ public class GpsImageView extends FrameLayout {
     //保存标记点的监听对象
     private SavePointDataListener onSaveListener;
 
+    private Map<String,VirtualObstacleView> wallMap = new HashMap<>();
 
     public GpsImageView(Context context) {
         super(context);
@@ -100,15 +103,16 @@ public class GpsImageView extends FrameLayout {
             }
         });
 
-        obstacleView = new VirtualObstacleView(getContext());
-        obstacleView.setLayoutParams(commonParams);
-        addView(obstacleView);
-        obstacleView.setAdd(true);
+//        obstacleView = new VirtualObstacleView(getContext());
+//        obstacleView.setLayoutParams(commonParams);
+//        addView(obstacleView);
+//        obstacleView.setAdd(true);
 
     }
 
     /**
      * 矩阵变化监听
+     *
      * @param matrix
      */
     private void changePoint(final Matrix matrix) {
@@ -121,7 +125,7 @@ public class GpsImageView extends FrameLayout {
                         PointF pointF = DegreeManager.changeAbsolutePoint(coordinateView.imageViewX, coordinateView.imageViewY, matrix);
                         coordinateView.setPositionViewX(pointF.x);
                         coordinateView.setPositionViewY(pointF.y);
-                        
+
 //                        LogManager.i("change point pointx========="+pointF.x+"\npointy============"+pointF.y);
                     }
                 });
@@ -134,7 +138,11 @@ public class GpsImageView extends FrameLayout {
 //                        virtualObstacleView.setSaveObstacleListener(onSaveObstacleListener);
                     }
                 });
-        obstacleView.setmMatrix(matrix);
+
+        if (obstacleView != null){
+
+            obstacleView.setmMatrix(matrix);
+        }
 
     }
 
@@ -199,28 +207,29 @@ public class GpsImageView extends FrameLayout {
      */
     private void savePointData(PointF pointF, String pointName) {
 
-        onSaveListener.onSavePoint(pointF,pointName);
+        onSaveListener.onSavePoint(pointF, pointName);
     }
 
-    public interface SavePointDataListener{
+    public interface SavePointDataListener {
 
-        void onSavePoint(PointF pointF,String name);
+        void onSavePoint(PointF pointF, String name);
     }
 
     /**
      * 更新标记点的名称
+     *
      * @param newName 名称
      * @param index   对应标记点view的index
      */
-    public void updateName(String newName, int index,int type) {
+    public void updateName(String newName, int index, int type) {
 
-        if (type == MapEditContract.TYPE_POINT){
+        if (type == MapEditContract.TYPE_POINT) {
 
             coordList.get(index).setPositionName(newName);
             coordList.get(index).postInvalidate();
         }
 
-        if (type == MapEditContract.TYPE_OBSTACLE ){
+        if (type == MapEditContract.TYPE_OBSTACLE) {
 
             obstacleList.get(index).setName(newName);
             obstacleList.get(index).postInvalidate();
@@ -257,9 +266,6 @@ public class GpsImageView extends FrameLayout {
         }
     }
 
-    public void scanAddPoint(String name, int i) {
-    }
-
     public void setImageView(Bitmap bitmap) {
         mapView.setImageBitmap(bitmap);
     }
@@ -268,9 +274,16 @@ public class GpsImageView extends FrameLayout {
         mapView.setImageDrawable(drawable);
     }
 
-    public void setLocation(float locationX, float locationY, double d) {
-    }
+    /**
+     * 开始进行添加虚拟墙操作
+     */
+    public void startAddWall(){
 
+        obstacleView = new VirtualObstacleView(getContext());
+        obstacleView.setLayoutParams(commonParams);
+        obstacleView.setmMatrix(mapView.getCurrentImageMatrix());
+        addView(obstacleView);
+    }
     /**
      * 设置虚拟墙的多边形顶点
      *
@@ -278,12 +291,9 @@ public class GpsImageView extends FrameLayout {
      */
     public void setObstacleRect(PointF pointF) {
 
-        if (obstacleView.isAdd() == false){
-
-            addView(obstacleView);
-        }
         obstacleView.addPoint(pointF);
 
+//        ObstacleUtil.obstacleTake().addPoint(pointF);
     }
 
     /**
@@ -293,16 +303,10 @@ public class GpsImageView extends FrameLayout {
      */
     public void setObstacleName(String name, VirtualObstacleView.SaveObstacleListener listener) {
 
-        VirtualObstacleView wall = new VirtualObstacleView(getContext(), null);
-        wall.setLayoutParams(commonParams);
-        wall.setName(name);
-        wall.setFinishedList(obstacleView.getDrawingList());
-        wall.saveObstacleBean(listener);
-        addView(wall);
-        obstacleList.add(wall);
+        obstacleView.setName(name);
+        obstacleView.saveObstacleBean(listener);
+        obstacleList.add(obstacleView);
 
-        removeView(obstacleView);
-        obstacleView.setAdd(false);
     }
 
     /**
@@ -326,9 +330,132 @@ public class GpsImageView extends FrameLayout {
         postInvalidate();
     }
 
-    public interface OnSetVertice{
+    /**
+     * 顶点设置监听
+     */
+    public interface OnSetVertice {
 
         void setVertice(PointF pointF);
     }
+
+//    /**
+//     * 虚拟墙工具类
+//     */
+//    public static class ObstacleUtil {
+//
+//        private static ObstaclePool mObstcalePool = new ObstaclePool(10);
+//
+//        public static VirtualObstacleView obstacleTake(){
+//            return mObstcalePool.take();
+//        }
+//
+//        public static void obstacleGiven(VirtualObstacleView view){
+//            mObstcalePool.given(view);
+//        }
+//
+//    }
+
+//    /**
+//     * 虚拟墙对象池
+//     */
+//    private static class ObstaclePool extends ObjectPool<VirtualObstacleView> {
+//        /**
+//         * 创建一个对象池
+//         *
+//         * @param size 对象池最大容量
+//         */
+//        public ObstaclePool(int size) {
+//            super(size);
+//        }
+//
+//        @Override
+//        protected VirtualObstacleView newInstance() {
+//            return new VirtualObstacleView(MainApplication.getContext());
+//        }
+//
+//        @Override
+//        protected VirtualObstacleView resetInstance(VirtualObstacleView obj) {
+//            return obj;
+//        }
+//    }
+//
+//    private abstract static class ObjectPool<T> {
+//
+//        /**
+//         * 对象池最大容量
+//         */
+//        private int mSize;
+//
+//        /**
+//         * 对象池
+//         */
+//        private Queue<T> mQueue;
+//
+//        /**
+//         * 创建一个对象池
+//         *
+//         * @param size 对象池最大容量
+//         */
+//        public ObjectPool(int size) {
+//
+//            mSize = size;
+//            mQueue = new LinkedList<>();
+//        }
+//
+//        /**
+//         * 获取一个空闲的对象
+//         * <p>
+//         * 如果对象池为空,则对象池自己会new一个返回.
+//         * 如果对象池内有对象,则取一个已存在的返回.
+//         * take出来的对象用完要记得调用given归还.
+//         * 如果不归还,让然会发生内存抖动,但不会引起泄漏.
+//         *
+//         * @return 可用的对象
+//         * @see #given(Object)
+//         */
+//        public T take() {
+//
+//            if (mQueue.size() == 0) {
+//                //如果池内为空就新建一个返回
+//                return newInstance();
+//            } else {
+//                //对象池里面有就从顶端拿出来一个返回
+//                return resetInstance(mQueue.poll());
+//            }
+//        }
+//
+//        /**
+//         * 归还对象池内申请的对象
+//         * <p>
+//         * 如果归还的对象数量超过对象池容量,那么归还的对象就会被丢弃.
+//         *
+//         * @param obj 归还的对象
+//         * @see #take()
+//         */
+//        public void given(T obj) {
+//
+//            if (obj != null && mQueue.size() < mSize) {
+//                //如果对象池还有空位置就归还对象
+//                mQueue.offer(obj);
+//            }
+//        }
+//
+//        /**
+//         * 实例化对象
+//         *
+//         * @return 创建的对象
+//         */
+//        abstract protected T newInstance();
+//
+//        /**
+//         * 重置对象
+//         * <p>
+//         * 把对象数据清空到就像刚创建的一样.
+//         *
+//         * @param obj 需要被重置的对象
+//         * @return 被重置之后的对象
+//         */
+//        abstract protected T resetInstance(T obj);
+//    }
 
 }

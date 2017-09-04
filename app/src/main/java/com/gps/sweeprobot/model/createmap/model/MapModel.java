@@ -142,19 +142,21 @@ public class MapModel implements CreateMapContract.Model {
 //                .toJSONString());
 //
         gpsMapBean.save();
+        gpsMapBean.setCompletedMapUrl("maps/"+gpsMapBean.getId()+"/"+gpsMapBean.getId()+".jpg");
+        gpsMapBean.update(gpsMapBean.getId());
     }
 
     /**
      * ask ros start
      */
-    public void askStart() {
+    private void askStart() {
         WebSocketHelper.send(JsonCreator.mappingStatus(0).toJSONString());
     }
 
     /**
      * ask ros stop
      */
-    public void askStop() {
+    private void askStop() {
         WebSocketHelper.send(JsonCreator.mappingStatus(1).toJSONString());
     }
 

@@ -38,42 +38,51 @@ import java.util.Map;
 import io.reactivex.Observable;
 import io.reactivex.functions.Consumer;
 
+import static com.gps.sweeprobot.model.mapmanager.presenterimpl.MapEditPresenterImpl.ActionEnum.ACTION_RESET;
+import static com.gps.sweeprobot.model.mapmanager.presenterimpl.MapEditPresenterImpl.ActionEnum.OPERATE_ADD_OBSTACLE;
+import static com.gps.sweeprobot.model.mapmanager.presenterimpl.MapEditPresenterImpl.ActionEnum.OPERATE_ADD_POINT;
+import static com.gps.sweeprobot.model.mapmanager.presenterimpl.MapEditPresenterImpl.ActionEnum.OPERATE_SUB_OBSTACLE;
+import static com.gps.sweeprobot.model.mapmanager.presenterimpl.MapEditPresenterImpl.ActionEnum.OPERATE_SUB_POINT;
+import static com.gps.sweeprobot.model.mapmanager.presenterimpl.MapEditPresenterImpl.DialogStatus.INPUT_DIALOG_ADD;
+import static com.gps.sweeprobot.model.mapmanager.presenterimpl.MapEditPresenterImpl.DialogStatus.INPUT_DIALOG_OBSTACLE;
+import static com.gps.sweeprobot.model.mapmanager.presenterimpl.MapEditPresenterImpl.DialogStatus.INPUT_DIALOG_RENAME;
+
 /**
  * Create by WangJun on 2017/7/19
  */
 
 public class MapEditPresenterImpl extends MapEditPresenter {
 
-    private static String MAP_KEY = "mapEdit";
-    private static String ACTION_KEY = "action_key";
+    private static final String MAP_KEY = "mapEdit";
+    private static final String ACTION_KEY = "action_key";
 
     private List<IAction> actionList;
     private List<GpsMapBean> mapList;
     private ActionItem.ActionOnItemListener listener;
     private MapEditContract.view mapEditView;
 
-    //动作状态
+/*    //动作状态
     public static final int OPERATE_ADD_POINT = 0;
     public static final int OPERATE_SUB_POINT = 1;
     public static final int OPERATE_ADD_PATH = 2;
     public static final int OPERATE_SUB_PATH = 3;
     public static final int OPERATE_ADD_OBSTACLE = 4;
     public static final int OPERATE_SUB_OBSTACLE = 5;
-    public static final int ACTION_RESET = 100;
+    public static final int ACTION_RESET = 100;*/
 
-    private int mAction;
+
+    private ActionEnum mAction;
     private boolean isAdd;
     private boolean isPoint;
 
-    //dialog状态
+ /*   //dialog状态
     public static final int INPUT_DIALOG_ADD = 0;
     public static final int INPUT_DIALOG_RENAME = 1;
     public static final int INPUT_DIALOG_OBSTACLE = 2;
-    public static final int DIALOG_STATUS_RESET = 101;
+    public static final int DIALOG_STATUS_RESET = 101;*/
 
-    private int dialogStatus;
+    private DialogStatus dialogStatus;
     private int position;
-    private int itemIconResid;
 
     //标记点数据，从数据库获取
     private List<PointBean> pointsList;
@@ -86,6 +95,24 @@ public class MapEditPresenterImpl extends MapEditPresenter {
 
     private Map<String,ActionItem> itemMap = new HashMap<>();
     private String mapName;
+
+    //动作状态
+    enum ActionEnum{
+        OPERATE_ADD_POINT,
+        OPERATE_SUB_POINT,
+        OPERATE_ADD_PATH,
+        OPERATE_SUB_PATH,
+        OPERATE_ADD_OBSTACLE,
+        OPERATE_SUB_OBSTACLE,
+        ACTION_RESET
+    }
+
+    //dialog状态
+    enum DialogStatus{
+        INPUT_DIALOG_ADD,
+        INPUT_DIALOG_RENAME,
+        INPUT_DIALOG_OBSTACLE
+    }
 
     public MapEditPresenterImpl(ActionItem.ActionOnItemListener listener, MapEditContract.view mapEditView) {
 
@@ -103,7 +130,7 @@ public class MapEditPresenterImpl extends MapEditPresenter {
      *
      * @param data
      */
-    public void getPointDataFromSQL(List<PointBean> data) {
+    private void getPointDataFromSQL(List<PointBean> data) {
 
         pointsList.clear();
         pointsList.addAll(data);
@@ -114,7 +141,7 @@ public class MapEditPresenterImpl extends MapEditPresenter {
 
     }
 
-    public void getObstacleDataFormSQL(List<VirtualObstacleBean> data) {
+    private void getObstacleDataFormSQL(List<VirtualObstacleBean> data) {
 
         obstacleBeanList.clear();
         obstacleBeanList.addAll(data);
@@ -197,7 +224,7 @@ public class MapEditPresenterImpl extends MapEditPresenter {
                 });
     }
 
-    public void setActionData() {
+    private void setActionData() {
 
         //获取action的数据
         Observable.just(((ActionModel) getiModelMap().get(ACTION_KEY)))
@@ -283,12 +310,15 @@ public class MapEditPresenterImpl extends MapEditPresenter {
     @Override
     public void obstacleActionOnClick() {
 
+        if (isAdd) {
+            mapEditView.startAddWall();
+            dialogStatus = INPUT_DIALOG_OBSTACLE;
+        }
         mAction = isAdd ? OPERATE_ADD_OBSTACLE : OPERATE_SUB_OBSTACLE;
-        if (isAdd) dialogStatus = INPUT_DIALOG_OBSTACLE;
         isPoint = false;
         actionList.clear();
         actionList.addAll(obstacleBeanList);
-        itemIconResid = R.mipmap.wall;
+        int itemIconResid = R.mipmap.wall;
         mapEditView.setActionRecyclerView();
     }
 
@@ -496,7 +526,7 @@ public class MapEditPresenterImpl extends MapEditPresenter {
      * @param name 新名字
      * @param position item列表的index
      */
-    public void rename(String name, int position) {
+    private void rename(String name, int position) {
 
         if (isPoint){
             pointRename(name,position);
