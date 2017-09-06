@@ -15,3 +15,6 @@
     "op": "call_service",
     "service": "/nav_flag"
 }
+
+
+{"args":{"gridpose":{"angle":0.0,"x":656.0,"y":0.0},"map_id":4,"map_name":"bgbgbg","nav_flag":1},"op":"call_service","service":"/nav_flag"}
