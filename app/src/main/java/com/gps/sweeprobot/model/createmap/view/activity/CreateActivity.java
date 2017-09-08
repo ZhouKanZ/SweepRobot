@@ -165,7 +165,7 @@ public class CreateActivity extends BaseActivity<CreateMapPresenter, CreateMapCo
 
         controlTabs = new ArrayList<>();
         controlTabs.add(new ControlTab(R.mipmap.play,"暂停"));
-        controlTabs.add(new ControlTab(R.mipmap.right,"完成"));
+        controlTabs.add(new ControlTab(R.mipmap.right_blue,"完成"));
         adapter =  new CommonAdapter<ControlTab>(this, R.layout.control_item, controlTabs) {
 
             @Override

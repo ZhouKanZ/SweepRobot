@@ -6,12 +6,15 @@ import android.graphics.BitmapFactory;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
+import com.alibaba.fastjson.JSON;
 import com.gps.sweeprobot.R;
 import com.gps.sweeprobot.base.BasePresenter;
+import com.gps.sweeprobot.bean.WebSocketResult;
 import com.gps.sweeprobot.database.GpsMapBean;
 import com.gps.sweeprobot.database.PointBean;
 import com.gps.sweeprobot.database.Task;
 import com.gps.sweeprobot.http.Http;
+import com.gps.sweeprobot.http.WebSocketHelper;
 import com.gps.sweeprobot.model.taskqueue.contract.EditNaveTaskContract;
 import com.gps.sweeprobot.mvp.IModel;
 
@@ -56,7 +59,6 @@ public class EditNaveTaskPresenter extends BasePresenter<EditNaveTaskContract.Vi
 
     @Override
     public void setData() {
-
     }
 
     public EditNaveTaskPresenter(Context ctz) {
@@ -119,12 +121,31 @@ public class EditNaveTaskPresenter extends BasePresenter<EditNaveTaskContract.Vi
 
     @Override
     public void removePoint() {
+
     }
 
     @Override
     public void saveTask(Task task) {
+
         task.setMapUrl(gpsMapBean.getCompletedMapUrl());
         task.save();
+
+        com.gps.sweeprobot.bean.Task  task1 = new com.gps.sweeprobot.bean.Task();
+        task1.setType(2);
+        task1.setMap_id(task.getMapId());
+        task1.setMap_name(task.getName());
+        task1.setNav_id(task.getPointBeanList());
+
+        task1.setTask_id(task.getId());
+        WebSocketResult<com.gps.sweeprobot.bean.Task> taskWeb = new WebSocketResult<>();
+
+        taskWeb.setOp("call_service");
+        taskWeb.setService("/edit_nav_task");
+        taskWeb.setArgs(task1);
+
+        String taskStr = JSON.toJSONString(taskWeb);
+
+        WebSocketHelper.send(taskStr);
         iView.finishActivity();
     }
 }

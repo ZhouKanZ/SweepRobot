@@ -92,6 +92,10 @@ public class PointBean extends IAction /*implements Cloneable*/ {
         this.type = type;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
 //    @Override
 //    public PointBean clone() {
 //        PointBean clone  = null;

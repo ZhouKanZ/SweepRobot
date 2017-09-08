@@ -9,10 +9,12 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.gps.ros.rosbridge.implementation.JSON;
 import com.gps.sweeprobot.R;
 import com.gps.sweeprobot.base.BaseActivity;
 import com.gps.sweeprobot.bean.NavPose;
@@ -215,11 +217,18 @@ public class TaskQueueActivity extends BaseActivity<TaskQuenePresenter, TaskQueu
                 break;
             case R.id.btn_check:
                 // 查看当前状况
-                TaskExecuteActivity.startSelf(this, TaskExecuteActivity.class, null);
+
+                Bundle b = new Bundle();
+                b.putInt(TaskExecuteActivity.MAP_ID,tasks.get(position).getMapId());
+                b.putInt(TaskExecuteActivity.TASK_ID,tasks.get(position).getId());
+//                tasks.get(position).getMapId()
+                Log.d("send", "onTaskClick: " + tasks.get(position).getMapId());
+                TaskExecuteActivity.startSelf(this, TaskExecuteActivity.class, b);
                 break;
             case R.id.btn_execute:
                 // 执行
                 Task task = tasks.get(position);
+                Log.d("xxx", "onTaskClick: " + com.alibaba.fastjson.JSON.toJSONString(task));
                 mPresenter.executeTask(task);
                 break;
         }

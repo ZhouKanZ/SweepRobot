@@ -17,7 +17,7 @@ public class JsonCreator {
     /**
      *  ros的最大速度
      */
-    private static final double MAX_VELOCITY = 0.5;
+    private static final double MAX_VELOCITY = 0.3;
 
     /**
      *  将角度个长度转成速度

@@ -37,13 +37,13 @@ public class Task extends DataSupport{
     /*
      * 导航点数据   length = 1  表示导航点 length > 1 轨迹任务;
      */
-    private List<PointBean> pointBeanList;
+    private List<Integer> pointBeanList;
 
-    public List<PointBean> getPointBeanList() {
+    public List<Integer> getPointBeanList() {
         return pointBeanList;
     }
 
-    public void setPointBeanList(List<PointBean> pointBeanList) {
+    public void setPointBeanList(List<Integer> pointBeanList) {
         this.pointBeanList = pointBeanList;
     }
 

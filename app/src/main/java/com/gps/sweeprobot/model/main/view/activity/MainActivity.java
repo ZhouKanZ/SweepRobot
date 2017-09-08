@@ -30,8 +30,6 @@ public class MainActivity extends BaseActivity {
     Toolbar toolbar;
     @BindView(R.id.rv_cate)
     RecyclerView rvCate;
-//    @BindView(R.id.cate_refresh_layout)
-//    SwipeRefreshLayout cateRefreshLayout;
 
     private MainAdapter adapter;
     private List<MainTab> tabs;
@@ -70,9 +68,7 @@ public class MainActivity extends BaseActivity {
     }
 
     @Override
-    protected void initListener() {
-
-    }
+    protected void initListener() {}
 
     @Override
     protected int getLayoutId() {
@@ -80,9 +76,7 @@ public class MainActivity extends BaseActivity {
     }
 
     @Override
-    protected void otherViewClick(View view) {
-
-    }
+    protected void otherViewClick(View view) {}
 
 
 

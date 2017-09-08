@@ -16,4 +16,13 @@
         android:layout_below="@+id/toolbar"
         />
 
+    <ImageButton
+        android:id="@+id/ib_fit_complete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@mipmap/right"
+        android:layout_below="@+id/toolbar"
+        android:layout_alignParentRight="true"
+        />
+
 </RelativeLayout>

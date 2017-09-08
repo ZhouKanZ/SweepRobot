@@ -30,7 +30,7 @@ import io.reactivex.functions.Consumer;
  * @CreateDate : 2017/7/14 0014
  * @Descriptiong : xxx
  */
-public class CreateMapPresenter extends BasePresenter<CreateMapContract.View> implements CreateMapContract.Presenter ,RosResponseLisenter {
+public class CreateMapPresenter extends BasePresenter<CreateMapContract.View> implements CreateMapContract.Presenter, RosResponseLisenter {
 
     private static String modelKey = "CreateMapPresenter";
     private Disposable disposable;
@@ -38,7 +38,7 @@ public class CreateMapPresenter extends BasePresenter<CreateMapContract.View> im
     private MapModel model;
 
     public CreateMapPresenter() {
-        model =  ((MapModel)getiModelMap().get(modelKey));
+        model = ((MapModel) getiModelMap().get(modelKey));
     }
 
     /**
@@ -67,7 +67,7 @@ public class CreateMapPresenter extends BasePresenter<CreateMapContract.View> im
          */
         Subscribe subscribe = new Subscribe();
         subscribe.topic = RosProtrocol.NaviPosition.TOPIC;
-        subscribe.type  = RosProtrocol.NaviPosition.TYPE;
+        subscribe.type = RosProtrocol.NaviPosition.TYPE;
         WebSocketHelper.send(subscribe.toJSON());
 
     }
@@ -98,7 +98,7 @@ public class CreateMapPresenter extends BasePresenter<CreateMapContract.View> im
     @Override
     public HashMap<String, IModel> loadModelMap(IModel... models) {
         HashMap<String, IModel> map = new HashMap<>();
-        map.put(modelKey,models[0]);
+        map.put(modelKey, models[0]);
         return map;
     }
 
@@ -130,7 +130,7 @@ public class CreateMapPresenter extends BasePresenter<CreateMapContract.View> im
     /* rxBus 传递过来的数据 */
     @Override
     public void OnReceiverPicture(PicturePose pose) {
-        iView.changeRobotPos(pose.getPosition().getX(),pose.getPosition().getY());
+        iView.changeRobotPos(pose.getPosition().getX(), pose.getPosition().getY());
     }
 
     @Override
@@ -144,11 +144,12 @@ public class CreateMapPresenter extends BasePresenter<CreateMapContract.View> im
         loopDispose = Observable
                 .interval(100, TimeUnit.MILLISECONDS)
                 .subscribe(new Consumer<Long>() {
-                    @Override
-                    public void accept(@NonNull Long aLong) throws Exception {
-                        model.sendVelocityToRos(iView.getVelocity()[0], (float) iView.getVelocity()[1]);
-                    }
-                });
+                               @Override
+                               public void accept(@NonNull Long aLong) throws Exception {
+                                   model.sendVelocityToRos(iView.getVelocity()[0], (float) iView.getVelocity()[1]);
+                               }
+                           }
+                );
     }
 
     @Override

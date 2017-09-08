@@ -147,7 +147,7 @@ public class PointAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         pointBean.setPointName(point.getPointName());
         pointBean.setX(point.getX());
         pointBean.setY(point.getY());
-
+        pointBean.setId(point.getId());
         pointBeanList.add(pointBean);
         notifyDataSetChanged();
     }
