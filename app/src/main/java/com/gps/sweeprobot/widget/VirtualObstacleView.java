@@ -9,6 +9,8 @@ import android.graphics.PointF;
 import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
 
 import com.gps.sweeprobot.R;
 import com.gps.sweeprobot.database.MyPointF;
@@ -43,8 +45,15 @@ public class VirtualObstacleView extends View {
     private boolean isFinish;
     //该view是否已被添加
     private boolean isAdd;
+    //是否取消添加虚拟墙
+    private boolean isCancel;
 
     private Path path;
+
+    private AttributeSet attr;
+
+    private int width;
+    private int height;
 
     public VirtualObstacleView(Context context) {
         super(context);
@@ -53,6 +62,8 @@ public class VirtualObstacleView extends View {
 
     public VirtualObstacleView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        LogManager.i("obstacle 22222222222222");
+        this.attr = attrs;
         init();
     }
 
@@ -70,12 +81,12 @@ public class VirtualObstacleView extends View {
         linePaint = new Paint();
         linePaint.setAntiAlias(true);
         linePaint.setStyle(Paint.Style.FILL_AND_STROKE);
-        linePaint.setColor(getResources().getColor(R.color.color_red_ccfa3c55,null));
+        linePaint.setColor(0xccfa3c55);
         linePaint.setStrokeWidth(DensityUtil.dip2px(getContext(), 2.0f));
 
         polygonPaint = new Paint();
         polygonPaint.setStyle(Paint.Style.FILL_AND_STROKE);
-        polygonPaint.setColor(getResources().getColor(R.color.color_green_00ae8c,null));
+        polygonPaint.setColor(0xff00ae8c);
         polygonPaint.setStrokeWidth(DensityUtil.dip2px(getContext(), 2.0f));
 
         circlePaint = new Paint();
@@ -84,10 +95,11 @@ public class VirtualObstacleView extends View {
         circlePaint.setStrokeWidth(DensityUtil.dip2px(getContext(), 2.0f));
 
         textPaint = new TextPaint(1);
-        textPaint.setColor(getResources().getColor(R.color.color_blue_0888ff,null));
+        textPaint.setColor(0xff333333);
         textPaint.setTextSize(DensityUtil.getDimen(R.dimen.text_size_12));
 
-//        setBackgroundColor(getResources().getColor(R.color.color_activity_blue_bg));
+        isCancel = false;
+//        setBackgroundColor(0x55101010);
     }
 
     public boolean isAdd() {
@@ -122,16 +134,15 @@ public class VirtualObstacleView extends View {
         invalidate();
     }
 
-    public List<MyPointF> getDrawingList() {
-        return drawingList;
-    }
-
     private void drawPolygons(Canvas canvas) {
 
-        if (isFinish){
-            drawPath(finishedList,canvas);
-        }else {
-            drawPath(drawingList,canvas);
+        if (isFinish) {
+            drawPath(finishedList, canvas);
+        } else {
+            if (isCancel){
+                drawingList.clear();
+            }
+            drawPath(drawingList, canvas);
         }
     }
 
@@ -150,11 +161,12 @@ public class VirtualObstacleView extends View {
                 path.moveTo(start.x, start.y);
                 nameX = start.x;
                 nameY = start.y;
+                canvas.drawPoint(start.x,start.y,polygonPaint);
 
-            }else {
+            } else {
                 PointF intermediate = DegreeManager.
                         changeAbsolutePoint(pointFList.get(i).getX(), pointFList.get(i).getY(), mMatrix);
-                LogManager.i("intermediate =========[" + intermediate.x + "," + intermediate.y + "]");
+//                LogManager.i("intermediate =========[" + intermediate.x + "," + intermediate.y + "]");
                 path.lineTo(intermediate.x, intermediate.y);
                 nameX += intermediate.x;
                 nameY += intermediate.y;
@@ -162,6 +174,7 @@ public class VirtualObstacleView extends View {
         }
         path.close();
 
+//        setViewPosition();
         canvas.drawPath(path, polygonPaint);
 
         if (getName() != null) {
@@ -172,16 +185,109 @@ public class VirtualObstacleView extends View {
 
     }
 
+/*    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+
+        width = getDefaultSize(getSuggestedMinimumWidth(), widthMeasureSpec);
+        height = getDefaultSize(getSuggestedMinimumHeight(), heightMeasureSpec);
+        LogManager.i("onMeasure   width=========" + width + "  height===========" + height);
+
+        setMeasuredDimension(width, height);
+
+    }*/
+
+    private void setViewPosition() {
+
+        if (finishedList.size() > 0) {
+
+            float[] x = new float[finishedList.size()];
+            float[] y = new float[finishedList.size()];
+
+            for (int i = 0; i < finishedList.size(); i++) {
+
+                PointF pointF = DegreeManager.changeAbsolutePoint(finishedList.get(i).getX(),
+                        finishedList.get(i).getY(), mMatrix);
+
+                x[i] = pointF.x;
+                y[i] = pointF.y;
+            }
+
+            float[] sequenceX = sequence(x);
+            float[] sequenceY = sequence(y);
+
+            int marginLeft = (int) sequenceX[0];
+            int marginTop = (int) sequenceY[0];
+            int marginRight = width - (int) sequenceX[sequenceX.length - 1];
+            int marginBottom = height - (int) sequenceY[sequenceY.length - 1];
+
+            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+            );
+            params.leftMargin = marginLeft;
+            params.topMargin = marginTop;
+            params.rightMargin = marginRight;
+            params.bottomMargin = marginBottom;
+
+            setLayoutParams(params);
+            setMeasuredDimension(width - marginLeft - marginRight + DensityUtil.dip2px(10),
+                    height - marginTop - marginBottom + DensityUtil.dip2px(10));
+        }
+    }
+
+    /**
+     * 冒泡排序
+     *
+     * @param coordinates
+     */
+    private float[] sequence(float[] coordinates) {
+
+        float[] coords;
+        for (int i = 0; i < coordinates.length - 1; i++) {
+
+            for (int j = 0; j < coordinates.length - i - 1; j++) {
+                if (coordinates[j] > coordinates[j + 1]) {
+                    float temp = coordinates[j];
+                    coordinates[j] = coordinates[j + 1];
+                    coordinates[j + 1] = temp;
+                }
+            }
+        }
+        coords = coordinates;
+
+        return coords;
+    }
+
+    public static int getDefaultSize(int size, int measureSpec) {
+
+        int result = size;
+        int specMode = MeasureSpec.getMode(measureSpec);
+        int specSize = MeasureSpec.getSize(measureSpec);
+
+        switch (specMode) {
+
+            case MeasureSpec.UNSPECIFIED:
+                result = size;
+                break;
+            case MeasureSpec.AT_MOST:
+            case MeasureSpec.EXACTLY:
+                result = specSize;
+                break;
+        }
+        return result;
+    }
 
     @Override
     protected void onDraw(Canvas canvas) {
 
+        LogManager.i("obstacle on draw");
         drawPolygons(canvas);
+
     }
 
     public void setName(String name) {
 
-         this.name = name;
+        this.name = name;
 
     }
 
@@ -197,6 +303,11 @@ public class VirtualObstacleView extends View {
         listener.onSaveObstacle(finishedList, name);
         LogManager.i("finished list size =======" + finishedList.size());
         postInvalidate();
+    }
+
+    public void cancelAddView(){
+        isCancel = true;
+        invalidate();
     }
 
     public interface SaveObstacleListener {

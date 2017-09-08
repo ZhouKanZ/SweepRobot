@@ -93,7 +93,6 @@ public class GpsImageView extends FrameLayout {
         );
 
         mapView.setLayoutParams(layoutParams);
-        mapView.setLayoutParams(layoutParams);
         addView(mapView);
 
         this.mapView.addOuterMatrixChangedListener(new PinchImageView.OuterMatrixChangedListener() {
@@ -158,7 +157,11 @@ public class GpsImageView extends FrameLayout {
         PointF pointF = DegreeManager.changeRelativePoint(screenX, screenY, mapView.getCurrentImageMatrix());
 
         int redValue = RGBUtil.getRedValue(mapView, pointF);
-        if (redValue == 254) {
+        int greenValue = RGBUtil.getGreenValue(mapView, pointF);
+        int blueValue = RGBUtil.getBlueValue(mapView, pointF);
+
+        if (redValue > 235 && greenValue > 235 && blueValue > 235 &&
+                redValue <= 255 && greenValue <= 255 && blueValue <= 255) {
 
             LogManager.i("pointx=======" + pointF.x + "\npointy=========" + pointF.y);
             addPoint(pointF.x, pointF.y, pointName);
@@ -322,6 +325,17 @@ public class GpsImageView extends FrameLayout {
         obstacleView.setName(name);
         addView(obstacleView);
         obstacleList.add(obstacleView);
+    }
+
+    /**
+     * 取消添加虚拟墙
+     */
+    public void cancelAddObstacleView(){
+
+        if (obstacleView != null){
+
+            obstacleView.cancelAddView();
+        }
     }
 
     public void removeObstacleView(String name, int position) {

@@ -20,6 +20,8 @@
 package com.gps.ros.rosbridge;
 
 
+import android.support.annotation.NonNull;
+
 import com.gps.ros.message.Message;
 import com.gps.ros.message.MessageType;
 import com.gps.ros.rosapi.message.*;
@@ -222,7 +224,7 @@ public class ROSBridgeClient extends ROSClient {
         return client;
     }
 
-
+    @NonNull
     public ROSBridgeWebSocketClient getClient() {
         return client;
     }

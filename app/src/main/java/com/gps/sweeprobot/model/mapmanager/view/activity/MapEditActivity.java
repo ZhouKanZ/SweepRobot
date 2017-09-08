@@ -210,6 +210,7 @@ public class MapEditActivity extends BaseActivity<MapEditPresenter, IView> imple
             case R.id.dialog_add_point_cancel:
 
                 dismissInputNameDialog();
+                gpsImageView.cancelAddObstacleView();
                 break;
 
             case R.id.dialog_add_point_sure:

@@ -61,25 +61,9 @@ public class MapEditPresenterImpl extends MapEditPresenter {
     private ActionItem.ActionOnItemListener listener;
     private MapEditContract.view mapEditView;
 
-/*    //动作状态
-    public static final int OPERATE_ADD_POINT = 0;
-    public static final int OPERATE_SUB_POINT = 1;
-    public static final int OPERATE_ADD_PATH = 2;
-    public static final int OPERATE_SUB_PATH = 3;
-    public static final int OPERATE_ADD_OBSTACLE = 4;
-    public static final int OPERATE_SUB_OBSTACLE = 5;
-    public static final int ACTION_RESET = 100;*/
-
-
     private ActionEnum mAction;
     private boolean isAdd;
     private boolean isPoint;
-
- /*   //dialog状态
-    public static final int INPUT_DIALOG_ADD = 0;
-    public static final int INPUT_DIALOG_RENAME = 1;
-    public static final int INPUT_DIALOG_OBSTACLE = 2;
-    public static final int DIALOG_STATUS_RESET = 101;*/
 
     private DialogStatus dialogStatus;
     private int position;
