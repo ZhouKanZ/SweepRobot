@@ -92,4 +92,9 @@ public class PointBean extends IAction{
         this.type = type;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
+
 }

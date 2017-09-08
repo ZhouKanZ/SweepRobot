@@ -74,19 +74,16 @@ public class IpPresenter extends BasePresenter<IpContract.View> implements IpCon
                         iView.startAct();
                     }
                 });
-
             }
 
             @Override
             public void onDisconnect(boolean normal, String reason, int code) {
-
                 mHandler.post(new Runnable() {
                     @Override
                     public void run() {
                         iView.hideProgress();
                     }
                 });
-
             }
 
             @Override

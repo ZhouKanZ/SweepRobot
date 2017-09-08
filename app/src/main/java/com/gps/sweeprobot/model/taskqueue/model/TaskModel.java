@@ -1,8 +1,15 @@
 package com.gps.sweeprobot.model.taskqueue.model;
 
+import android.util.Log;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.gps.sweeprobot.bean.FitParams;
+import com.gps.sweeprobot.bean.WebSocketResult;
 import com.gps.sweeprobot.database.GpsMapBean;
 import com.gps.sweeprobot.database.PointBean;
 import com.gps.sweeprobot.database.Task;
+import com.gps.sweeprobot.http.WebSocketHelper;
 import com.gps.sweeprobot.model.taskqueue.contract.TaskQueueContract;
 
 import org.litepal.crud.DataSupport;
@@ -41,7 +48,40 @@ public class TaskModel implements TaskQueueContract.Model {
 
     @Override
     public void executeTask(Task task) {
-        // 向服务器发送数据
+//        // 向服务器发送数据
+////        int32 map_id
+////        string map_name
+////        int32 task_id
+////        int32 rate
+//
+////        ---float64[] data
+////        string errormsg
+////        bool successed
+//
+////        execute_nav_task
+//        JSONObject jsonTask = new JSONObject();
+//        jsonTask.put("map_id",task.getMapId());
+//        jsonTask.put("map_name",task.getName());
+//        jsonTask.put("task_id",task.getId());
+//        jsonTask.put("rate",1);
+
+
+        WebSocketResult<ExecuteTaskModel> execute = new WebSocketResult();
+        execute.setService("/execute_nav_task");
+        execute.setOp("call_service");
+        ExecuteTaskModel exe = new ExecuteTaskModel();
+        GpsMapBean gmb = DataSupport.find(GpsMapBean.class,task.getMapId());
+        exe.setMap_name(gmb.getName());
+        exe.setTask_id(task.getId());
+        exe.setMap_id(task.getMapId());
+        exe.setRate(1);
+//        exe.setNav_flag(1);
+
+        execute.setArgs(exe);
+
+        Log.d("tag", "executeTask: " + JSON.toJSONString(execute));
+
+        WebSocketHelper.send(JSON.toJSONString(execute));
     }
 
 

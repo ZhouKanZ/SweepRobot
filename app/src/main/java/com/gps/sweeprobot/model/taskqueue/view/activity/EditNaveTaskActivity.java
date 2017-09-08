@@ -183,7 +183,15 @@ public class EditNaveTaskActivity extends BaseActivity<EditNaveTaskPresenter, Ed
                 task.setType(typeId);
                 task.setMapId(mapId);
                 task.setCreateTime();
-                task.setPointBeanList(selectedAdapter.getdata());
+
+//                int[] ids = new int[selectedAdapter.getdata().size()];
+                List<Integer> ids = new ArrayList<>();
+                for (int i = 0; i < selectedAdapter.getdata().size() ; i++) {
+                    // // TODO: 2017/9/6 0006
+                    ids.add(selectedAdapter.getdata().get(i).getId());
+                }
+                task.setPointBeanList(ids);
+                Log.d("ids", "onViewClicked: " + ids);
                 task.setName(taskName);
                 mPresenter.saveTask(task);
                 break;
@@ -242,6 +250,11 @@ public class EditNaveTaskActivity extends BaseActivity<EditNaveTaskPresenter, Ed
     public void finishActivity() {
         this.finish();
         TaskQueueActivity.startSelf(this,TaskQueueActivity.class,null);
+    }
+
+    @Override
+    public void showProgress() {
+
     }
 
     /* 加号事件 */

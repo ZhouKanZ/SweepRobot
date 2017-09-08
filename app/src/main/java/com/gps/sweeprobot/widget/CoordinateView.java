@@ -27,8 +27,8 @@ public class CoordinateView extends ViewGroup {
     private static final int VIEWSIZE = 10;
 
     private float angle;
-    public float imageViewX;
-    public float imageViewY;
+    public  float imageViewX;
+    public  float imageViewY;
     private boolean isShowArrow = false;
     private boolean isShowPointName = true;
     private float locationX;
@@ -64,7 +64,6 @@ public class CoordinateView extends ViewGroup {
         mainPositionRes = defStyleRes;
         initPaint();
     }
-
 
     private int computeMaxStringWidth(String str, Paint paint) {
         return (int) (Math.max(paint.measureText(str), 0.0F) + 0.5D);

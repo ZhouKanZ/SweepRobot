@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <litepal>
     <dbname value="gps"/>
-    <version value="15" />
+
+    <version value="17" />
 
     <list>
         <mapping class="com.gps.sweeprobot.database.GpsMapBean"/>
