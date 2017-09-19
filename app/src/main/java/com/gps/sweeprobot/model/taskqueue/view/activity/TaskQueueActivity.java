@@ -35,9 +35,9 @@ import butterknife.OnClick;
  * @Descriptiong : xxx
  */
 public class TaskQueueActivity extends BaseActivity<TaskQuenePresenter, TaskQueueContract.View>
-        implements TaskQueueContract.View,
-        SwipeRefreshLayout.OnRefreshListener
-        , TaskAdapter.OnTaskClickListener {
+        implements  TaskQueueContract.View,
+                    SwipeRefreshLayout.OnRefreshListener,
+                    TaskAdapter.OnTaskClickListener {
 
     @BindView(R.id.iv_back)
     ImageView ivBack;

@@ -43,4 +43,9 @@ public abstract class MapEditPresenter extends BasePresenter<MapEditActivity> {
     public abstract void savePoint(PointF pointF,String pointName);
 
     public abstract void saveObstacle(List<MyPointF> myPointFs,String name);
+
+
+    public abstract void exitMap();
+
+    public abstract void enterMap();
 }

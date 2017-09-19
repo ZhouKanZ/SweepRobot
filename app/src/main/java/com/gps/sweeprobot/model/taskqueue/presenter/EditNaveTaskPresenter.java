@@ -39,6 +39,8 @@ import okhttp3.ResponseBody;
  */
 public class EditNaveTaskPresenter extends BasePresenter<EditNaveTaskContract.View> implements EditNaveTaskContract.Presenter {
 
+    private static final String TAG = "EditNaveTaskPresenter";
+
     private GpsMapBean gpsMapBean;
     private Context ctz;
 
@@ -74,6 +76,7 @@ public class EditNaveTaskPresenter extends BasePresenter<EditNaveTaskContract.Vi
             public <T> void onFinish(T t) {
                 gpsMapBean = (GpsMapBean) t;
                 String url = gpsMapBean.getId() + "/"+gpsMapBean.getId()+".jpg";
+                Log.d(TAG, "onFinish: " + url);
                 Http.getHttpService()
                         .downInetImage(url)
                         .map(new Function<ResponseBody, Bitmap>() {

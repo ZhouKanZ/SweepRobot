@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.graphics.PointF;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -12,18 +13,20 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.alexvasilkov.gestures.GestureController;
+import com.alexvasilkov.gestures.State;
 import com.gps.ros.response.LaserPose;
-import com.gps.ros.rosbridge.implementation.JSON;
 import com.gps.sweeprobot.R;
 import com.gps.sweeprobot.base.BaseActivity;
 import com.gps.sweeprobot.bean.FitParams;
-import com.gps.sweeprobot.bean.Position;
 import com.gps.sweeprobot.bean.WebSocketResult;
 import com.gps.sweeprobot.database.GpsMapBean;
 import com.gps.sweeprobot.http.Http;
 import com.gps.sweeprobot.http.WebSocketHelper;
 import com.gps.sweeprobot.model.createmap.contract.CreateMapContract;
 import com.gps.sweeprobot.model.createmap.presenter.CreateMapPresenter;
+import com.gps.sweeprobot.utils.DegreeManager;
+import com.gps.sweeprobot.utils.JsonCreator;
 import com.gps.sweeprobot.widget.GpsView;
 
 import org.litepal.crud.DataSupport;
@@ -31,7 +34,6 @@ import org.litepal.crud.DataSupport;
 import java.util.List;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
@@ -95,6 +97,7 @@ public class TaskExecuteActivity extends BaseActivity<CreateMapPresenter, Create
     @Override
     protected void initData() {
 
+        Log.d(TAG, "initData: ");
         Intent intent = getIntent();
         if (intent != null){
             Bundle bundle = intent.getBundleExtra(TaskExecuteActivity.class.getSimpleName());
@@ -112,8 +115,9 @@ public class TaskExecuteActivity extends BaseActivity<CreateMapPresenter, Create
         mPresenter.subscribe();
         mPresenter.registerRxBus();
 
+        Log.e(TAG, "initData: " + "maps/"+map_id+"/"+map_id+".jpg");
         Http.getHttpService()
-                .downInetImage("maps/now/map.jpg")
+                .downInetImage("maps/"+map_id+"/"+map_id+".jpg")
                 .map(new Function<ResponseBody, Bitmap>() {
                     @Override
                     public Bitmap apply(@NonNull ResponseBody responseBody) throws Exception {
@@ -131,7 +135,7 @@ public class TaskExecuteActivity extends BaseActivity<CreateMapPresenter, Create
                 .subscribe(this, new Consumer<Throwable>() {
                     @Override
                     public void accept(@NonNull Throwable throwable) throws Exception {
-                        Log.d("xx", "accept: ");
+//                        Log.d("xx", "accept: ");
                     }
                 });
 
@@ -143,6 +147,10 @@ public class TaskExecuteActivity extends BaseActivity<CreateMapPresenter, Create
                 .setOverscrollDistance(1000, 1000)
                 .setZoomEnabled(false)
                 .disableBounds();
+
+        // 进入
+        WebSocketHelper.send(JsonCreator.mappingStatus(6,gpsMapBean.getId(),gpsMapBean.getName(),"/var/www/maps").toJSONString());
+
     }
 
     @Override
@@ -217,6 +225,11 @@ public class TaskExecuteActivity extends BaseActivity<CreateMapPresenter, Create
     }
 
     @Override
+    public void showCompleteDialog(String msg, int type) {
+
+    }
+
+    @Override
     public void accept(@NonNull Bitmap bitmap) throws Exception {
         gpsview.setImageBitmap(bitmap);
     }
@@ -225,6 +238,7 @@ public class TaskExecuteActivity extends BaseActivity<CreateMapPresenter, Create
     protected void onDestroy() {
         super.onDestroy();
         mPresenter.unregisterRxBus();
+        WebSocketHelper.send(JsonCreator.mappingStatus(7,gpsMapBean.getId(),gpsMapBean.getName(),"/var/www/maps").toJSONString());
     }
 
     @OnClick({R.id.iv_back, R.id.ib_fit_complete})
@@ -234,6 +248,7 @@ public class TaskExecuteActivity extends BaseActivity<CreateMapPresenter, Create
                 this.finish();
                 break;
             case R.id.ib_fit_complete:
+                // 需要在操作之前获取到没有发生变化前时的 ---
                 Matrix matrix = gpsview.completeFit();
                 convertPositionAfterFit(matrix);
                 break;
@@ -248,16 +263,9 @@ public class TaskExecuteActivity extends BaseActivity<CreateMapPresenter, Create
         if (gpsMapBean == null){
             return;
         }
+
         float[] matrixValues = new float[9];
         matrix.getValues(matrixValues);
-
-        //        for (int i = 0; i <matrixValues.length ; i++) {
-        //            Log.d("xxx--------", "convertPositionAfterFit: " + matrixValues[i]);
-        //        }
-        //
-        //        double a = Math.atan(matrixValues[3]/matrixValues[4]);
-        //        Log.d("a", "convertPositionAfterFit: " + a);
-
         WebSocketResult<FitParams> fit = new WebSocketResult();
         fit.setService("/nav_flag");
         fit.setOp("call_service");
@@ -265,11 +273,12 @@ public class TaskExecuteActivity extends BaseActivity<CreateMapPresenter, Create
         fitP.setMap_id(gpsMapBean.getId());
         fitP.setMap_name(gpsMapBean.getName());
         fitP.setNav_flag(1);
-//        fitP.setTask_id(task_id);
-            FitParams.Gridpose gridPose = new FitParams.Gridpose();
-            gridPose.setX(matrixValues[2]);
-            gridPose.setY(matrixValues[5]);
-            gridPose.setAngle((float) Math.atan(matrixValues[3]/matrixValues[4]));
+        FitParams.Gridpose gridPose = new FitParams.Gridpose();
+
+        PointF pointF = DegreeManager.changeRelativePoint(gpsview.getRobotPosition()[0],gpsview.getRobotPosition()[1],matrix);
+        gridPose.setX(pointF.x);
+        gridPose.setY(pointF.y);
+        gridPose.setAngle((float) Math.atan(matrixValues[3]/matrixValues[4]));
         fitP.setGridpose(gridPose);
         fit.setArgs(fitP);
 

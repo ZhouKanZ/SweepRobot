@@ -24,6 +24,7 @@ import android.widget.TextView;
 
 import com.gps.sweeprobot.R;
 import com.gps.sweeprobot.base.BaseActivity;
+import com.gps.sweeprobot.database.GpsMapBean;
 import com.gps.sweeprobot.database.MyPointF;
 import com.gps.sweeprobot.model.main.bean.ToolbarOptions;
 import com.gps.sweeprobot.model.mapmanager.adaper.item.ActionItem;
@@ -105,6 +106,8 @@ public class MapEditActivity extends BaseActivity<MapEditPresenter, IView> imple
         bundle = getIntent().getBundleExtra(this.getClass().getSimpleName());
         mPresenter.setBundle(bundle);
         mPresenter.setData();
+
+        mPresenter.enterMap();
 
 
     }
@@ -385,6 +388,7 @@ public class MapEditActivity extends BaseActivity<MapEditPresenter, IView> imple
 
     }
 
+
     public void showInputNameDialog() {
         dialogPlus.show();
     }
@@ -486,7 +490,9 @@ public class MapEditActivity extends BaseActivity<MapEditPresenter, IView> imple
         actionDialog = null;
         dialogPlus = null;
         mPresenter.onDestroy();
+        mPresenter.exitMap();
         super.onDestroy();
+
     }
 
     /**
@@ -510,4 +516,5 @@ public class MapEditActivity extends BaseActivity<MapEditPresenter, IView> imple
     public void onSaveObstacle(List<MyPointF> myPointFs, String name) {
         mPresenter.saveObstacle(myPointFs, name);
     }
+
 }

@@ -112,10 +112,12 @@ public class CreateMapPresenter extends BasePresenter<CreateMapContract.View> im
 
     @Override
     public void setData() {
-
     }
 
 
+    /**
+     *  根据上面的订阅来用RxBus接收消息
+     */
     @Override
     public void registerRxBus() {
         model.registerRxBus();
@@ -156,4 +158,31 @@ public class CreateMapPresenter extends BasePresenter<CreateMapContract.View> im
     public void stopLoop() {
         loopDispose.dispose();
     }
+
+    @Override
+    public void cancel(GpsMapBean gpsbean) {
+        model.cancel(gpsbean);
+    }
+
+    @Override
+    public GpsMapBean getGpsMapBean(){
+        return model.getGpsMapBean();
+    }
+
+    @Override
+    public void clearId() {
+        model.clearCurrentId();
+    }
+
+    @Override
+    public void saveTempMap(GpsMapBean gpsbean) {
+        model.saveTempMap(gpsbean);
+    }
+
+    @Override
+    public void clearMap(GpsMapBean gpsMapBean) {
+        model.clearCurrentMap(gpsMapBean);
+    }
+
+
 }

@@ -2,8 +2,10 @@ package com.gps.sweeprobot.model.createmap.view.activity;
 
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -19,6 +21,7 @@ import android.widget.Toast;
 
 import com.alexvasilkov.gestures.views.GestureFrameLayout;
 import com.gps.ros.response.LaserPose;
+import com.gps.sweeprobot.MainApplication;
 import com.gps.sweeprobot.R;
 import com.gps.sweeprobot.base.BaseActivity;
 import com.gps.sweeprobot.database.GpsMapBean;
@@ -26,7 +29,6 @@ import com.gps.sweeprobot.http.WebSocketHelper;
 import com.gps.sweeprobot.model.createmap.bean.ControlTab;
 import com.gps.sweeprobot.model.createmap.contract.CreateMapContract;
 import com.gps.sweeprobot.model.createmap.presenter.CreateMapPresenter;
-import com.gps.sweeprobot.url.UrlHelper;
 import com.gps.sweeprobot.utils.JsonCreator;
 import com.gps.sweeprobot.utils.ToastManager;
 import com.gps.sweeprobot.widget.GpsImage;
@@ -44,7 +46,6 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Consumer;
-import retrofit2.http.HEAD;
 
 /**
  * @Author : zhoukan
@@ -91,13 +92,17 @@ public class CreateActivity extends BaseActivity<CreateMapPresenter, CreateMapCo
 
     private RecyclerView.Adapter adapter;
     private DialogPlus dialog;
+    private AlertDialog.Builder completeDialogBuilder;
     private GpsMapBean gpsMapBean;
+
+    /* 是否保存 -- 是否完成 */
+    private boolean isSaved = false
+                   ,isCompleted =false;
 
     @Override
     protected TextView getTitleTextView() {
         return title;
     }
-
 
     @Override
     protected String getTitleText() {
@@ -113,10 +118,12 @@ public class CreateActivity extends BaseActivity<CreateMapPresenter, CreateMapCo
     @Override
     protected void initData() {
 
+        MainApplication.startRos++;
         initView();
         initDialog();
 
-        gpsMapBean = new GpsMapBean();
+        /* 根据不同的情况来获取gpsMapBean */
+        gpsMapBean = mPresenter.getGpsMapBean();
 
         mPresenter.subscribe();
         mPresenter.registerRxBus();
@@ -124,6 +131,7 @@ public class CreateActivity extends BaseActivity<CreateMapPresenter, CreateMapCo
     }
 
     private void initDialog() {
+
         dialog = DialogPlus.newDialog(this)
                 .setContentHolder(new com.orhanobut.dialogplus.ViewHolder(R.layout.dialog_inputinfo))
                 .setOnClickListener(new OnClickListener() {
@@ -141,15 +149,24 @@ public class CreateActivity extends BaseActivity<CreateMapPresenter, CreateMapCo
                                 if (TextUtils.isEmpty(robotName)){
                                     ToastManager.show(mCtz,"您忘了为机器人命名噢", Toast.LENGTH_SHORT);
                                 }else {
+
+                                    isCompleted = true;
+                                    MainApplication.iscreateMapping = true;
+
                                     gpsMapBean.setName(robotName);
                                     gpsMapBean.setCompletedMapUrl("/maps/now/map.jpg");
-//                                    gpsMapBean.setCompletedMapUrl(UrlHelper.COMPLETE_URL);
+                                    // gpsMapBean.setCompletedMapUrl(UrlHelper.COMPLETE_URL);
                                     gpsMapBean.setDate( Calendar.getInstance().getTime());
+                                    // 更新
                                     mPresenter.saveMap(gpsMapBean);
+                                    // 只需要清除id即可
+                                    mPresenter.clearId();
+                                    // 完成
                                     WebSocketHelper.send(JsonCreator.mappingStatus(2,gpsMapBean.getId(),gpsMapBean.getName(),"/var/www/maps").toJSONString());
-                                    Log.d(TAG, "onClick: " + "" + "\n id" + gpsMapBean.getId() + "\n + name" + gpsMapBean.getName());
+
                                 }
                                 dialog.dismiss();
+                                CreateActivity.this.finish();
                                 break;
                         }
 
@@ -159,13 +176,19 @@ public class CreateActivity extends BaseActivity<CreateMapPresenter, CreateMapCo
                 .setContentWidth(RelativeLayout.LayoutParams.WRAP_CONTENT)
                 .setGravity(Gravity.CENTER)
                 .create();
+
+        completeDialogBuilder = new  AlertDialog.Builder(this);
     }
 
+    /* 设置侧边栏 和监听 */
     private void initView() {
 
+
+        MainApplication.iscreateMapping = false;
         controlTabs = new ArrayList<>();
-        controlTabs.add(new ControlTab(R.mipmap.play,"暂停"));
+        controlTabs.add(new ControlTab(R.mipmap.play,"保存"));
         controlTabs.add(new ControlTab(R.mipmap.right_blue,"完成"));
+        controlTabs.add(new ControlTab(R.mipmap.cancel_,"取消"));
         adapter =  new CommonAdapter<ControlTab>(this, R.layout.control_item, controlTabs) {
 
             @Override
@@ -194,7 +217,6 @@ public class CreateActivity extends BaseActivity<CreateMapPresenter, CreateMapCo
 
     @Override
     protected void initListener() {
-
     }
 
     @Override
@@ -223,7 +245,6 @@ public class CreateActivity extends BaseActivity<CreateMapPresenter, CreateMapCo
 
     @Override
     public void onAnimationRepeat(Animator animation) {
-
     }
 
     @Override
@@ -296,6 +317,31 @@ public class CreateActivity extends BaseActivity<CreateMapPresenter, CreateMapCo
         dialog.dismiss();
     }
 
+    @Override
+    public void showCompleteDialog(String msg,int type) {
+
+        if (type != -1){
+
+            completeDialogBuilder.setMessage(msg)
+                                .setNegativeButton("仍要退出", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        CreateActivity.this.finish();
+                                    }
+                                })
+                                .setPositiveButton("继续完成", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                    }
+                                });
+            completeDialogBuilder.create();
+            completeDialogBuilder.show();
+        }else {
+
+        }
+        return;
+    }
+
 
     @Override
     public void onStarting() {
@@ -314,10 +360,8 @@ public class CreateActivity extends BaseActivity<CreateMapPresenter, CreateMapCo
 
     @Override
     public void onFinish() {
-//        velocity[0] = 0;
-//        velocity[1] = 0;
-//        mPresenter.sendCommandToRos();
         mPresenter.stopLoop();
+        mPresenter.cancel(gpsMapBean);
     }
 
     @Override
@@ -341,7 +385,21 @@ public class CreateActivity extends BaseActivity<CreateMapPresenter, CreateMapCo
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.iv_back:
-                this.finish();
+
+                StringBuilder msg = new StringBuilder();
+                int type = -1;   // -1不显示 0 表示未保存  1表示保存但未完成
+                if (!isCompleted){   // true
+                    if (!isSaved){
+                        type = 0;
+                        msg.append("地图未保存，请确认是否退出");
+                    }else {
+                        type = 1;
+                        msg.append("地图未完成，请确认是否退出");
+                    }
+                    this.showCompleteDialog(msg.toString(), type);
+                }else {
+                    this.finish();
+                }
                 break;
             case R.id.iv:
                 if (controllayoutisHide) {
@@ -358,7 +416,7 @@ public class CreateActivity extends BaseActivity<CreateMapPresenter, CreateMapCo
     }
 
     /**
-     * 控制布局点击事件
+     *  右侧布局的点击事件  分别有保存  -- 完成  -- 取消
      */
     public class OnControlClickListener implements View.OnClickListener {
 
@@ -370,14 +428,30 @@ public class CreateActivity extends BaseActivity<CreateMapPresenter, CreateMapCo
 
         @Override
         public void onClick(View v) {
+            // 暂停 -- 保存
             if (position == 0) {
                 // 表示现在正在扫描地图
-                switchControllPause(isScanTasked);
+                isSaved = true;
+//                mPresenter.saveMap();
+                mPresenter.saveTempMap(gpsMapBean);
+//                switchControllPause(isScanTasked);
             }
 
+            /* 完成 */
             if (position == 1) {
-//                mPresenter.stopScanMap();
+                MainApplication.startRos = 0;
                 mPresenter.finishScanMap();
+            }
+
+            /* 取消 */
+            if (position == 2){
+                // 删除并清除id的值
+                // 删除
+                MainApplication.iscreateMapping = true;
+                MainApplication.startRos = 0;
+                mPresenter.cancel(gpsMapBean);
+                mPresenter.clearMap(gpsMapBean);
+                CreateActivity.this.finish();
             }
         }
     }

@@ -1,7 +1,9 @@
 package com.gps.sweeprobot.model.main.adapter;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.BitmapFactory;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.gps.sweeprobot.MainApplication;
 import com.gps.sweeprobot.R;
 import com.gps.sweeprobot.model.createmap.view.activity.CreateActivity;
 import com.gps.sweeprobot.model.main.bean.MainTab;
@@ -32,11 +35,26 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
     private List<MainTab> tabs;
     private Context mContext;
     private LayoutInflater inflater;
+    private AlertDialog.Builder builder;
 
     public MainAdapter(List<MainTab> tabs, Context mContext) {
         this.tabs = tabs;
         this.mContext = mContext;
         inflater = LayoutInflater.from(mContext);
+        builder = createDialog(mContext);
+        builder.create();
+    }
+
+    private AlertDialog.Builder createDialog(Context mContext) {
+        return new AlertDialog.Builder(mContext)
+                .setMessage("还有未构建完成的地图，请先构建完成后再执行其他操作!")
+                .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+
     }
 
     @Override
@@ -94,9 +112,19 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
                     CreateActivity.startSelf(context,CreateActivity.class,null);
                     break;
                 case 1:
+                    if(!MainApplication.iscreateMapping){
+                        // 还有未构建完成的地图，请先构建完成后再执行其他操作
+                        builder.show();
+                        return;
+                    }
                     MapManagerActivity.startSelf(context,MapManagerActivity.class,null);
                     break;
                 case 2:
+                    if(!MainApplication.iscreateMapping){
+                        // 还有未构建完成的地图，请先构建完成后再执行其他操作
+                        builder.show();
+                        return;
+                    }
                     TaskQueueActivity.startSelf(context,TaskQueueActivity.class,null);
                     break;
                 case 3:

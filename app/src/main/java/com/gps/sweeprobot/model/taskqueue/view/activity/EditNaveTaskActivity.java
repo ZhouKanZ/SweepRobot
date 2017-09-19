@@ -20,9 +20,11 @@ import com.gps.sweeprobot.base.BaseActivity;
 import com.gps.sweeprobot.database.GpsMapBean;
 import com.gps.sweeprobot.database.PointBean;
 import com.gps.sweeprobot.database.Task;
+import com.gps.sweeprobot.http.WebSocketHelper;
 import com.gps.sweeprobot.model.taskqueue.adapter.PointAdapter;
 import com.gps.sweeprobot.model.taskqueue.contract.EditNaveTaskContract;
 import com.gps.sweeprobot.model.taskqueue.presenter.EditNaveTaskPresenter;
+import com.gps.sweeprobot.utils.JsonCreator;
 import com.gps.sweeprobot.widget.GpsImage;
 
 import org.litepal.crud.DataSupport;
@@ -76,6 +78,8 @@ public class EditNaveTaskActivity extends BaseActivity<EditNaveTaskPresenter, Ed
     private PointAdapter candidateAdapter, selectedAdapter;
     /* adapter 参数 */
     private List<PointBean> candidatePoints, selectedPoints;
+
+    private GpsMapBean gpsMapBean = null;
 
     @Override
     protected TextView getTitleTextView() {
@@ -141,10 +145,15 @@ public class EditNaveTaskActivity extends BaseActivity<EditNaveTaskPresenter, Ed
             taskName = bundle.getString(TASK_NAME);
         }
 
+
         if (mapId != -1) {
             mPresenter.initData(mapId);
+            gpsMapBean = DataSupport.find(GpsMapBean.class,mapId);
         }
-
+        // 进入
+        if (gpsMapBean != null){
+            WebSocketHelper.send(JsonCreator.mappingStatus(6,gpsMapBean.getId(),gpsMapBean.getName(),"/var/www/maps").toJSONString());
+        }
 
     }
 
@@ -161,6 +170,15 @@ public class EditNaveTaskActivity extends BaseActivity<EditNaveTaskPresenter, Ed
     @Override
     protected void otherViewClick(View view) {
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // 进入
+        if (gpsMapBean != null){
+            WebSocketHelper.send(JsonCreator.mappingStatus(7,gpsMapBean.getId(),gpsMapBean.getName(),"/var/www/maps").toJSONString());
+        }
     }
 
     @OnClick({R.id.iv_back, R.id.iv,R.id.iv_right})

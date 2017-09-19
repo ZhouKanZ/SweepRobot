@@ -5,6 +5,8 @@ import android.content.SharedPreferences;
 
 import com.gps.sweeprobot.MainApplication;
 
+import org.mozilla.universalchardet.prober.contextanalysis.SJISContextAnalysis;
+
 import java.util.HashMap;
 
 /**
@@ -17,6 +19,8 @@ public class ConfigParams {
     /* 表——table_config */
     private static final String  TABLE_CONFIG = "config";
     private static final String IS_FRIST_INSTALL = "is_frist_install";
+    // 上一次地图的id 默认值为 -1
+    private static final String LAST_GPSMAP_ID = "last_gpsmap_id";
 
     /* 根据表名存储的SharedPerferences */
     private static HashMap<String,SharedPreferences> preferencesMap;
@@ -58,6 +62,18 @@ public class ConfigParams {
 
     private static SharedPreferences.Editor getEdit(String key){
         return preferencesMap.get(key).edit();
+    }
+
+    // 设置地图的id 在地图构建的时候存储
+    public static boolean setLastGpsMapId(int id){
+        SharedPreferences.Editor editor =getEdit(TABLE_CONFIG);
+        editor.putInt(LAST_GPSMAP_ID,id);
+        return editor.commit();
+    }
+
+    // 获取上一次保存的地图的id 默认值为-1 , 当地图完成的时候 一定要重置
+    public static int getLastGpsMapId(){
+        return preferencesMap.get(TABLE_CONFIG).getInt(LAST_GPSMAP_ID, -1);
     }
 
 }

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PointF;
@@ -39,11 +40,14 @@ import io.reactivex.functions.Consumer;
 public class GpsView extends GestureImageView
 {
 
+    private static final String TAG = "GpsView";
+
     private Paint mPaint;
     private Bitmap robot;
     private List<LaserPose.DataBean> laserPoints;
     private Matrix mMatrix;
     private Matrix finalMatrix;
+    private float robotPosition[] = new float[2];
 
     /* 宽高 */
     private int height;
@@ -55,7 +59,7 @@ public class GpsView extends GestureImageView
 
     private enum State {
         FIT,          // 正在拟合的状态
-        NORMAL       // 拟合完成
+        NORMAL        // 拟合完成
     }
 
     public GpsView(Context context) {
@@ -76,10 +80,10 @@ public class GpsView extends GestureImageView
         mPaint = new Paint();
         mPaint.setAntiAlias(true);
         mPaint.setStyle(Paint.Style.FILL);
+        mPaint.setColor(Color.BLUE);
         mPaint.setStrokeWidth(2); // px
 
         robot = BitmapFactory.decodeResource(getResources(), R.mipmap.sweeprobot);
-
         laserPoints = new ArrayList<>();
 
     }
@@ -94,6 +98,8 @@ public class GpsView extends GestureImageView
         // 1.drawRobotBitmap
         if (checkBitmapIsValid(robot) && robotX * robotY != 0 && finalMatrix != null) {
             PointF pointF = DegreeManager.changeAbsolutePoint(robotX, robotY, finalMatrix);
+            robotPosition[0] = pointF.x;
+            robotPosition[1] = pointF.y;
             canvas.drawBitmap(robot, pointF.x, pointF.y, mPaint);
         }
         // 2.drawLaserPoint
@@ -171,6 +177,7 @@ public class GpsView extends GestureImageView
     public void setImageBitmap(Bitmap bm) {
         super.setImageBitmap(bm);
         mMatrix = getImageMatrix();
+        Log.d(TAG, "setImageBitmap: " + mMatrix);
         finalMatrix = new Matrix(mMatrix);
         Log.d("tag", "setImageBitmap: " + mMatrix);
     }
@@ -181,6 +188,10 @@ public class GpsView extends GestureImageView
     public Matrix completeFit(){
         state = State.NORMAL;
         return getImageMatrix();
+    }
+
+    public float[] getRobotPosition() {
+        return robotPosition;
     }
 }
 

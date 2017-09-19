@@ -41,7 +41,6 @@ import static com.gps.sweeprobot.model.mapmanager.contract.MapManagerContract.MA
 public class MapManagerActivity extends BaseActivity<MapManagerPresenter,IView> implements
         MapListItem.MOnItemClickListener ,MapManagerContract.view{
 
-
     @BindView(R.id.activity_map_manager_rv)
     RecyclerView recyclerView;
 

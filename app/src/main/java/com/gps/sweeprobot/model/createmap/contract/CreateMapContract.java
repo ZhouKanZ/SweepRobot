@@ -55,6 +55,16 @@ public class CreateMapContract {
         void loopSendCommandToRos();
 
         void stopLoop();
+
+        void cancel(GpsMapBean gpsbean);
+
+        GpsMapBean getGpsMapBean();
+
+        void clearId();
+
+        void saveTempMap(GpsMapBean gpsbean);
+
+        void clearMap(GpsMapBean gpsMapBean);
     }
 
     public interface View extends IView{
@@ -101,6 +111,9 @@ public class CreateMapContract {
 
         void showIutInfoDialog();
         void hideIutInfoDialog();
+
+        /* 显示是否完成 */
+        void showCompleteDialog(String msg,int type);
     }
 
     public interface Model extends RxBusModel<JSONObject> {
@@ -128,5 +141,9 @@ public class CreateMapContract {
         void subscribe();
 
         void sendMapInfoToRos(GpsMapBean gpsMapBean);
+
+        void cancel(GpsMapBean gpsbean);
+
+        void saveTempMap(GpsMapBean gpsbean);
     }
 }

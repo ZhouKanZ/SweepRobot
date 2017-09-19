@@ -70,20 +70,14 @@
             android:configChanges="orientation|keyboardHidden|screenSize"
             />
         <activity android:name=".model.taskqueue.view.activity.TaskDetailActivity"/>
+
         <activity android:name=".model.taskqueue.view.activity.TaskExecuteActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="landscape"
             />
-
-
         <!-- ZHOUKAN - ENDING -->
-        <activity android:name=".test.TestActivity2">
-            <!--<intent-filter>
-               <action android:name="android.intent.action.MAIN" />
 
-               <category android:name="android.intent.category.LAUNCHER" />
-           </intent-filter>-->
-        </activity>
+        <activity android:name=".test.TestActivity2"/>
 
     </application>
 

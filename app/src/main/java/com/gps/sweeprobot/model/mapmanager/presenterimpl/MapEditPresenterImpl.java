@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 
+import com.alibaba.fastjson.annotation.JSONCreator;
 import com.gps.sweeprobot.MainApplication;
 import com.gps.sweeprobot.R;
 import com.gps.sweeprobot.bean.IAction;
@@ -14,6 +15,7 @@ import com.gps.sweeprobot.database.MyPointF;
 import com.gps.sweeprobot.database.PointBean;
 import com.gps.sweeprobot.database.VirtualObstacleBean;
 import com.gps.sweeprobot.http.Constant;
+import com.gps.sweeprobot.http.WebSocketHelper;
 import com.gps.sweeprobot.model.mapmanager.adaper.item.ActionItem;
 import com.gps.sweeprobot.model.mapmanager.contract.MapEditContract;
 import com.gps.sweeprobot.model.mapmanager.contract.MapManagerContract;
@@ -24,6 +26,7 @@ import com.gps.sweeprobot.model.view.adapter.CommonRcvAdapter;
 import com.gps.sweeprobot.model.view.adapter.item.AdapterItem;
 import com.gps.sweeprobot.mvp.IModel;
 import com.gps.sweeprobot.utils.CommunicationUtil;
+import com.gps.sweeprobot.utils.JsonCreator;
 import com.gps.sweeprobot.utils.LogManager;
 import com.gps.sweeprobot.utils.ScreenUtils;
 import com.gps.sweeprobot.utils.ToastManager;
@@ -82,9 +85,9 @@ public class MapEditPresenterImpl extends MapEditPresenter {
     //地图数据model
     private MapInfoModel mapInfoModel;
 
-    private int mapid;
-
     private Map<String,ActionItem> itemMap = new HashMap<>();
+
+    private int mapid;
     private String mapName;
 
     public MapEditPresenterImpl(ActionItem.ActionOnItemListener listener, MapEditContract.view mapEditView) {
@@ -455,7 +458,16 @@ public class MapEditPresenterImpl extends MapEditPresenter {
         obstacleBeanList.add(virtualObstacleBean);
         mapEditView.updateAdapter(obstacleBeanList);
 //        itemMap.get("123").startAnim();
+    }
 
+    @Override
+    public void exitMap() {
+        WebSocketHelper.send(JsonCreator.mappingStatus(5,mapid,mapName,"/var/www/maps").toJSONString());
+    }
+
+    @Override
+    public void enterMap() {
+        WebSocketHelper.send(JsonCreator.mappingStatus(4,mapid,mapName,"/var/www/maps").toJSONString());
     }
 
     /**

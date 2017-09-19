@@ -3,6 +3,7 @@ package com.gps.sweeprobot.utils;
 import android.util.Log;
 
 import com.alibaba.fastjson.JSONObject;
+import com.gps.sweeprobot.database.GpsMapBean;
 
 /**
  * @Author : zhoukan
@@ -90,6 +91,36 @@ public class JsonCreator {
         mappingStatus.put("op","call_service");
         mappingStatus.put("service","/mapping_status");
         mappingStatus.put("args",msg);
+
+        Log.d(TAG, "mappingStatus: "+mappingStatus.toJSONString());
+
+
+        return mappingStatus;
+    }
+
+    /**
+     * Object ... 的参数列表的方式 ， 跟一下的方式在调用方式上没有任何差别
+     * @param mappingId
+     * @param gpsMapBean
+     * @return
+     */
+    public static JSONObject mappingStatus_(int mappingId ,GpsMapBean gpsMapBean){
+        /* 0表示开始  1 暂停 2 结束*/
+        JSONObject msg = new JSONObject();
+        msg.put("data",mappingId);
+        msg.put("map_id",gpsMapBean.getId() + "");
+
+//        if (gpsMapBean.getName() !=null && !gpsMapBean.getName().isEmpty()){
+            msg.put("map_name","unknown");
+//        }
+        msg.put("map_path","/var/www/maps");
+
+        JSONObject mappingStatus = new JSONObject();
+        mappingStatus.put("op","call_service");
+        mappingStatus.put("service","/mapping_status");
+        mappingStatus.put("args",msg);
+
+        Log.d(TAG, "mappingStatus_: " + mappingStatus);
 
         return mappingStatus;
     }
