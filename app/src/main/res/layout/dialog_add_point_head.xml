@@ -10,6 +10,7 @@
         android:layout_height="@dimen/action_bar_height"
         android:textSize="@dimen/text_size_18"
         android:text="@string/dialog_add_point_title"
+        android:textStyle="italic"
         android:textColor="@color/textColor"
         android:gravity="center"/>
 </LinearLayout>

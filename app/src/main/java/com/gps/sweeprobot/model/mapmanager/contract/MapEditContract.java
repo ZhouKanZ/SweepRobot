@@ -73,5 +73,6 @@ public class MapEditContract {
         //删除虚拟墙
         void removeObstacle(String name,int position);
 
+        void startAddWall();
     }
 }

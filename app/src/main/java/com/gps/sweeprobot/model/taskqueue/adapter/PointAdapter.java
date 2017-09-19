@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -138,8 +137,7 @@ public class PointAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
      * @param point
      */
     public void addItem(PointBean point){
-//        PointBean pointBean = point.clone();
-//        pointBean.setType(1);
+
         PointBean pointBean = new PointBean();
         pointBean.setType(1);
         pointBean.setMapId(point.getMapId());

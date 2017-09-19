@@ -6,7 +6,7 @@ import com.gps.sweeprobot.bean.IAction;
  * Create by WangJun on 2017/7/24
  */
 
-public class PointBean extends IAction /*implements Cloneable*/ {
+public class PointBean extends IAction{
 
     /* 地图的id也是table的主键 */
     private int id;
@@ -96,14 +96,5 @@ public class PointBean extends IAction /*implements Cloneable*/ {
         this.id = id;
     }
 
-//    @Override
-//    public PointBean clone() {
-//        PointBean clone  = null;
-//        try {
-//            clone = (PointBean) super.clone();
-//        } catch (CloneNotSupportedException e) {
-//            e.printStackTrace();
-//        }
-//        return clone;
-//    }
+
 }

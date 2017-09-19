@@ -13,4 +13,9 @@
         <attr name="leftSwipe" format="boolean" />
     </declare-styleable>
 
+    <declare-styleable name="VirtualObstacleView">
+        <attr name="layout_width" format="integer"/>
+        <attr name="layout_height" format="integer"/>
+    </declare-styleable>
+
 </resources>

@@ -38,7 +38,7 @@ public class CommunicationUtil {
     public static void sendPoint2Ros(PointBean pointBean,int type){
 
         NavPose navPose = new NavPose();
-        navPose.setMapid(pointBean.getMapId());
+        navPose.setMapid(3);
         navPose.setMapname(pointBean.getMapName());
         navPose.setId(pointBean.getId());
         navPose.setName(pointBean.getPointName());

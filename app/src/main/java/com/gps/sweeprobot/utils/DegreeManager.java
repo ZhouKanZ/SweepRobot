@@ -63,4 +63,15 @@ public class DegreeManager {
         float y = point[1];
         return new PointF(x,y);
     }
+
+    public static float changeRelativeCoordinate(float i,Matrix matrix){
+
+        float[] point = new float[1];
+        point[0] = i;
+        Matrix invertMatrix = new Matrix();
+        matrix.invert(invertMatrix);
+        invertMatrix.mapPoints(point);
+        float p = point[0];
+        return p;
+    }
 }

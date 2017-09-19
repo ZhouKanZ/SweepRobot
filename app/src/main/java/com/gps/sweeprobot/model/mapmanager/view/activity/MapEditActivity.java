@@ -16,7 +16,6 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewAnimationUtils;
-import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
@@ -55,8 +54,11 @@ import io.reactivex.functions.Consumer;
  * Create by WangJun on 2017/7/19
  */
 
-public class MapEditActivity extends BaseActivity<MapEditPresenter, IView> implements ActionItem.ActionOnItemListener
-        , MapEditContract.view, GpsImageView.SavePointDataListener, VirtualObstacleView.SaveObstacleListener {
+public class MapEditActivity extends BaseActivity<MapEditPresenter, IView> implements
+        ActionItem.ActionOnItemListener,
+        MapEditContract.view,
+        GpsImageView.SavePointDataListener,
+        VirtualObstacleView.SaveObstacleListener {
 
 
     @BindView(R.id.activity_map_edit_giv)
@@ -70,15 +72,12 @@ public class MapEditActivity extends BaseActivity<MapEditPresenter, IView> imple
     List<ImageView> nameViews;
 
     //动作列表的dialog
-    AlertDialog actionDialog;
+    private AlertDialog actionDialog;
 
     private TextInputEditText inputName;
 
     //命名的dialog
     private DialogPlus dialogPlus;
-
-    //存放mapid的bundle，上个activity传过来的
-    private Bundle bundle;
 
     @Override
     protected TextView getTitleTextView() {
@@ -103,12 +102,11 @@ public class MapEditActivity extends BaseActivity<MapEditPresenter, IView> imple
         options.titleId = R.string.activity_edit_map_title;
         setToolBar(R.id.toolbar, options);
 
-        bundle = getIntent().getBundleExtra(this.getClass().getSimpleName());
+        Bundle bundle = getIntent().getBundleExtra(this.getClass().getSimpleName());
         mPresenter.setBundle(bundle);
         mPresenter.setData();
 
         mPresenter.enterMap();
-
 
     }
 
@@ -215,6 +213,7 @@ public class MapEditActivity extends BaseActivity<MapEditPresenter, IView> imple
             case R.id.dialog_add_point_cancel:
 
                 dismissInputNameDialog();
+                gpsImageView.cancelAddObstacleView();
                 break;
 
             case R.id.dialog_add_point_sure:
@@ -279,12 +278,12 @@ public class MapEditActivity extends BaseActivity<MapEditPresenter, IView> imple
      *
      * @param contentView
      */
-    public void addAction(View contentView) {
+    private void addAction(View contentView) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setView(contentView);
         actionDialog = builder.create();
-        actionDialog.getWindow().setLayout(1500, 800);
+        actionDialog.getWindow().setLayout(1200, 800);
         actionDialog.show();
 
         initDialogView(contentView, R.id.dialog_action_point, this);
@@ -300,7 +299,7 @@ public class MapEditActivity extends BaseActivity<MapEditPresenter, IView> imple
      * @param viewId
      * @param listener
      */
-    public void initDialogView(View contentView, int viewId, final View.OnClickListener listener) {
+    private void initDialogView(View contentView, int viewId, final View.OnClickListener listener) {
 
         Observable.just(findView(contentView, viewId))
                 .subscribe(new Consumer<View>() {
@@ -370,11 +369,11 @@ public class MapEditActivity extends BaseActivity<MapEditPresenter, IView> imple
 
         dialogPlus = DialogPlus.newDialog(this)
                 .setContentHolder(new ViewHolder(R.layout.dialog_add_point))
-                .setExpanded(true, ViewGroup.LayoutParams.WRAP_CONTENT)
+                .setExpanded(true,900)
                 .setGravity(Gravity.CENTER)
                 .setHeader(R.layout.dialog_add_point_head)
                 .setFooter(R.layout.dialog_add_point_foot)
-                .setContentWidth(1300)
+                .setContentWidth(1500)
                 .setInAnimation(R.anim.fade_in_center)
                 .setOutAnimation(R.anim.fade_out_center)
                 .create();
@@ -389,11 +388,11 @@ public class MapEditActivity extends BaseActivity<MapEditPresenter, IView> imple
     }
 
 
-    public void showInputNameDialog() {
+    private void showInputNameDialog() {
         dialogPlus.show();
     }
 
-    public void dismissInputNameDialog() {
+    private void dismissInputNameDialog() {
         dialogPlus.dismiss();
     }
 
@@ -431,6 +430,11 @@ public class MapEditActivity extends BaseActivity<MapEditPresenter, IView> imple
         gpsImageView.removeObstacleView(name, position);
     }
 
+    @Override
+    public void startAddWall() {
+        gpsImageView.startAddWall();
+    }
+
     /**
      * 设置左边recycler的item
      */
@@ -445,6 +449,8 @@ public class MapEditActivity extends BaseActivity<MapEditPresenter, IView> imple
         actionRecyclerView.setAdapter(mPresenter.initAdapter());
 
     }
+
+
 
     /**
      * 左边recycler item 的点击事件
@@ -475,7 +481,7 @@ public class MapEditActivity extends BaseActivity<MapEditPresenter, IView> imple
         mPresenter.itemLongClick(position);
     }
 
-    public <T extends View> T findView(View rootView, int viewId) {
+    private <T extends View> T findView(View rootView, int viewId) {
 
         if (rootView == null) {
             return null;

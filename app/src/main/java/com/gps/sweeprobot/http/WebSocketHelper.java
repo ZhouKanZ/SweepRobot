@@ -43,6 +43,7 @@ public class WebSocketHelper {
      * @return
      */
     private static WebSocketClient getWebsocket(){
+
         return rosBridgeClient().getClient();
     }
 

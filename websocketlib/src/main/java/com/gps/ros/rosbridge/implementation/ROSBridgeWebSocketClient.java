@@ -45,10 +45,10 @@ public class ROSBridgeWebSocketClient extends WebSocketClient {
     private boolean debug;
     private ROSClient.ConnectionStatusListener listener;
     
-    ROSBridgeWebSocketClient(URI serverURI) {
+    private ROSBridgeWebSocketClient(URI serverURI) {
         super(serverURI);
-        classes = new Registry<Class>();
-        handlers = new Registry<FullMessageHandler>();
+        classes = new Registry<>();
+        handlers = new Registry<>();
         Operation.initialize(classes);  // note, this ensures that the Message Map is initialized too
         listener = null;
     }
@@ -93,6 +93,7 @@ public class ROSBridgeWebSocketClient extends WebSocketClient {
                 com.gps.ros.response.ServiceResponse serviceresponse = jsonObject.toJavaObject(com.gps.ros.response.ServiceResponse.class);
                 RxBus.getDefault().post(serviceresponse);
                 break;
+
             default:
                 System.out.println("error");
                 break;

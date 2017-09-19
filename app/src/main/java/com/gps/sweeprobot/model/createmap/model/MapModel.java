@@ -164,22 +164,29 @@ public class MapModel implements CreateMapContract.Model {
     @Override
     public void saveTempMap(GpsMapBean gpsbean) {
         WebSocketHelper.send(JsonCreator.mappingStatus_(1,gpsbean).toJSONString());
+//        WebSocketHelper.send(
+//                JsonCreator
+//                .postMapInfo(gpsMapBean.getId(),
+//                        gpsMapBean.getName())
+//                .toJSONString());
+//
+        gpsMapBean.save();
+        gpsMapBean.setCompletedMapUrl("maps/"+gpsMapBean.getId()+"/"+gpsMapBean.getId()+".jpg");
+        gpsMapBean.update(gpsMapBean.getId());
     }
 
     /**
      * ask ros start
      */
-    public void askStart() {
-        if (MainApplication.startRos == 1){
-            WebSocketHelper.send(JsonCreator.mappingStatus(0).toJSONString());
-        }
+    private void askStart() {
+        WebSocketHelper.send(JsonCreator.mappingStatus(0).toJSONString());
     }
 
     /**
      * ask ros stop //
      */
     public void askStop() {
-//     WebSocketHelper.send(JsonCreator.mappingStatus(1).toJSONString());
+     WebSocketHelper.send(JsonCreator.mappingStatus(1).toJSONString());
     }
 
 
