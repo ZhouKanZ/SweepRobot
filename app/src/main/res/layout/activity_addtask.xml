@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    >
+
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/layout_toolbar" />
+
+    <!-- 任务名称 -->
+    <EditText
+        android:id="@+id/et_task_name"
+        android:layout_marginTop="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="42dp"
+        android:background="@drawable/edit_input"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_below="@+id/toolbar"
+        android:hint="@string/input_task_name"
+        android:paddingLeft="10dp"
+        android:textColorHint="@color/text_hint"
+        android:textSize="14sp"
+        />
+
+    <TextView
+        android:id="@+id/tv_notice_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/seleteType"
+        android:layout_below="@+id/et_task_name"
+        android:textSize="12sp"
+        android:layout_marginLeft="15dp"
+        android:textColor="@color/textColor"
+        android:layout_marginTop="10dp"
+        />
+
+    <Spinner
+        android:id="@+id/sp_type"
+        android:layout_width="match_parent"
+        android:layout_height="42dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:background="@drawable/edit_input"
+        android:layout_below="@+id/tv_notice_type"
+        />
+
+    <TextView
+        android:id="@+id/tv_notice_map"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/seleteMap"
+        android:layout_below="@+id/sp_type"
+        android:textSize="12sp"
+        android:layout_marginLeft="15dp"
+        android:textColor="@color/textColor"
+        android:layout_marginTop="10dp"
+        />
+
+    <!-- map spinner -->
+    <Spinner
+        android:id="@+id/sp_map"
+        android:layout_width="match_parent"
+        android:layout_height="42dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:background="@drawable/edit_input"
+        android:layout_below="@+id/tv_notice_map"
+        />
+
+    <!-- 预览 -->
+    <Button
+        android:id="@+id/btn_edit"
+        android:layout_width="match_parent"
+        android:layout_height="42dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:background="@drawable/btn_main"
+        android:text="@string/pleaseInputName"
+        android:textColor="@color/white"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="30dp"
+        android:enabled="false"
+        />
+
+</RelativeLayout>

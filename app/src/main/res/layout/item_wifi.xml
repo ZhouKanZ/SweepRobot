@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:id="@+id/item_wifi"
+    android:layout_height="52dp"
+    android:orientation="vertical"
+    android:gravity="center_vertical"
+    android:padding="10dp"
+    >
+
+    <ImageView
+        android:id="@+id/iv_wifi_signal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@mipmap/ic_setting_wifi_3"
+        />
+    
+    <TextView
+        android:id="@+id/tv_wifi_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="LiebaoWIFI"
+        android:layout_toRightOf="@+id/iv_wifi_signal"
+        android:layout_marginLeft="12dp"
+        android:layout_marginTop="5dp"
+        />
+
+    <TextView
+        android:id="@+id/tv_conn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="5dp"
+        android:text="已连接"
+        />
+
+</RelativeLayout>

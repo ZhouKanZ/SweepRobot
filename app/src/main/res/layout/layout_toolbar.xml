@@ -4,10 +4,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/toolbar"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/height_toolbar"
-    android:background="@color/white"
+    android:layout_height="?attr/actionBarSize"
+    android:background="@color/colorPrimary"
     app:contentInsetLeft="0dp"
     app:contentInsetStart="0dp"
+    android:elevation="2dp"
     >
 
         <RelativeLayout
@@ -29,7 +30,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="SweepRobot"
-                android:textColor="@color/colorPrimary"
+                android:textColor="@color/white"
                 android:textSize="18sp"
                 android:layout_centerInParent="true"
                 />

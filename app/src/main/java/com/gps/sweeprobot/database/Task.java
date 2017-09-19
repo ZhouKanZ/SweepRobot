@@ -1,9 +1,10 @@
 package com.gps.sweeprobot.database;
 
-import com.gps.sweeprobot.model.taskqueue.bean.TaskPoint;
-
 import org.litepal.crud.DataSupport;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -14,44 +15,97 @@ import java.util.List;
 
 public class Task extends DataSupport{
 
-    /* 任务id */
-    private String id;
+    /* primary key */
+    private int id;
 
-    /* 任务状态 excute prepare finish  执行中 待执行 任务完成 */
-    private String status;
+    private String name;
 
-    /* 任务类型  0 1 2 分别表示 导航 路径 清洁*/
+    private String createTime;
+
+    /* 任务类型  0(导航点) 1(轨迹) 2()*/
     private int type;
 
-    /* 该任务的点 */
-    private List<TaskPoint> taskPoints;
+    private boolean isExecuting = false;
 
-    public Task(String id, String status) {
-        this.id = id;
-        this.status = status;
+    private String mapUrl;
+
+    /* 外键id
+    *  标识机器人执行任务所处的环境
+    */
+    private int mapId;
+
+    /*
+     * 导航点数据   length = 1  表示导航点 length > 1 轨迹任务;
+     */
+    private List<Integer> pointBeanList;
+
+    public List<Integer> getPointBeanList() {
+        return pointBeanList;
     }
 
-    public String getId() {
+    public void setPointBeanList(List<Integer> pointBeanList) {
+        this.pointBeanList = pointBeanList;
+    }
+
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 
-    public String getStatus() {
-        return status;
+    public String getName() {
+        return name;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public List<TaskPoint> getTaskPoints() {
-        return taskPoints;
+    public String getCreateTime() {
+        return createTime;
     }
 
-    public void setTaskPoints(List<TaskPoint> taskPoints) {
-        this.taskPoints = taskPoints;
+    /**
+     *  设置时间，不需要传入参数
+     */
+    public void setCreateTime() {
+        Calendar calendar = Calendar.getInstance();
+        Date date = calendar.getTime();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        this.createTime = sdf.format(date);
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+
+    public boolean isExecuting() {
+        return isExecuting;
+    }
+
+    public void setExecuting(boolean executing) {
+        isExecuting = executing;
+    }
+
+    public int getMapId() {
+        return mapId;
+    }
+
+    public void setMapId(int mapId) {
+        this.mapId = mapId;
+    }
+
+    public String getMapUrl() {
+        return mapUrl;
+    }
+
+    public void setMapUrl(String mapUrl) {
+        this.mapUrl = mapUrl;
     }
 }

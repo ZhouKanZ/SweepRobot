@@ -1,58 +1,41 @@
 package com.gps.sweeprobot.model.taskqueue.view.activity;
 
-import android.graphics.BitmapFactory;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.alexvasilkov.gestures.views.GestureFrameLayout;
 import com.gps.sweeprobot.R;
 import com.gps.sweeprobot.base.BaseActivity;
 import com.gps.sweeprobot.base.BasePresenter;
-import com.gps.sweeprobot.model.taskqueue.bean.TaskPoint;
-import com.gps.sweeprobot.ui.gps_map.GpsImageView;
-import com.zhy.adapter.recyclerview.CommonAdapter;
-import com.zhy.adapter.recyclerview.base.ViewHolder;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.gps.sweeprobot.widget.GpsImage;
 
 import butterknife.BindView;
 import butterknife.OnClick;
 
 /**
  * @Author : zhoukan
- * @CreateDate : 2017/7/18 0018
- * @Descriptiong : 任务详情页面，获取启动得bundle getType 来指明activity的类型
+ * @CreateDate : 2017/8/24 0024
+ * @Descriptiong : xxx
  */
 
 public class TaskDetailActivity extends BaseActivity {
 
-    public static final String TYPE_KEY = "type_key";
-    // 标记点
-    public static final String TYPE_MARKPOINT = "type_markpoint";
-    // 路径
-    public static final String TYPE_PATH = "type_path";
-    // 障碍物
-    public static final String TYPE_OBSTACLE = "type_obstacle";
+    public static final String TASK_ID_KEY = "task_id_key";
 
     @BindView(R.id.iv_back)
     ImageView ivBack;
     @BindView(R.id.title)
     TextView title;
-    @BindView(R.id.add)
-    ImageView add;
-    @BindView(R.id.sub)
-    ImageView sub;
-    @BindView(R.id.gps_mapview_task)
-    GpsImageView gpsMapviewTask;
-    @BindView(R.id.rv_task_detail)
-    RecyclerView rvTaskDetail;
-
-    private List<TaskPoint> points;
-
-    private CommonAdapter adapter;
+    @BindView(R.id.iv_right)
+    ImageView ivRight;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+    @BindView(R.id.gps_image)
+    GpsImage gpsImage;
+    @BindView(R.id.layout_gesture)
+    GestureFrameLayout layoutGesture;
 
     @Override
     protected TextView getTitleTextView() {
@@ -61,7 +44,7 @@ public class TaskDetailActivity extends BaseActivity {
 
     @Override
     protected String getTitleText() {
-        return "标记点任务";
+        return "任务详情";
     }
 
     @Override
@@ -77,39 +60,17 @@ public class TaskDetailActivity extends BaseActivity {
     @Override
     protected void initData() {
         setLeftVisiable(true);
-
-        points = new ArrayList<>();
-        initAdapter();
-
-        points.add(new TaskPoint(100f,200f,"第一个点"));
-        points.add(new TaskPoint(200f,200f,"第二个点"));
-        points.add(new TaskPoint(300f,200f,"第三个点"));
-        points.add(new TaskPoint(200f,300f,"第四个点"));
-
-        rvTaskDetail.setLayoutManager(new LinearLayoutManager(mCtz));
-        rvTaskDetail.setAdapter(adapter);
-
-        adapter.notifyDataSetChanged();
-
-        gpsMapviewTask.setImageView(BitmapFactory.decodeResource(getResources(),R.mipmap.map_test));
-    }
-
-    private void initAdapter() {
-        adapter = new CommonAdapter<TaskPoint>(mCtz,R.layout.item_point_task,points) {
-            @Override
-            protected void convert(ViewHolder holder, TaskPoint taskPoint, int position) {
-                // 将taskPoint绘制到GpsImageView上
-                gpsMapviewTask.addPoint(taskPoint.getX(),taskPoint.getY(),taskPoint.getTaskName());
-                holder.setText(R.id.tv_name,taskPoint.getTaskName());
-                if (position == points.size() - 1){
-                    holder.setVisible(R.id.line_horizontal,false);
-                }
-            }
-        };
+        layoutGesture
+                .getController()
+                .getSettings()
+                .setMaxZoom(5)
+                .setRotationEnabled(true);
     }
 
     @Override
-    protected void initListener() {}
+    protected void initListener() {
+
+    }
 
     @Override
     protected int getLayoutId() {

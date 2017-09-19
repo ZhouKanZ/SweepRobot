@@ -9,7 +9,7 @@
         android:id="@+id/toolbar"
         layout="@layout/layout_toolbar" />
 
-    <com.gps.sweeprobot.ui.gps_map.GpsImageView
+    <com.gps.sweeprobot.widget.GpsImageView
         android:id="@+id/gps_mapview"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -22,10 +22,10 @@
                 android:id="@+id/iv_anim"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
                 android:scaleType="centerInside"
                 android:src="@mipmap/scan"
-                android:layout_centerInParent="true"
-                />
+                android:visibility="gone" />
 
             <ImageView
                 android:id="@+id/iv_point_south"
@@ -35,7 +35,7 @@
                 android:layout_marginTop="10dp"
                 android:src="@mipmap/pointsouth" />
 
-            <com.kongqw.rockerlibrary.view.RockerView
+            <com.gps.sweeprobot.widget.RockerView
                 android:id="@+id/rockerView_center"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
@@ -52,8 +52,7 @@
                 android:layout_height="match_parent"
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="-100dp"
-                android:elevation="2dp"
-                >
+                android:elevation="2dp">
 
                 <ImageView
                     android:id="@+id/iv"
@@ -68,22 +67,20 @@
                     android:id="@+id/line"
                     android:layout_width="0.5dp"
                     android:layout_height="match_parent"
-                    android:layout_toEndOf="@+id/iv"
-                    android:layout_toRightOf="@+id/iv"
                     android:layout_marginLeft="-1dp"
-                     />
+                    android:layout_toEndOf="@+id/iv"
+                    android:layout_toRightOf="@+id/iv" />
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/rv_control"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_toRightOf="@+id/line"
-                    android:background="@color/white"
                     android:layout_centerVertical="true"
-                    />
+                    android:layout_toRightOf="@+id/line"
+                    android:background="@color/white" />
 
             </RelativeLayout>
         </RelativeLayout>
-    </com.gps.sweeprobot.ui.gps_map.GpsImageView>
+    </com.gps.sweeprobot.widget.GpsImageView>
 
 </LinearLayout>

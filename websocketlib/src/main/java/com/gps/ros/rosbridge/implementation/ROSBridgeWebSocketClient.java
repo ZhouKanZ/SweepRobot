@@ -19,10 +19,16 @@
  */
 package com.gps.ros.rosbridge.implementation;
 
-import com.gps.ros.rosbridge.ROSClient;
+import android.util.Log;
+
+import com.alibaba.fastjson.JSONObject;
+import com.gps.ros.android.RxBus;
 import com.gps.ros.message.Message;
+import com.gps.ros.response.SubscribeResponse;
 import com.gps.ros.rosbridge.FullMessageHandler;
+import com.gps.ros.rosbridge.ROSClient;
 import com.gps.ros.rosbridge.operation.Operation;
+
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.framing.CloseFrame;
 import org.java_websocket.handshake.ServerHandshake;
@@ -39,10 +45,10 @@ public class ROSBridgeWebSocketClient extends WebSocketClient {
     private boolean debug;
     private ROSClient.ConnectionStatusListener listener;
     
-    ROSBridgeWebSocketClient(URI serverURI) {
+    private ROSBridgeWebSocketClient(URI serverURI) {
         super(serverURI);
-        classes = new Registry<Class>();
-        handlers = new Registry<FullMessageHandler>();
+        classes = new Registry<>();
+        handlers = new Registry<>();
         Operation.initialize(classes);  // note, this ensures that the Message Map is initialized too
         listener = null;
     }
@@ -63,16 +69,37 @@ public class ROSBridgeWebSocketClient extends WebSocketClient {
         this.listener = listener;
     }
 
-
-
     @Override
     public void onMessage(String message) {
-        /// -------------
-        if (debug) System.out.println("<ROS--------- " + message);
-        System.out.println("ROSBridgeWebSocketClient.onMessage (message): " + message);
+//        System.out.println("<ROS " + message);
+        if (debug) System.out.println("<ROS " + message);
 
+        JSONObject jsonObject = (JSONObject) JSONObject.parse(message);
+        Log.i("rosclient-------", "onMessage: " + jsonObject);
+        RxBus.getDefault().post(jsonObject);
 
-////        ----------------
+        // 1.发送jsonobject类型的数据 -- 有的model需要接收多种类型的数据
+        String op = jsonObject.getString("op");
+
+        switch (op){
+            case "publish":
+                // 2.发送op = publish的数据
+                SubscribeResponse subscriberesponse = jsonObject.toJavaObject(SubscribeResponse.class);
+                RxBus.getDefault().post(subscriberesponse);
+//                System.out.println("SubscribeResponse:"+JSONObject.toJSONString(subscriberesponse));
+                break;
+            case "service_response":
+                // 3.发送op = service_responsed额数据
+                com.gps.ros.response.ServiceResponse serviceresponse = jsonObject.toJavaObject(com.gps.ros.response.ServiceResponse.class);
+                RxBus.getDefault().post(serviceresponse);
+                break;
+
+            default:
+                System.out.println("error");
+                break;
+        }
+
+//        //System.out.println("ROSBridgeWebSocketClient.onMessage (message): " + message);
 //        Operation operation = Operation.toOperation(message, classes);
 //        //System.out.println("ROSBridgeWebSocketClient.onMessage (operation): ");
 //        //operation.print();
@@ -95,17 +122,40 @@ public class ROSBridgeWebSocketClient extends WebSocketClient {
 //        // this is probably some sort of call to the operation for "validation." Do it
 //        // as part of error handling.
 //
-//
-//        if (handler != null)
+//        if (handler != null && message.contains("\"id\":"))
 //            handler.onMessage(operation.id, msg);
-//        else if (debug) {
-//            System.out.print("No handler: id# " + operation.id + ", ");
-//            if (operation instanceof Publish)
-//                System.out.println("Publish " + ((Publish) operation).topic);
-//            else if (operation instanceof ServiceResponse)
-//                System.out.println("Service Response " + ((ServiceResponse) operation).service);
-//            //operation.print();
+//        else {
+//            if (debug)
+//                System.out.print("No handler: id# " + operation.id + ", op:" + operation.op);
+//            if (operation instanceof Publish) {
+//                Publish publish = ((Publish) operation);
+//                try {
+//                    JSONObject jo = JSONObject.parseObject(message);
+//                    String content = jo.get("msg").toString();
+//                    RxBus.getDefault().post(new PublishEvent(operation,publish.topic,content) );
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//
+//                System.out.println("Publish " + publish.topic);
+//            } else if (operation instanceof ServiceResponse) {
+//                ServiceResponse serviceResponse = ((ServiceResponse) operation);
+//
+//                try {
+//
+//                    JSONObject jo = JSONObject.parseObject(message);
+//                    String content = jo.get("values").toString();
+//                    RxBus.getDefault().post(new PublishEvent(operation,serviceResponse.service,content));
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//
+//                System.out.println("Service Response " + serviceResponse.service);
+//            }
 //        }
+
+
+
     }
        
     @Override

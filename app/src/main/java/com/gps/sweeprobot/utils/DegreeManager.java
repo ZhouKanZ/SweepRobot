@@ -30,14 +30,15 @@ public class DegreeManager {
      * @param matrix
      * @return
      */
-    public static PointF changeAbslutePoint(float locationX, float locationY, Matrix matrix)
+    public static PointF changeAbsolutePoint(float locationX, float locationY, Matrix matrix)
     {
-        float[] arrayOfFloat = new float[2];
-        arrayOfFloat[0] = locationX;
-        arrayOfFloat[1] = locationY;
-        matrix.mapPoints(arrayOfFloat);
-        int x = Integer.valueOf((int)arrayOfFloat[0]).intValue();
-        int y = Integer.valueOf((int)arrayOfFloat[1]).intValue();
+        float[] point = new float[2];
+        point[0] = locationX;
+        point[1] = locationY;
+        //计算当前矩阵变化后的值，并将值放入数组中
+        matrix.mapPoints(point);
+        float x = point[0];
+        float y = point[1];
         return new PointF(x,y);
     }
 
@@ -48,18 +49,29 @@ public class DegreeManager {
      * @param matrix
      * @return
      */
-    public static PointF changeRelativePoint(float locationX,float locationY, Matrix matrix){
+    public static PointF changeRelativePoint(float locationX, float locationY, Matrix matrix){
 
-        float[] arrayOfFloat= new float[2];
-        arrayOfFloat[0]=locationX;
-        arrayOfFloat[1]=locationY;
+        float[] point= new float[2];
+        point[0]=locationX;
+        point[1]=locationY;
         Matrix invertMatrix=new Matrix();
         //得到逆矩阵
         matrix.invert(invertMatrix);
         //将此矩阵应用于2D点阵列，并将转换的点写入数组
-        invertMatrix.mapPoints(arrayOfFloat);
-        float x = arrayOfFloat[0];
-        float y = arrayOfFloat[1];
+        invertMatrix.mapPoints(point);
+        float x = point[0];
+        float y = point[1];
         return new PointF(x,y);
+    }
+
+    public static float changeRelativeCoordinate(float i,Matrix matrix){
+
+        float[] point = new float[1];
+        point[0] = i;
+        Matrix invertMatrix = new Matrix();
+        matrix.invert(invertMatrix);
+        invertMatrix.mapPoints(point);
+        float p = point[0];
+        return p;
     }
 }

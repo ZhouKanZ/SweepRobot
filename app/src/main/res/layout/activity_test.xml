@@ -1,155 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <Button
-        android:id="@+id/connect"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/connectsocket"
-        />
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/layout_toolbar"/>
 
-    <Button
-        android:id="@+id/unconnect"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/unconnectsocket"
-        />
-
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/advertise"
-        android:layout_margin="10dp"
-        android:textSize="15sp"
-        android:textColor="@color/black"
-        />
-
-    <RadioGroup
-        android:id="@+id/rg_advertise"
+    <com.alexvasilkov.gestures.views.GestureFrameLayout
+        android:id="@+id/gps_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/toolbar"
         >
+            <com.gps.sweeprobot.widget.GpsImage
+                android:id="@+id/gps_image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                />
 
-        <RadioButton
-            android:id="@+id/rb_speed_adv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="速度"
-            android:checked="true"
-            />
-
-        <RadioButton
-            android:id="@+id/rb_position_adv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:text="位置"
-            />
-
-    </RadioGroup>
-
-    <Button
-        android:id="@+id/btn_commit_adv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/commit"
-        />
+    </com.alexvasilkov.gestures.views.GestureFrameLayout>
 
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/publish"
-        android:layout_margin="10dp"
-        android:textSize="15sp"
-        android:textColor="@color/black"
-        />
-
-    <RadioGroup
-        android:id="@+id/rg_publish"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        >
-
-        <RadioButton
-            android:id="@+id/rb_speed_pub"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="true"
-            android:text="速度"
-            />
-
-        <RadioButton
-            android:id="@+id/rb_position_pub"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:text="位置"
-            />
-
-    </RadioGroup>
-
-    <Button
-        android:id="@+id/btn_commit_publish"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/commit"
-        />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/subscribe"
-        android:layout_margin="10dp"
-        android:textSize="15sp"
-        android:textColor="@color/black"
-        />
-
-    <RadioGroup
-        android:id="@+id/rg_subscribe"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        >
-
-        <RadioButton
-            android:id="@+id/rb_speed_sub"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="true"
-            android:text="速度"
-            />
-
-        <RadioButton
-            android:id="@+id/rb_position_sub"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:text="位置"
-            />
-
-    </RadioGroup>
-
-    <Button
-        android:id="@+id/btn_commit_sub"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/commit"
-        />
-
-    <!-- 呈现所有的信息 -->
-    <TextView
-        android:id="@+id/screen"
-        android:layout_width="match_parent"
+    <com.gps.sweeprobot.widget.RockerView
+        android:id="@+id/rockerView_center"
+        android:layout_width="100dp"
         android:layout_height="100dp"
-        android:background="#f0b9b9b9"
-        android:textColor="#ff0000"
-        />
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="30dp"
+        android:layout_marginLeft="30dp"
+        app:areaBackground="#bbbfbfbf"
+        app:rockerBackground="#FF6F6F6F"
+        app:rockerRadius="20dp" />
 
-</LinearLayout>
+    <RelativeLayout
+        android:id="@+id/layout_control"
+        android:layout_width="130dp"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="-100dp"
+        android:layout_below="@+id/toolbar"
+        android:elevation="2dp">
+
+        <ImageView
+            android:id="@+id/iv"
+            android:layout_width="30dp"
+            android:layout_height="100dp"
+            android:layout_centerVertical="true"
+            android:background="@drawable/shape_show"
+            android:scaleType="centerInside"
+            android:src="@mipmap/show" />
+
+        <View
+            android:id="@+id/line"
+            android:layout_width="0.5dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="-1dp"
+            android:layout_toEndOf="@+id/iv"
+            android:layout_toRightOf="@+id/iv" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_control"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/line"
+            android:background="@color/white"
+            />
+
+    </RelativeLayout>
+
+</RelativeLayout>
+

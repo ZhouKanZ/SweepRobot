@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- 底层图 -->
+    <com.gps.sweeprobot.widget.GpsImage
+        android:id="@+id/gps_backgroud"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!-- 镭射层 -->
+    <com.alexvasilkov.gestures.views.GestureImageView
+        android:id="@+id/gps_laser_layer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        />
+
+
+</RelativeLayout>
