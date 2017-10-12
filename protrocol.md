@@ -8,6 +8,6 @@
 
 | topic(话题名称)  | topic(话题type) |topic内容(服务内容)        |
 | ------------- |:-------------|:-------------|
-|/map_status_feedback | operation/status     | int32 sta |
+
 |/cmd_vel | geometry_msgs/Twist    | geometry_msgs/Vector3 linear</br>&ensp;&ensp;float64 x</br> &ensp;&ensp;float64 y</br> &ensp;&ensp;float64 z </br> geometry_msgs/Vector3 angular</br> &ensp;&ensp;float64 x</br> &ensp;&ensp;float64 y</br> &ensp;&ensp;float64 z|
-|/status | std_msgs/Int32     | int32 data |
+|/mapping_status_feedback | std_msgs/Int32     | int32 data |
