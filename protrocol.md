@@ -8,6 +8,5 @@
 
 | topic(话题名称)  | topic(话题type) |topic内容(服务内容)        |
 | ------------- |:-------------|:-------------|
-
-|/cmd_vel | geometry_msgs/Twist    | geometry_msgs/Vector3 linear</br>&ensp;&ensp;float64 x</br> &ensp;&ensp;float64 y</br> &ensp;&ensp;float64 z </br> geometry_msgs/Vector3 angular</br> &ensp;&ensp;float64 x</br> &ensp;&ensp;float64 y</br> &ensp;&ensp;float64 z|
-|/mapping_status_feedback | std_msgs/Int32     | int32 data |
+| /cmd_vel | geometry_msgs/Twist    | geometry_msgs/Vector3 linear</br>&ensp;&ensp;float64 x</br> &ensp;&ensp;float64 y</br> &ensp;&ensp;float64 z </br> geometry_msgs/Vector3 angular</br> &ensp;&ensp;float64 x</br> &ensp;&ensp;float64 y</br> &ensp;&ensp;float64 z|
+| /mapping_status_feedback | std_msgs/Int32     | int32 data |
